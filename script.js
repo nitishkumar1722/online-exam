@@ -483,16 +483,25 @@ function loadQuestions() {
   quizDiv.innerHTML = "";
 
   questions.forEach((q, index) => {
-    quizDiv.innerHTML += `
-      <p>${q.question}</p>
+    const div = document.createElement("div");
+    div.className = "question";
+    div.id = `question-${index}`;
+
+    div.innerHTML = `
+      <p><strong>Q${index + 1}.</strong> ${q.question}</p>
+
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
-      <hr>
+
+      <!-- 👇 YE LINE BAHUT ZAROORI HAI -->
+      <p id="answer-${index}" style="display:none;"></p>
     `;
+
+    quizDiv.appendChild(div);
   });
 }
 
@@ -503,14 +512,34 @@ function submitQuiz() {
     const selected = document.querySelector(
       `input[name="q${index}"]:checked`
     );
+
+    const questionDiv = document.getElementById(`question-${index}`);
+    const answerDiv = document.getElementById(`answer-${index}`);
+
+    if (!questionDiv || !answerDiv) {
+      console.error("Missing element for question", index);
+      return;
+    }
+
     if (selected && selected.value === q.answer) {
       score++;
+      questionDiv.style.border = "2px solid green";
+      answerDiv.innerHTML = "✅ Correct";
+    } else if (selected) {
+      questionDiv.style.border = "2px solid red";
+      answerDiv.innerHTML = `❌ Wrong | Correct Answer: <b>${q.answer}</b>`;
+    } else {
+      questionDiv.style.border = "2px solid orange";
+      answerDiv.innerHTML = `⚠ Not Attempted | Correct Answer: <b>${q.answer}</b>`;
     }
+
+    answerDiv.style.display = "block";
   });
 
   document.getElementById("result").innerText =
-    "Score: " + score + " / " + questions.length;
+    `Score: ${score} / ${questions.length}`;
 }
+
 
 window.onload = loadQuestions;
 
@@ -550,6 +579,7 @@ function sendResultToGoogleSheet(score) {
     })
   }).catch(err => console.error(err));
 }
+
 
 
 
