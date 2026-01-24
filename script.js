@@ -543,6 +543,8 @@ function submitQuiz() {
 
 window.onload = loadQuestions;
 
+
+
 function startExam() {
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
@@ -553,32 +555,19 @@ function startExam() {
     return;
   }
 
-  // Save student info (optional – future use)
-  localStorage.setItem(
-    "currentStudent",
-    JSON.stringify({ name, roll, dob })
-  );
-
-  // Hide form, show exam
+  // Hide form
   document.getElementById("studentForm").style.display = "none";
+
+  // Show quiz + submit
   document.getElementById("quiz").style.display = "block";
   document.getElementById("submitBtn").style.display = "inline-block";
 
-  // Load questions
+  // Load questions NOW
   loadQuestions();
 }
 
 
-function sendResultToGoogleSheet(score) {
-  fetch("https://script.google.com/macros/s/AKfycbyOPGsFbwXEA7JqbIGis9bPOygKUAvoQkhUeKatB05VeHrGgLqFC2zDJpsLf_T-09LC/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      score: score,
-      total: questions.length,
-      date: new Date().toLocaleString()
-    })
-  }).catch(err => console.error(err));
-}
+
 
 
 
