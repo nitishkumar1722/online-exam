@@ -519,9 +519,12 @@ function submitQuiz() {
       score++;
       questionDiv.style.border = "2px solid green";
       answerDiv.innerHTML = "✅ Correct";
-    } else {
+    } else if (selected) {
       questionDiv.style.border = "2px solid red";
       answerDiv.innerHTML = `❌ Wrong | Correct: <b>${q.answer}</b>`;
+    } else {
+      questionDiv.style.border = "2px solid orange";
+      answerDiv.innerHTML = `⚠ Not Attempted | Correct: <b>${q.answer}</b>`;
     }
 
     answerDiv.style.display = "block";
@@ -530,6 +533,10 @@ function submitQuiz() {
   document.getElementById("result").innerText =
     `Score: ${score} / ${questions.length}`;
 }
+
+window.onload = loadQuestions;
+
+
 
 
 
