@@ -530,11 +530,40 @@ function submitQuiz() {
     answerDiv.style.display = "block";
   });
 
-  document.getElementById("result").innerText =
-    `Score: ${score} / ${questions.length}`;
+  const student = JSON.parse(localStorage.getItem("currentStudent"));
+
+  document.getElementById("result").innerHTML =
+    `<b>Name:</b> ${student.name}<br>
+     <b>Roll No:</b> ${student.roll}<br>
+     <b>DOB:</b> ${student.dob}<br><br>
+     <b>Score:</b> ${score} / ${questions.length}`;
 }
 
-window.onload = loadQuestions;
+function startExam() {
+  const name = document.getElementById("studentName").value.trim();
+  const roll = document.getElementById("rollNumber").value.trim();
+  const dob = document.getElementById("dob").value;
+
+  if (!name || !roll || !dob) {
+    alert("Please fill all details before starting the exam");
+    return;
+  }
+
+  // Save student info (optional – future use)
+  localStorage.setItem(
+    "currentStudent",
+    JSON.stringify({ name, roll, dob })
+  );
+
+  // Hide form, show exam
+  document.getElementById("studentForm").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("submitBtn").style.display = "inline-block";
+
+  // Load questions
+  loadQuestions();
+}
+
 
 
 
