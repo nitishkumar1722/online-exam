@@ -484,22 +484,25 @@ function loadQuestions() {
   questions.forEach((q, index) => {
     const div = document.createElement("div");
     div.className = "question";
-    div.id = `question-${index}`;   // 👈 IMPORTANT
+    div.id = `question-${index}`;
 
     div.innerHTML = `
       <p><strong>Q${index + 1}.</strong> ${q.question}</p>
+
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
+
       <p class="answer" id="answer-${index}" style="display:none;"></p>
     `;
 
     quizDiv.appendChild(div);
   });
 }
+
 
 function submitQuiz() {
   let score = 0;
@@ -527,6 +530,7 @@ function submitQuiz() {
   document.getElementById("result").innerText =
     `Score: ${score} / ${questions.length}`;
 }
+
 
 
 
