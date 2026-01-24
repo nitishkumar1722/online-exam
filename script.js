@@ -512,33 +512,17 @@ function submitQuiz() {
       `input[name="q${index}"]:checked`
     );
 
-    const questionDiv = document.getElementById(`question-${index}`);
-    const answerDiv = document.getElementById(`answer-${index}`);
-
     if (selected && selected.value === q.answer) {
       score++;
-      questionDiv.style.border = "2px solid green";
-      answerDiv.innerHTML = "✅ Correct";
-    } else if (selected) {
-      questionDiv.style.border = "2px solid red";
-      answerDiv.innerHTML = `❌ Wrong | Correct: <b>${q.answer}</b>`;
-    } else {
-      questionDiv.style.border = "2px solid orange";
-      answerDiv.innerHTML = `⚠ Not Attempted | Correct: <b>${q.answer}</b>`;
     }
-
-    answerDiv.style.display = "block";
   });
 
-  const student = JSON.parse(localStorage.getItem("currentStudent"));
-  sendResultToGoogleSheet(student, score);
+  document.getElementById("result").innerText =
+    `Score: ${score} / ${questions.length}`;
 
-  document.getElementById("result").innerHTML =
-    `<b>Name:</b> ${student.name}<br>
-     <b>Roll No:</b> ${student.roll}<br>
-     <b>DOB:</b> ${student.dob}<br><br>
-     <b>Score:</b> ${score} / ${questions.length}`;
+sendResultToGoogleSheet(score);
 }
+
 
 function startExam() {
   const name = document.getElementById("studentName").value.trim();
@@ -564,25 +548,19 @@ function startExam() {
   // Load questions
   loadQuestions();
 }
-function sendResultToGoogleSheet(student, score) {
+
+
+function sendResultToGoogleSheet(score) {
   fetch("https://script.google.com/macros/s/AKfycbyOPGsFbwXEA7JqbIGis9bPOygKUAvoQkhUeKatB05VeHrGgLqFC2zDJpsLf_T-09LC/exec", {
     method: "POST",
     body: JSON.stringify({
-      name: student.name,
-      roll: student.roll,
-      dob: student.dob,
       score: score,
       total: questions.length,
-      exam: examId
+      date: new Date().toLocaleString()
     })
-  })
-  .then(() => {
-    console.log("Result saved to Google Sheet");
-  })
-  .catch(err => {
-    console.error("Error saving result", err);
-  });
+  }).catch(err => console.error(err));
 }
+
 
 
 
