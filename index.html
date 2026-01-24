@@ -6,17 +6,45 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+ <body>
   <h1>Practice Exam</h1>
 
-  <div id="quiz"></div>
+  <div id="studentForm">
+    <h3>Student Details</h3>
 
-  <button onclick="submitQuiz()">Submit</button>
+    <label>
+      Name:
+      <input type="text" id="studentName" required>
+    </label><br><br>
+
+    <label>
+      Roll Number:
+      <input type="text" id="rollNumber" required>
+    </label><br><br>
+
+    <label>
+      Date of Birth:
+      <input type="date" id="dob" required>
+    </label><br><br>
+
+    <button onclick="startExam()">Start Exam</button>
+  </div>
+
+  
+  <div id="quiz" style="display:none;"></div>
+
+  <button onclick="submitQuiz()" style="display:none;" id="submitBtn">
+    Submit
+  </button>
 
   <p id="result"></p>
 
   <script src="script.js"></script>
 </body>
 
+</body>
+
 </html>
+
 
 
