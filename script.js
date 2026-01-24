@@ -1,3 +1,4 @@
+alert("JS LOADED");
 const questions = [
   {
     question: "What is the unit digit of 347?",
@@ -549,6 +550,7 @@ function sendResultToGoogleSheet(score) {
     })
   }).catch(err => console.error(err));
 }
+
 
 
 
