@@ -11,3 +11,15 @@ button {
     padding: 10px 15px;
     font-size: 16px;
 }
+
+.question {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.answer {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
