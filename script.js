@@ -483,20 +483,36 @@ function loadQuestions() {
   quizDiv.innerHTML = "";
 
   questions.forEach((q, index) => {
-    quizDiv.innerHTML += `
-      <p>${q.question}</p>
+    const div = document.createElement("div");
+    div.className = "question";
+    div.id = `question-${index}`;
+
+    div.innerHTML = `
+      <p><b>Q${index + 1}.</b> ${q.question}</p>
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
+      <p id="answer-${index}" style="display:none;"></p>
       <hr>
     `;
+
+    quizDiv.appendChild(div);
   });
 }
 
+// START EXAM
+function startExam() {
+  document.getElementById("studentForm").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  document.getElementById("submitBtn").style.display = "inline-block";
 
+  loadQuestions();
+}
+
+// SUBMIT QUIZ (SCORE + RIGHT/WRONG)
 function submitQuiz() {
   let score = 0;
 
@@ -505,52 +521,28 @@ function submitQuiz() {
       `input[name="q${index}"]:checked`
     );
 
-    const questionDiv = document.getElementById(`question-${index}`);
-    const answerDiv = document.getElementById(`answer-${index}`);
-
-    if (!questionDiv || !answerDiv) {
-      console.error("Missing element for question", index);
-      return;
-    }
+    const qDiv = document.getElementById(`question-${index}`);
+    const ansDiv = document.getElementById(`answer-${index}`);
 
     if (selected && selected.value === q.answer) {
       score++;
-      questionDiv.style.border = "2px solid green";
-      answerDiv.innerHTML = "✅ Correct";
-    } else if (selected) {
-      questionDiv.style.border = "2px solid red";
-      answerDiv.innerHTML = `❌ Wrong | Correct Answer: <b>${q.answer}</b>`;
-    } else {
-      questionDiv.style.border = "2px solid orange";
-      answerDiv.innerHTML = `⚠ Not Attempted | Correct Answer: <b>${q.answer}</b>`;
+      qDiv.style.border = "2px solid green";
+      ansDiv.innerHTML = "✅ Correct";
+    } 
+    else if (selected) {
+      qDiv.style.border = "2px solid red";
+      ansDiv.innerHTML = `❌ Wrong | Correct: <b>${q.answer}</b>`;
+    } 
+    else {
+      qDiv.style.border = "2px solid orange";
+      ansDiv.innerHTML = `⚠ Not Attempted | Correct: <b>${q.answer}</b>`;
     }
 
-    answerDiv.style.display = "block";
+    ansDiv.style.display = "block";
   });
 
   document.getElementById("result").innerText =
     `Score: ${score} / ${questions.length}`;
-}
-
-
-
-function startExam() {
-  alert("Start Exam clicked"); // 👈 test
-
-  const form = document.getElementById("studentForm");
-  const quiz = document.getElementById("quiz");
-  const submitBtn = document.getElementById("submitBtn");
-
-  if (!form || !quiz || !submitBtn) {
-    alert("HTML ID mismatch");
-    return;
-  }
-
-  form.style.display = "none";
-  quiz.style.display = "block";
-  submitBtn.style.display = "inline-block";
-
-  loadQuestions();
 }
 
 
