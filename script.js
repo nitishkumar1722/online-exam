@@ -482,27 +482,18 @@ function loadQuestions() {
   quizDiv.innerHTML = "";
 
   questions.forEach((q, index) => {
-    const div = document.createElement("div");
-    div.className = "question";
-    div.id = `question-${index}`;
-
-    div.innerHTML = `
-      <p><strong>Q${index + 1}.</strong> ${q.question}</p>
-
+    quizDiv.innerHTML += `
+      <p>${q.question}</p>
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
-
-      <p class="answer" id="answer-${index}" style="display:none;"></p>
+      <hr>
     `;
-
-    quizDiv.appendChild(div);
   });
 }
-
 
 function submitQuiz() {
   let score = 0;
@@ -511,18 +502,16 @@ function submitQuiz() {
     const selected = document.querySelector(
       `input[name="q${index}"]:checked`
     );
-
     if (selected && selected.value === q.answer) {
       score++;
     }
   });
 
   document.getElementById("result").innerText =
-    `Score: ${score} / ${questions.length}`;
-
-sendResultToGoogleSheet(score);
+    "Score: " + score + " / " + questions.length;
 }
 
+window.onload = loadQuestions;
 
 function startExam() {
   const name = document.getElementById("studentName").value.trim();
@@ -560,6 +549,7 @@ function sendResultToGoogleSheet(score) {
     })
   }).catch(err => console.error(err));
 }
+
 
 
 
