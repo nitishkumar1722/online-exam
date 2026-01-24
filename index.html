@@ -9,43 +9,38 @@
  <body>
   <h1>Practice Exam</h1>
 
-  <div id="studentForm">
-    <h3>Student Details</h3>
+<div id="studentForm">
+  <label>Name:
+    <input type="text" id="studentName">
+  </label><br><br>
 
-    <label>
-      Name:
-      <input type="text" id="studentName" required>
-    </label><br><br>
+  <label>Roll Number:
+    <input type="text" id="rollNumber">
+  </label><br><br>
 
-    <label>
-      Roll Number:
-      <input type="text" id="rollNumber" required>
-    </label><br><br>
+  <label>Date of Birth:
+    <input type="date" id="dob">
+  </label><br><br>
 
-    <label>
-      Date of Birth:
-      <input type="date" id="dob" required>
-    </label><br><br>
-
-    <button onclick="startExam()">Start Exam</button>
-  </div>
-
-  
-  <div id="quiz" style="display:none;"></div>
-
-  <button onclick="submitQuiz()" style="display:none;" id="submitBtn">
-    Submit
-  </button>
-
-  <p id="result"></p>
-     
   <button onclick="startExam()">Start Exam</button>
-  <script src="js/script.js"></script>
+</div>
+
+<div id="quiz" style="display:none;"></div>
+
+<button id="submitBtn" style="display:none;" onclick="submitQuiz()">
+  Submit
+</button>
+
+<p id="result"></p>
+
+<script src="script.js"></script>
+
 </body>
 
 </body>
 
 </html>
+
 
 
 
