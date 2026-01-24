@@ -484,15 +484,17 @@ function loadQuestions() {
   questions.forEach((q, index) => {
     const div = document.createElement("div");
     div.className = "question";
+    div.id = `question-${index}`;   // 👈 IMPORTANT
 
     div.innerHTML = `
-      <p>${q.question}</p>
+      <p><strong>Q${index + 1}.</strong> ${q.question}</p>
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
+      <p class="answer" id="answer-${index}" style="display:none;"></p>
     `;
 
     quizDiv.appendChild(div);
@@ -502,19 +504,53 @@ function loadQuestions() {
 function submitQuiz() {
   let score = 0;
 
+  const studentName = document.getElementById("studentName").value.trim();
+  if (!studentName) {
+    alert("Please enter your name before submitting");
+    return;
+  }
+
   questions.forEach((q, index) => {
     const selected = document.querySelector(
       `input[name="q${index}"]:checked`
     );
-    if (selected && selected.value === q.answer) {
-      score++;
+
+    const questionDiv = document.getElementById(`question-${index}`);
+    const answerDiv = document.getElementById(`answer-${index}`);
+
+    if (selected) {
+      if (selected.value === q.answer) {
+        score++;
+        questionDiv.style.border = "2px solid green";
+        answerDiv.innerHTML = "✅ Correct";
+      } else {
+        questionDiv.style.border = "2px solid red";
+        answerDiv.innerHTML = `❌ Wrong <br> ✔ Correct Answer: <b>${q.answer}</b>`;
+      }
+    } else {
+      questionDiv.style.border = "2px solid orange";
+      answerDiv.innerHTML = `⚠ Not Attempted <br> ✔ Correct Answer: <b>${q.answer}</b>`;
     }
+
+    answerDiv.style.display = "block";
   });
+
+  // Save result (localStorage)
+  const result = {
+    name: studentName,
+    score: score,
+    total: questions.length,
+    date: new Date().toLocaleString()
+  };
+
+  let savedResults = JSON.parse(localStorage.getItem("examResults")) || [];
+  savedResults.push(result);
+  localStorage.setItem("examResults", JSON.stringify(savedResults));
 
   document.getElementById("result").innerText =
     `Score: ${score} / ${questions.length}`;
 }
 
-window.onload = loadQuestions;
+
 
 
