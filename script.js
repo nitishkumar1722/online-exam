@@ -1,3 +1,4 @@
+const examId = "RRB_ntpc_1"; 
 alert("JS LOADED");
 const questions = [
   {
@@ -543,7 +544,33 @@ function submitQuiz() {
 
   document.getElementById("result").innerText =
     `Score: ${score} / ${questions.length}`;
+
+  const student = JSON.parse(localStorage.getItem("currentStudent"));
+sendResultToGoogleSheet(student, score);
 }
+
+
+function sendResultToGoogleSheet(student, score) {
+  fetch("https://script.google.com/macros/s/AKfycbwdaV5MgTu_eeVlbdi2RQ6Vlb-Wd7Wfv5C3K0pCwpwH3HNfMPURCf2lwg9YNAs4_ZaR5A/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: student.name,
+      roll: student.roll,
+      dob: student.dob,
+      score: score,
+      total: questions.length,
+      exam: examId
+    })
+  })
+  .then(() => {
+    console.log("Result sent to Google Sheet");
+  })
+  .catch(err => {
+    console.error("Google Sheet Error:", err);
+  });
+}
+
+
 
 
 
