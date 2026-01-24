@@ -483,27 +483,19 @@ function loadQuestions() {
   quizDiv.innerHTML = "";
 
   questions.forEach((q, index) => {
-    const div = document.createElement("div");
-    div.className = "question";
-    div.id = `question-${index}`;
-
-    div.innerHTML = `
-      <p><strong>Q${index + 1}.</strong> ${q.question}</p>
-
+    quizDiv.innerHTML += `
+      <p>${q.question}</p>
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
-
-      <!-- 👇 YE LINE BAHUT ZAROORI HAI -->
-      <p id="answer-${index}" style="display:none;"></p>
+      <hr>
     `;
-
-    quizDiv.appendChild(div);
   });
 }
+
 
 function submitQuiz() {
   let score = 0;
@@ -541,30 +533,27 @@ function submitQuiz() {
 }
 
 
-window.onload = loadQuestions;
-
-
 
 function startExam() {
-  const name = document.getElementById("studentName").value.trim();
-  const roll = document.getElementById("rollNumber").value.trim();
-  const dob = document.getElementById("dob").value;
+  alert("Start Exam clicked"); // 👈 test
 
-  if (!name || !roll || !dob) {
-    alert("Please fill all details before starting the exam");
+  const form = document.getElementById("studentForm");
+  const quiz = document.getElementById("quiz");
+  const submitBtn = document.getElementById("submitBtn");
+
+  if (!form || !quiz || !submitBtn) {
+    alert("HTML ID mismatch");
     return;
   }
 
-  // Hide form
-  document.getElementById("studentForm").style.display = "none";
+  form.style.display = "none";
+  quiz.style.display = "block";
+  submitBtn.style.display = "inline-block";
 
-  // Show quiz + submit
-  document.getElementById("quiz").style.display = "block";
-  document.getElementById("submitBtn").style.display = "inline-block";
-
-  // Load questions NOW
   loadQuestions();
 }
+
+
 
 
 
