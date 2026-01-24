@@ -531,6 +531,7 @@ function submitQuiz() {
   });
 
   const student = JSON.parse(localStorage.getItem("currentStudent"));
+  sendResultToGoogleSheet(student, score);
 
   document.getElementById("result").innerHTML =
     `<b>Name:</b> ${student.name}<br>
@@ -563,6 +564,26 @@ function startExam() {
   // Load questions
   loadQuestions();
 }
+function sendResultToGoogleSheet(student, score) {
+  fetch("https://script.google.com/macros/s/AKfycbyOPGsFbwXEA7JqbIGis9bPOygKUAvoQkhUeKatB05VeHrGgLqFC2zDJpsLf_T-09LC/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: student.name,
+      roll: student.roll,
+      dob: student.dob,
+      score: score,
+      total: questions.length,
+      exam: examId
+    })
+  })
+  .then(() => {
+    console.log("Result saved to Google Sheet");
+  })
+  .catch(err => {
+    console.error("Error saving result", err);
+  });
+}
+
 
 
 
