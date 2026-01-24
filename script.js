@@ -551,7 +551,7 @@ sendResultToGoogleSheet(student, score);
 
 
 function sendResultToGoogleSheet(student, score) {
-  fetch("https://script.google.com/macros/s/AKfycbwdaV5MgTu_eeVlbdi2RQ6Vlb-Wd7Wfv5C3K0pCwpwH3HNfMPURCf2lwg9YNAs4_ZaR5A/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbxzHCSz9-jW3NkZs1F4_14eCj8UiW-ESWtZ_RrfKeie2boJJC0LFU19I1gF55ikjJwOzQ/exec", {
     method: "POST",
     body: JSON.stringify({
       name: student.name,
@@ -562,13 +562,12 @@ function sendResultToGoogleSheet(student, score) {
       exam: examId
     })
   })
-  .then(() => {
-    console.log("Result sent to Google Sheet");
-  })
-  .catch(err => {
-    console.error("Google Sheet Error:", err);
-  });
+  .then(res => res.text())
+  .then(txt => console.log("Sheet response:", txt))
+  .catch(err => console.error("Fetch error:", err));
 }
+
+
 
 
 
