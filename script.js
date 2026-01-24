@@ -173,6 +173,306 @@ const questions = [
     question: "Which of the following is a perfect cube?",
     options: ["64", "81", "100", "121"],
     answer: "64"
+  },
+  {
+    question: "Q1. If + means ×, − means ÷, × means +, ÷ means −, find the value of 8 + 4 − 2.",
+    options: ["18", "10", "4", "16"],
+    answer: "18"
+  },
+  {
+    question: "Q2. If A @ B means A × B + A, find 6 @ 4.",
+    options: ["24", "30", "28", "26"],
+    answer: "30"
+  },
+  {
+    question: "Q3. If × means ÷ and ÷ means ×, find 24 × 6 ÷ 2.",
+    options: ["72", "8", "12", "48"],
+    answer: "8"
+  },
+  {
+    question: "Q4. If + means − and − means +, find 18 + 7 − 5.",
+    options: ["20", "10", "30", "6"],
+    answer: "20"
+  },
+  {
+    question: "Q5. If A # B = (A + B) × 2, find 5 # 7.",
+    options: ["20", "24", "26", "30"],
+    answer: "24"
+  },
+  {
+    question: "Q6. If + means ÷, − means ×, × means −, ÷ means +, find 8 + 4 − 2 × 6 ÷ 3.",
+    options: ["6", "10", "12", "14"],
+    answer: "10"
+  },
+  {
+    question: "Q7. If A $ B = A² − B², find 9 $ 5.",
+    options: ["56", "64", "36", "81"],
+    answer: "56"
+  },
+  {
+    question: "Q8. If A * B = (A + B) ÷ (A − B), find 10 * 6.",
+    options: ["4", "2", "8", "1"],
+    answer: "4"
+  },
+  {
+    question: "Q9. If + means × and × means +, find 7 + 5 × 3.",
+    options: ["22", "26", "36", "21"],
+    answer: "22"
+  },
+  {
+    question: "Q10. If A % B = (A ÷ B) + (B ÷ A), find 8 % 2.",
+    options: ["4.25", "4", "2.5", "5"],
+    answer: "4.25"
+  },
+  {
+    question: "Q11. If − means ÷ and ÷ means +, find 18 − 6 ÷ 3.",
+    options: ["6", "9", "7", "12"],
+    answer: "9"
+  },
+  {
+    question: "Q12. If A @ B @ C = A × B − C, find 5 @ 4 @ 6.",
+    options: ["14", "20", "26", "10"],
+    answer: "14"
+  },
+  {
+    question: "Q13. If + means −, − means ×, × means ÷, find 16 + 4 − 2 × 4.",
+    options: ["3", "4", "6", "8"],
+    answer: "3"
+  },
+  {
+    question: "Q14. If A & B = (A + B)² − (A − B)², find 6 & 4.",
+    options: ["96", "48", "40", "80"],
+    answer: "96"
+  },
+  {
+    question: "Q15. If ÷ means − and − means +, find 20 ÷ 8 − 5.",
+    options: ["23", "17", "7", "13"],
+    answer: "23"
+  },
+  {
+    question: "Q16. If A ⊕ B = A² + B² − 2AB, find 7 ⊕ 3.",
+    options: ["16", "10", "20", "8"],
+    answer: "16"
+  },
+  {
+    question: "Q17. If + means ×, − means +, × means ÷, ÷ means −, find 18 + 6 − 3 × 9 ÷ 2.",
+    options: ["52", "48", "30", "36"],
+    answer: "52"
+  },
+  {
+    question: "Q18. If A Δ B = (A × B) + (A ÷ B), find 12 Δ 4.",
+    options: ["51", "49", "48", "52"],
+    answer: "51"
+  },
+  {
+    question: "Q19. If A * B = A³ − B³, find 5 * 2.",
+    options: ["117", "125", "27", "98"],
+    answer: "117"
+  },
+  {
+    question: "Q20. If + means ÷ and ÷ means ×, find 16 + 4 ÷ 2.",
+    options: ["2", "8", "32", "10"],
+    answer: "8"
+  },
+  {
+    question: "Q1. Which sector is known as the backbone of the Indian economy?",
+    options: ["Industrial", "Agricultural", "Service", "Banking"],
+    answer: "Agricultural"
+  },
+  {
+    question: "Q2. What is meant by GDP?",
+    options: ["Total income of citizens", "Total production within country", "Total exports", "Total government revenue"],
+    answer: "Total production within country"
+  },
+  {
+    question: "Q3. Which of the following is a non-tax revenue?",
+    options: ["Income tax", "GST", "Customs duty", "Dividend"],
+    answer: "Dividend"
+  },
+  {
+    question: "Q4. Which bank issues currency notes in India?",
+    options: ["SBI", "Ministry of Finance", "Reserve Bank of India", "NABARD"],
+    answer: "Reserve Bank of India"
+  },
+  {
+    question: "Q5. What does LPG stand for in economic reforms?",
+    options: ["Liberalisation, Privatisation, Globalisation", "Labour, Production, Growth", "Law, Policy, Governance", "Localisation, Production, Growth"],
+    answer: "Liberalisation, Privatisation, Globalisation"
+  },
+  {
+    question: "Q6. Which year marks the beginning of economic reforms in India?",
+    options: ["1985", "1990", "1991", "1995"],
+    answer: "1991"
+  },
+  {
+    question: "Q7. Which tax replaced multiple indirect taxes in India?",
+    options: ["VAT", "Service Tax", "Excise Duty", "GST"],
+    answer: "GST"
+  },
+  {
+    question: "Q8. Which sector contributes the maximum share to India’s GDP?",
+    options: ["Primary", "Secondary", "Tertiary", "Quaternary"],
+    answer: "Tertiary"
+  },
+  {
+    question: "Q9. What is fiscal deficit?",
+    options: ["Excess of revenue over expenditure", "Excess of expenditure over revenue", "Excess of exports over imports", "Excess of savings over investment"],
+    answer: "Excess of expenditure over revenue"
+  },
+  {
+    question: "Q10. Which committee recommended banking sector reforms in India?",
+    options: ["Rangarajan Committee", "Kelkar Committee", "Narasimham Committee", "Sukhamoy Chakravarty Committee"],
+    answer: "Narasimham Committee"
+  },
+  {
+    question: "Q11. What is inflation?",
+    options: ["Fall in prices", "Rise in prices", "Increase in income", "Increase in production"],
+    answer: "Rise in prices"
+  },
+  {
+    question: "Q12. Which index measures inflation at the consumer level?",
+    options: ["WPI", "CPI", "IIP", "GDP Deflator"],
+    answer: "CPI"
+  },
+  {
+    question: "Q13. Which institution regulates monetary policy in India?",
+    options: ["SEBI", "Finance Ministry", "RBI", "NITI Aayog"],
+    answer: "RBI"
+  },
+  {
+    question: "Q14. What is the full form of NITI?",
+    options: ["National Institution for Transforming India", "National Institute of Trade in India", "National Investment Trust of India", "National Infrastructure Team of India"],
+    answer: "National Institution for Transforming India"
+  },
+  {
+    question: "Q15. Which plan replaced the Planning Commission?",
+    options: ["RBI", "Finance Commission", "NITI Aayog", "SEBI"],
+    answer: "NITI Aayog"
+  },
+  {
+    question: "Q16. Which sector shows disguised unemployment in India?",
+    options: ["Industrial", "Service", "Agricultural", "Banking"],
+    answer: "Agricultural"
+  },
+  {
+    question: "Q17. What is meant by Balance of Trade?",
+    options: ["Difference between exports and imports", "Difference between revenue and expenditure", "Difference between savings and investment", "Difference between assets and liabilities"],
+    answer: "Difference between exports and imports"
+  },
+  {
+    question: "Q18. What is stagflation?",
+    options: ["Inflation without unemployment", "Inflation with unemployment", "Deflation with growth", "Growth without inflation"],
+    answer: "Inflation with unemployment"
+  },
+  {
+    question: "Q19. Which tax is levied directly on income?",
+    options: ["GST", "Excise duty", "Income tax", "Customs duty"],
+    answer: "Income tax"
+  },
+  {
+    question: "Q20. What is repo rate?",
+    options: ["Rate at which banks lend to public", "Rate at which RBI lends to banks", "Rate of interest on deposits", "Rate on government bonds"],
+    answer: "Rate at which RBI lends to banks"
+  },
+  {
+    question: "Q21. Which organisation prepares India’s Union Budget?",
+    options: ["RBI", "NITI Aayog", "Finance Ministry", "Planning Commission"],
+    answer: "Finance Ministry"
+  },
+  {
+    question: "Q22. Which indicator measures industrial growth?",
+    options: ["CPI", "IIP", "GDP", "WPI"],
+    answer: "IIP"
+  },
+  {
+    question: "Q23. What is capital formation?",
+    options: ["Consumption of goods", "Creation of assets", "Destruction of assets", "Export of capital"],
+    answer: "Creation of assets"
+  },
+  {
+    question: "Q24. Which sector is also called the service sector?",
+    options: ["Primary", "Secondary", "Tertiary", "Quaternary"],
+    answer: "Tertiary"
+  },
+  {
+    question: "Q25. Which Indian bank is known as the banker’s bank?",
+    options: ["SBI", "RBI", "NABARD", "PNB"],
+    answer: "RBI"
+  },
+  {
+    question: "Q26. Which tax is not shared between Centre and States?",
+    options: ["Income tax", "Corporation tax", "GST", "Customs duty"],
+    answer: "Customs duty"
+  },
+  {
+    question: "Q27. What is the full form of SEBI?",
+    options: ["Securities and Exchange Board of India", "Stock Exchange Board of India", "Securities and Economic Board of India", "Share Exchange Board of India"],
+    answer: "Securities and Exchange Board of India"
+  },
+  {
+    question: "Q28. Which plan period introduced Green Revolution?",
+    options: ["First", "Second", "Third", "Fourth"],
+    answer: "Third"
+  },
+  {
+    question: "Q29. What does per capita income indicate?",
+    options: ["National income", "Average income", "Government income", "Tax income"],
+    answer: "Average income"
+  },
+  {
+    question: "Q30. Which sector involves mining and fishing?",
+    options: ["Primary", "Secondary", "Tertiary", "Service"],
+    answer: "Primary"
+  },
+  {
+    question: "Q31. Who controls fiscal policy in India?",
+    options: ["RBI", "Parliament", "Finance Ministry", "SEBI"],
+    answer: "Finance Ministry"
+  },
+  {
+    question: "Q32. What is deficit financing?",
+    options: ["Tax collection", "Printing of money", "Export promotion", "Import substitution"],
+    answer: "Printing of money"
+  },
+  {
+    question: "Q33. Which body regulates capital markets in India?",
+    options: ["RBI", "SEBI", "NABARD", "IRDA"],
+    answer: "SEBI"
+  },
+  {
+    question: "Q34. Which tax is levied on goods manufactured in India?",
+    options: ["Customs duty", "Excise duty", "Income tax", "Sales tax"],
+    answer: "Excise duty"
+  },
+  {
+    question: "Q35. Which sector converts raw material into finished goods?",
+    options: ["Primary", "Secondary", "Tertiary", "Quaternary"],
+    answer: "Secondary"
+  },
+  {
+    question: "Q36. What is the tenure of Finance Commission?",
+    options: ["3 years", "4 years", "5 years", "6 years"],
+    answer: "5 years"
+  },
+  {
+    question: "Q37. Which bank provides long-term credit to agriculture?",
+    options: ["SBI", "RBI", "NABARD", "PNB"],
+    answer: "NABARD"
+  },
+  {
+    question: "Q38. Which type of unemployment is common among educated youth?",
+    options: ["Seasonal", "Disguised", "Structural", "Educated unemployment"],
+    answer: "Educated unemployment"
+  },
+  {
+    question: "Q39. What is the main objective of GST?",
+    options: ["Increase inflation", "One Nation One Tax", "Reduce exports", "Increase subsidies"],
+    answer: "One Nation One Tax"
+  },
+  {
+    question: "Q40. Which sector includes transport, banking, and insurance?",
+    options: ["Primary", "Secondary", "Tertiary", "Agricultural"],
+    answer: "Tertiary"
   }
 ];
 
@@ -216,4 +516,5 @@ function submitQuiz() {
 }
 
 window.onload = loadQuestions;
+
 
