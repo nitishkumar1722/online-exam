@@ -1,6 +1,6 @@
 console.log("SCRIPT JS LOADED");
 
-
+let questions = [];
 const examPapers = {
   jan24: [
   
@@ -687,7 +687,7 @@ jan25: [
   }
  ]
 ];
-let questions = [];
+
 
 
 
@@ -792,6 +792,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
