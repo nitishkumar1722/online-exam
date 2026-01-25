@@ -1,4 +1,8 @@
-document.body.innerHTML = "<h1>JS IS WORKING</h1>";
+document.body.insertAdjacentHTML(
+  "beforeend",
+  "<h2>SCRIPT FILE LOADED</h2>"
+);
+
 
 
 
@@ -782,6 +786,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
