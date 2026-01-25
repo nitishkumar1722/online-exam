@@ -504,26 +504,21 @@ function loadQuestions() {
   });
 }
 
-//start exam
+
 function startExam() {
-   alert("START EXAM FUNCTION CALLED");
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
   const dob = document.getElementById("dob").value;
 
   if (!name || !roll || !dob) {
-    alert("Please fill all details");
+    alert("Fill all details");
     return;
   }
 
-  const student = {
-    name: name,
-    roll: roll,
-    dob: dob,
-    exam: examId   // examId upar defined hai
-  };
-
-  localStorage.setItem("currentStudent", JSON.stringify(student));
+  localStorage.setItem(
+    "currentStudent",
+    JSON.stringify({ name, roll, dob })
+  );
 
   document.getElementById("studentForm").style.display = "none";
   document.getElementById("quiz").style.display = "block";
@@ -531,7 +526,6 @@ function startExam() {
 
   loadQuestions();
 }
-
 
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
@@ -587,6 +581,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
