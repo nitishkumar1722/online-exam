@@ -1,5 +1,4 @@
  alert("JS LOADED");
-let question [];
 const exampapers = {
   jan_24_2026: [
   
@@ -685,11 +684,9 @@ jan_25_2026: [
     answer: "3"
   }
 ];
+let questions = [];
 
 
-
-  
-  
 
 
 function loadQuestions() {
@@ -725,20 +722,19 @@ function startExam() {
   const selectedExam = document.getElementById("examSelect").value;
 
   if (!name || !roll || !dob || !selectedExam) {
-    alert("Please fill all details and select exam paper");
+    alert("Fill all details and select paper");
     return;
   }
 
-  // 👇 yahin decide hota hai kaunsa paper load hoga
+  // 🔥 MAIN LINE (ab crash nahi hoga)
   questions = examPapers[selectedExam];
 
-  const student = {
-    name,
-    roll,
-    dob,
-    exam: selectedExam
-  };
+  if (!questions) {
+    alert("Exam paper not found");
+    return;
+  }
 
+  const student = { name, roll, dob, exam: selectedExam };
   localStorage.setItem("currentStudent", JSON.stringify(student));
 
   document.getElementById("studentForm").style.display = "none";
@@ -747,6 +743,7 @@ function startExam() {
 
   loadQuestions();
 }
+
 
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
@@ -802,6 +799,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
