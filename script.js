@@ -1,4 +1,6 @@
  alert("JS LOADED");
+document.body.style.background = "red";
+
 const exampapers = {
   jan_24_2026: [
   
@@ -800,6 +802,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
