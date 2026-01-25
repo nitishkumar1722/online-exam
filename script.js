@@ -1,4 +1,4 @@
-const examId = "RRB_ntpc_1"; 
+const examId = "24_jan_2026"; 
 alert("JS LOADED");
 const questions = [
   {
@@ -566,6 +566,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
