@@ -683,6 +683,7 @@ jan_25_2026: [
     options: ["2", "3", "5", "9"],
     answer: "3"
   }
+ ]
 ];
 let questions = [];
 
@@ -799,6 +800,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
