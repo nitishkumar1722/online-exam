@@ -506,6 +506,7 @@ function loadQuestions() {
 
 //start exam
 function startExam() {
+   alert("START EXAM FUNCTION CALLED");
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
   const dob = document.getElementById("dob").value;
@@ -586,6 +587,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
