@@ -12,29 +12,23 @@
   <input id="rollNumber" placeholder="Roll Number"><br><br>
   <input id="dob" type="date"><br><br>
 
-  <select id="examSelect">
-    <option value="">-- Select Exam --</option>
-    <option value="jan24">Exam Paper 1</option>
-    <option value="jan25">Exam Paper 2</option>
-  </select><br><br>
+ <select id="examSelect">
+  <option value="">-- Select Exam --</option>
+  <option value="jan24">Exam Paper 1</option>
+  <option value="jan25">Exam Paper 2</option>
+</select>
 
-  <button onclick="startExam()">Start Exam</button>
-</div>
-
-<hr>
+<button onclick="startExam()">Start Exam</button>
 
 <div id="quiz" style="display:none;"></div>
+<button id="submitBtn" style="display:none;">Submit</button>
 
-<button id="submitBtn" style="display:none;" onclick="submitQuiz()">
-  Submit
-</button>
+<script src="./script.js?v=99"></script>
 
-<p id="result"></p>
-
-<script src="./script.js?v=2"></script>
 
 </body>
 </html>
+
 
 
 
