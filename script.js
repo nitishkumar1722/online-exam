@@ -715,6 +715,8 @@ function loadQuestions() {
     
 //start exam
 function startExam() {
+  alert("Start clicked");
+
   const name = document.getElementById("studentName").value;
   const roll = document.getElementById("rollNumber").value;
   const dob = document.getElementById("dob").value;
@@ -787,6 +789,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
