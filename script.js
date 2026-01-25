@@ -692,54 +692,37 @@ jan25: [
 
 
 
-
 function loadQuestions() {
   const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML = "";
+  quizDiv.innerHTML = "<h3>Questions Loaded</h3>";
 
-  questions.forEach((q, i) => {
-    const div = document.createElement("div");
-    div.id = `question-${i}`;
-
-    div.innerHTML = `
-      <p><strong>${i + 1}. ${q.question}</strong></p>
-      ${q.options.map(opt => `
-        <label>
-          <input type="radio" name="q${i}" value="${opt}">
-          ${opt}
-        </label><br>
-      `).join("")}
-      <p id="answer-${i}" style="display:none;"></p>
-      <hr>
+  for (let i = 0; i < questions.length; i++) {
+    quizDiv.innerHTML += `
+      <p>${i + 1}. ${questions[i].question}</p>
     `;
-
-    quizDiv.appendChild(div);
-  });
+  }
 }
+
 
     
 // ================== START EXAM ==================
 function startExam() {
-  const name = document.getElementById("studentName").value.trim();
-  const roll = document.getElementById("rollNumber").value.trim();
-  const dob = document.getElementById("dob").value;
   const selectedExam = document.getElementById("examSelect").value;
 
-  if (!name || !roll || !dob || !selectedExam) {
-    alert("Fill all details");
+  if (!selectedExam) {
+    alert("Select exam");
     return;
   }
 
   questions = examPapers[selectedExam];
 
-  if (!questions || questions.length === 0) {
-    alert("Questions array empty");
+  if (!questions) {
+    alert("Questions not found");
     return;
   }
 
-  document.getElementById("studentForm").style.display = "none";
   document.getElementById("quiz").style.display = "block";
-  document.getElementById("submitBtn").style.display = "inline-block";
+  document.getElementById("submitBtn").style.display = "block";
 
   loadQuestions();
 }
@@ -798,6 +781,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
