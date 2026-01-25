@@ -1,3 +1,4 @@
+document.body.innerHTML = "<h1>JS IS WORKING</h1>";
 console.log("NEW JS LOADED jan24/jan25");
 
 
@@ -781,6 +782,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
