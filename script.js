@@ -697,39 +697,28 @@ jan25: [
 
 
 
+function startExam() {
+  const selectedExam = document.getElementById("examSelect").value;
+
+  questions = examPapers[selectedExam];
+
+  loadQuestions();
+}
+
+
+
 function loadQuestions() {
   const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML = "<h3>Questions Loaded</h3>";
+
+  // 🔥 force visible + force content
+  quizDiv.style.display = "block";
+  quizDiv.innerHTML = "<h3>QUESTIONS LOADING...</h3>";
 
   for (let i = 0; i < questions.length; i++) {
     quizDiv.innerHTML += `
       <p>${i + 1}. ${questions[i].question}</p>
     `;
   }
-}
-
-
-    
-// ================== START EXAM ==================
-function startExam() {
-  const selectedExam = document.getElementById("examSelect").value;
-
-  if (!selectedExam) {
-    alert("Select exam");
-    return;
-  }
-
-  questions = examPapers[selectedExam];
-
-  if (!questions) {
-    alert("Questions not found");
-    return;
-  }
-
-  document.getElementById("quiz").style.display = "block";
-  document.getElementById("submitBtn").style.display = "block";
-
-  loadQuestions();
 }
 
 
@@ -786,6 +775,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
