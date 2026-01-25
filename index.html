@@ -8,19 +8,21 @@
 <h2>Online Exam</h2>
 
 <!-- Student Details -->
-<label>
-  Name:
-  <input type="text" id="studentName">
-</label>
-<br><br>
+<div id="studentSection">
+  <label>
+    Name:
+    <input type="text" id="studentName">
+  </label>
+  <br><br>
 
-<label>
-  Roll No:
-  <input type="text" id="rollNumber">
-</label>
-<br><br>
+  <label>
+    Roll No:
+    <input type="text" id="rollNumber">
+  </label>
+  <br><br>
 
-<button type="button" onclick="startExam()">Start Exam</button>
+  <button type="button" onclick="startExam()">Start Exam</button>
+</div>
 
 <hr>
 
@@ -31,12 +33,13 @@
   Submit
 </button>
 
-
 <p id="result"></p>
 
 <script src="script.js"></script>
+
 </body>
 </html>
+
 
 
 
