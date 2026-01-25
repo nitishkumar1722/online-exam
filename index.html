@@ -1,30 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Practice Exam</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Online Exam</title>
 </head>
 <body>
- <body>
-<h1>Practice Exam</h1>
+
+<h2>Student Details</h2>
 
 <div id="studentForm">
-  <label>Name:
-    <input type="text">
-  </label><br><br>
+  <input id="studentName" placeholder="Name"><br><br>
+  <input id="rollNumber" placeholder="Roll Number"><br><br>
+  <input id="dob" type="date"><br><br>
 
-
-<label>
-  Select Exam:
-  <select id="examSelect">
-    <option value="">--Select Exam--</option>
-    <option value="24_jan_2026">Exam 1(24 jan)</option>
-    <option value="25_jan_2026">Exam 1(25 jan)</option>
-  </select>
-</label><br><br>
-
-<button onclick="startExam()">Start Exam</button>
+  <button onclick="startExam()">Start Exam</button>
 </div>
 
 <div id="quiz" style="display:none;"></div>
@@ -35,16 +23,11 @@
 
 <p id="result"></p>
 
-
 <script src="script.js"></script>
-
-
-
 </body>
-
-</body>
-
 </html>
+
+
 
 
 
