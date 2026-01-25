@@ -5,21 +5,32 @@
 </head>
 <body>
 
-<h2>Student Details</h2>
+<h2>Online Exam</h2>
 
-<div id="studentForm">
-  <input id="studentName" placeholder="Name"><br><br>
-  <input id="rollNumber" placeholder="Roll Number"><br><br>
-  <input id="dob" type="date"></div><br><br>
+<!-- Student Details -->
+<label>
+  Name:
+  <input type="text" id="studentName">
+</label>
+<br><br>
 
+<label>
+  Roll No:
+  <input type="text" id="rollNumber">
+</label>
+<br><br>
 
-<button id="startBtn" type="button">Start Exam</button>
+<button type="button" onclick="startExam()">Start Exam</button>
 
-
+<hr>
 
 <div id="quiz"></div>
-<button id="submitBtn" style="display:none;">Submit</button>
+
+<br>
+<button type="button" onclick="submitQuiz()">Submit</button>
+
 <p id="result"></p>
+
 <script src="script.js"></script>
 </body>
 </html>
