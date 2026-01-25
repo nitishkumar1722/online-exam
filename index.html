@@ -10,29 +10,19 @@
 <div id="studentForm">
   <input id="studentName" placeholder="Name"><br><br>
   <input id="rollNumber" placeholder="Roll Number"><br><br>
-  <input id="dob" type="date"><br><br>
+  <input id="dob" type="date"></div><br><br>
 
- <select id="examSelect">
-  <option value="">-- Select Exam --</option>
-  <option value="jan24">Exam Paper 1</option>
-  <option value="jan25">Exam Paper 2</option>
-</select>
 
 <button type="button" onclick="startExam()">Start Exam</button>
-</div>
+
 
 <div id="quiz"></div>
 <button id="submitBtn" style="display:none;">Submit</button>
-<script>
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    "<h1>INLINE JS WORKING</h1>"
-  );
-</script>
-
+<p id="result"></p>
 <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
