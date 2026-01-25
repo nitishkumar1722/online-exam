@@ -17,6 +17,8 @@ const questions = [
   }
 ];
 
+
+
 // START EXAM
 function startExam() {
   const name = document.getElementById("studentName").value.trim();
@@ -28,7 +30,12 @@ function startExam() {
   }
 
   loadQuestions();
+    // 👇 Submit button show karo
+  document.getElementById("submitBtn").style.display = "inline-block";
 }
+
+
+
 
 // LOAD QUESTIONS
 function loadQuestions() {
@@ -65,6 +72,7 @@ function submitQuiz() {
   document.getElementById("result").innerText =
     "Score: " + score + " / " + questions.length;
 }
+
 
 
 
