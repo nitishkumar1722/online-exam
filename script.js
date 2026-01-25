@@ -485,241 +485,49 @@ const examPapers = {
     options: ["Primary", "Secondary", "Tertiary", "Agricultural"],
     answer: "Tertiary"
   }
-],
-
-jan25: [
-  {
-    id: 1,
-    question: "Which of the following is a rational number?",
-    options: ["√2", "√3", "0.25", "π"],
-    answer: "0.25"
-  },
-  {
-    id: 2,
-    question: "What is the value of (-5)²?",
-    options: ["-25", "25", "-10", "10"],
-    answer: "25"
-  },
-  {
-    id: 3,
-    question: "Which of the following is the smallest prime number?",
-    options: ["0", "1", "2", "3"],
-    answer: "2"
-  },
-  {
-    id: 4,
-    question: "The decimal expansion of a rational number is:",
-    options: [
-      "Non-terminating",
-      "Non-repeating",
-      "Terminating or repeating",
-      "Always terminating"
-    ],
-    answer: "Terminating or repeating"
-  },
-  {
-    id: 5,
-    question: "How many natural numbers are there between 5 and 10?",
-    options: ["3", "4", "5", "6"],
-    answer: "4"
-  },
-
-  // Tough Level
-  {
-    id: 6,
-    question: "Find the LCM of 12 and 18.",
-    options: ["24", "36", "48", "72"],
-    answer: "36"
-  },
-  {
-    id: 7,
-    question: "Which of the following is an irrational number?",
-    options: ["0.125", "7/8", "√5", "0.4"],
-    answer: "√5"
-  },
-  {
-    id: 8,
-    question:
-      "If a number is divisible by both 3 and 4, then it must be divisible by:",
-    options: ["6", "7", "12", "24"],
-    answer: "12"
-  },
-  {
-    id: 9,
-    question: "What is the HCF of 54 and 90?",
-    options: ["9", "12", "18", "27"],
-    answer: "18"
-  },
-  {
-    id: 10,
-    question: "Which number is neither prime nor composite?",
-    options: ["0", "1", "2", "3"],
-    answer: "1"
-  },
-
-  // Very Tough Level
-  {
-    id: 11,
-    question:
-      "If the sum of two numbers is 45 and their difference is 5, find the larger number.",
-    options: ["20", "25", "30", "35"],
-    answer: "25"
-  },
-  {
-    id: 12,
-    question:
-      "The product of two consecutive integers is 1320. Find the smaller number.",
-    options: ["35", "36", "37", "38"],
-    answer: "36"
-  },
-  {
-    id: 13,
-    question: "How many prime numbers are there between 1 and 50?",
-    options: ["14", "15", "16", "17"],
-    answer: "15"
-  },
-  {
-    id: 14,
-    question: "If √x = 9, then x equals:",
-    options: ["18", "27", "81", "90"],
-    answer: "81"
-  },
-  {
-    id: 15,
-    question:
-      "What is the smallest number that is divisible by 8, 12, and 15?",
-    options: ["120", "240", "360", "480"],
-    answer: "360"
-  },
-  {
-    id: 16,
-    question:
-      "If a number when divided by 6 leaves remainder 5, what will be the remainder when it is divided by 3?",
-    options: ["0", "1", "2", "3"],
-    answer: "2"
-  },
-  {
-    id: 17,
-    question: "Find the value of 3⁴ − 2⁴.",
-    options: ["49", "65", "81", "97"],
-    answer: "65"
-  },
-  {
-    id: 18,
-    question: "The cube root of 0.000512 is:",
-    options: ["0.08", "0.16", "0.32", "0.64"],
-    answer: "0.08"
-  },
-  {
-    id: 19,
-    question: "How many factors does 36 have?",
-    options: ["7", "8", "9", "10"],
-    answer: "9"
-  },
-  {
-    id: 20,
-    question:
-      "If x is a prime number, which of the following cannot be a prime?",
-    options: ["x", "x + 1", "2x", "x − 1"],
-    answer: "2x"
-  },
-
-  // PYQs
-  {
-    id: 21,
-    question: "Which is the smallest composite number?",
-    options: ["1", "2", "3", "4"],
-    answer: "4"
-  },
-  {
-    id: 22,
-    question: "What is the value of 0.2 × 0.02?",
-    options: ["0.004", "0.04", "0.0004", "0.002"],
-    answer: "0.004"
-  },
-  {
-    id: 23,
-    question: "Find the HCF of 45 and 75.",
-    options: ["5", "10", "15", "25"],
-    answer: "15"
-  },
-  {
-    id: 24,
-    question: "What is the place value of 7 in 57.234?",
-    options: ["7", "0.7", "70", "700"],
-    answer: "70"
-  },
-  {
-    id: 25,
-    question: "If the sum of first 10 natural numbers is:",
-    options: ["45", "50", "55", "60"],
-    answer: "55"
-  },
-  {
-    id: 26,
-    question: "Which number has only two factors?",
-    options: [
-      "Composite number",
-      "Prime number",
-      "Even number",
-      "Odd number"
-    ],
-    answer: "Prime number"
-  },
-  {
-    id: 27,
-    question: "The square of an odd number is always:",
-    options: ["Even", "Prime", "Odd", "Composite"],
-    answer: "Odd"
-  },
-  {
-    id: 28,
-    question: "Which of the following is divisible by 9?",
-    options: ["2345", "5678", "9999", "1234"],
-    answer: "9999"
-  },
-  {
-    id: 29,
-    question: "What is the remainder when 47 is divided by 6?",
-    options: ["1", "3", "5", "7"],
-    answer: "5"
-  },
-  {
-    id: 30,
-    question:
-      "The sum of digits of a number is divisible by 3. The number is divisible by:",
-    options: ["2", "3", "5", "9"],
-    answer: "3"
-  }
- ]
 ];
 
 
 
 
 function startExam() {
-  const selectedExam = document.getElementById("examSelect").value;
+  const quizDiv = document.getElementById("quiz");
+  quizDiv.innerHTML = "";
 
-  questions = examPapers[selectedExam];
-
-  loadQuestions();
+  questions.forEach((q, index) => {
+    quizDiv.innerHTML += `
+      <p>${index + 1}. ${q.question}</p>
+      ${q.options.map(opt => `
+        <label>
+          <input type="radio" name="q${index}" value="${opt}">
+          ${opt}
+        </label><br>
+      `).join("")}
+      <hr>
+    `;
+  });
 }
 
 
 
 function loadQuestions() {
   const quizDiv = document.getElementById("quiz");
+  quizDiv.innerHTML = "";
 
-  // 🔥 force visible + force content
-  quizDiv.style.display = "block";
-  quizDiv.innerHTML = "<h3>QUESTIONS LOADING...</h3>";
-
-  for (let i = 0; i < questions.length; i++) {
+  questions.forEach((q, index) => {
     quizDiv.innerHTML += `
-      <p>${i + 1}. ${questions[i].question}</p>
+      <p>${index + 1}. ${q.question}</p>
+      ${q.options.map(opt => `
+        <label>
+          <input type="radio" name="q${index}" value="${opt}">
+          ${opt}
+        </label><br>
+      `).join("")}
+      <hr>
     `;
-  }
+  });
 }
+
 
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
@@ -775,6 +583,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
