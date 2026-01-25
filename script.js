@@ -29,8 +29,13 @@ function startExam() {
     return;
   }
 
+  // Student details hide
+  document.getElementById("studentSection").style.display = "none";
+
+  // Questions load
   loadQuestions();
-    // 👇 Submit button show karo
+
+  // Submit button show
   document.getElementById("submitBtn").style.display = "inline-block";
 }
 
@@ -72,6 +77,7 @@ function submitQuiz() {
   document.getElementById("result").innerText =
     "Score: " + score + " / " + questions.length;
 }
+
 
 
 
