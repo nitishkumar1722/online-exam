@@ -12,10 +12,18 @@
   <input id="rollNumber" placeholder="Roll Number"><br><br>
   <input id="dob" type="date"><br><br>
 
+  <select id="examSelect">
+  <option value="">--Select Exam--</option>
+  <option value="jan_24_2026">Exam Paper 1</option>
+  <option value="jan_25_2026">Exam Paper 2</option>
+</select>
+
+
   <button onclick="startExam()">Start Exam</button>
 </div>
 
 <div id="quiz" style="display:none;"></div>
+  
 
 <button id="submitBtn" style="display:none;" onclick="submitQuiz()">
   Submit
@@ -26,6 +34,7 @@
 <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
