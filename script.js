@@ -1,11 +1,3 @@
-document.body.insertAdjacentHTML(
-  "beforeend",
-  "<h2>SCRIPT FILE LOADED</h2>"
-);
-
-
-
-
 let questions = [];
 const examPapers = {
   jan24: [
@@ -491,22 +483,17 @@ const examPapers = {
 
 
 function startExam() {
-  const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML = "";
+  const name = document.getElementById("studentName").value.trim();
+  const roll = document.getElementById("rollNumber").value.trim();
 
-  questions.forEach((q, index) => {
-    quizDiv.innerHTML += `
-      <p>${index + 1}. ${q.question}</p>
-      ${q.options.map(opt => `
-        <label>
-          <input type="radio" name="q${index}" value="${opt}">
-          ${opt}
-        </label><br>
-      `).join("")}
-      <hr>
-    `;
-  });
+  if (name === "" || roll === "") {
+    alert("Please enter Name and Roll Number");
+    return;
+  }
+
+  loadQuestions();
 }
+
 
 
 
@@ -527,7 +514,6 @@ function loadQuestions() {
     `;
   });
 }
-
 
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
@@ -583,6 +569,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
