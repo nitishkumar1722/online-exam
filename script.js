@@ -727,8 +727,8 @@ function startExam() {
     return;
   }
 
-  // 🔥 MAIN LINE (ab crash nahi hoga)
-  questions = examPapers[selectedExam];
+  // 🔥 MAIN LINE 
+  questions = exampapers[selectedExam];
 
   if (!questions) {
     alert("Exam paper not found");
@@ -800,6 +800,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
