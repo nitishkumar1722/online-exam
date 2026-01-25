@@ -483,11 +483,13 @@ const examPapers = {
 
 
 function startExam() {
+  alert("START EXAM FUNCTION CALLED");
+
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
 
-  if (name === "" || roll === "") {
-    alert("Please enter Name and Roll Number");
+  if (!name || !roll) {
+    alert("Enter Name and Roll Number");
     return;
   }
 
@@ -499,21 +501,24 @@ function startExam() {
 
 function loadQuestions() {
   const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML = "";
+  quizDiv.innerHTML = "<h3>QUESTIONS LOADED</h3>";
 
-  questions.forEach((q, index) => {
-    quizDiv.innerHTML += `
-      <p>${index + 1}. ${q.question}</p>
-      ${q.options.map(opt => `
-        <label>
-          <input type="radio" name="q${index}" value="${opt}">
-          ${opt}
-        </label><br>
-      `).join("")}
-      <hr>
-    `;
+  questions.forEach((q, i) => {
+    quizDiv.innerHTML += `<p>${i + 1}. ${q.question}</p>`;
   });
 }
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("startBtn");
+
+  btn.addEventListener("click", function () {
+    startExam();
+  });
+});
+
 
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
@@ -569,6 +574,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
