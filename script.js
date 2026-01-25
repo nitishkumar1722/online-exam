@@ -2,7 +2,7 @@ console.log("SCRIPT JS LOADED");
 
 
 const examPapers = {
-  jan_24_2026: [
+  jan24: [
   
   {
     question: "What is the unit digit of 347?",
@@ -481,7 +481,7 @@ const examPapers = {
   }
 ],
 
-jan_25_2026: [
+jan25: [
   {
     id: 1,
     question: "Which of the following is a rational number?",
@@ -692,14 +692,12 @@ let questions = [];
 
 
 
-// ===== LOAD QUESTIONS =====
 function loadQuestions() {
   const quizDiv = document.getElementById("quiz");
   quizDiv.innerHTML = "";
 
   questions.forEach((q, i) => {
-    const div = document.createElement("div");
-    div.innerHTML = `
+    quizDiv.innerHTML += `
       <p>${i + 1}. ${q.question}</p>
       ${q.options.map(opt => `
         <label>
@@ -709,25 +707,29 @@ function loadQuestions() {
       `).join("")}
       <hr>
     `;
-    quizDiv.appendChild(div);
   });
 }
+
     
 //start exam
 function startExam() {
-  alert("Start clicked");
-
-  const name = document.getElementById("studentName").value;
-  const roll = document.getElementById("rollNumber").value;
+  const name = document.getElementById("studentName").value.trim();
+  const roll = document.getElementById("rollNumber").value.trim();
   const dob = document.getElementById("dob").value;
-  const exam = document.getElementById("examSelect").value;
+  const selectedExam = document.getElementById("examSelect").value;
 
-  if (!name || !roll || !dob || !exam) {
+  if (!name || !roll || !dob || !selectedExam) {
     alert("Fill all details");
     return;
   }
 
-  questions = examPapers[exam];
+  // 🔥 THIS IS THE MOST IMPORTANT LINE
+  questions = examPapers[selectedExam];
+
+  if (!questions || questions.length === 0) {
+    alert("Questions not found for this paper");
+    return;
+  }
 
   document.getElementById("studentForm").style.display = "none";
   document.getElementById("quiz").style.display = "block";
@@ -735,6 +737,7 @@ function startExam() {
 
   loadQuestions();
 }
+
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
 function submitQuiz() {
@@ -789,6 +792,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
