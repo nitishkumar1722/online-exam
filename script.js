@@ -1,7 +1,7 @@
  alert("JS LOADED");
 document.body.style.background = "red";
 
-const exampapers = {
+const examPapers = {
   jan_24_2026: [
   
   {
@@ -692,62 +692,47 @@ let questions = [];
 
 
 
+// ===== LOAD QUESTIONS =====
 function loadQuestions() {
   const quizDiv = document.getElementById("quiz");
   quizDiv.innerHTML = "";
 
-  questions.forEach((q, index) => {
+  questions.forEach((q, i) => {
     const div = document.createElement("div");
-    div.className = "question";
-    div.id = `question-${index}`;
-
     div.innerHTML = `
-      <p><b>Q${index + 1}.</b> ${q.question}</p>
+      <p>${i + 1}. ${q.question}</p>
       ${q.options.map(opt => `
         <label>
-          <input type="radio" name="q${index}" value="${opt}">
+          <input type="radio" name="q${i}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
-      <p id="answer-${index}" style="display:none;"></p>
       <hr>
     `;
-
     quizDiv.appendChild(div);
   });
 }
-
-
+    
+//start exam
 function startExam() {
-  const name = document.getElementById("studentName").value.trim();
-  const roll = document.getElementById("rollNumber").value.trim();
+  const name = document.getElementById("studentName").value;
+  const roll = document.getElementById("rollNumber").value;
   const dob = document.getElementById("dob").value;
-  const selectedExam = document.getElementById("examSelect").value;
+  const exam = document.getElementById("examSelect").value;
 
-  if (!name || !roll || !dob || !selectedExam) {
-    alert("Fill all details and select paper");
+  if (!name || !roll || !dob || !exam) {
+    alert("Fill all details");
     return;
   }
 
-  // 🔥 MAIN LINE 
-  questions = exampapers[selectedExam];
-
-  if (!questions) {
-    alert("Exam paper not found");
-    return;
-  }
-
-  const student = { name, roll, dob, exam: selectedExam };
-  localStorage.setItem("currentStudent", JSON.stringify(student));
+  questions = examPapers[exam];
 
   document.getElementById("studentForm").style.display = "none";
   document.getElementById("quiz").style.display = "block";
-  document.getElementById("submitBtn").style.display = "inline-block";
+  document.getElementById("submitBtn").style.display = "block";
 
   loadQuestions();
 }
-
-
 
 // SUBMIT QUIZ (SCORE + RIGHT/WRONG)
 function submitQuiz() {
@@ -802,6 +787,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
