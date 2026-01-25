@@ -698,21 +698,27 @@ function loadQuestions() {
   quizDiv.innerHTML = "";
 
   questions.forEach((q, i) => {
-    quizDiv.innerHTML += `
-      <p>${i + 1}. ${q.question}</p>
+    const div = document.createElement("div");
+    div.id = `question-${i}`;
+
+    div.innerHTML = `
+      <p><strong>${i + 1}. ${q.question}</strong></p>
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${i}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
+      <p id="answer-${i}" style="display:none;"></p>
       <hr>
     `;
+
+    quizDiv.appendChild(div);
   });
 }
 
     
-//start exam
+// ================== START EXAM ==================
 function startExam() {
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
@@ -724,17 +730,16 @@ function startExam() {
     return;
   }
 
-  // 🔥 THIS IS THE MOST IMPORTANT LINE
   questions = examPapers[selectedExam];
 
   if (!questions || questions.length === 0) {
-    alert("Questions not found for this paper");
+    alert("Questions array empty");
     return;
   }
 
   document.getElementById("studentForm").style.display = "none";
   document.getElementById("quiz").style.display = "block";
-  document.getElementById("submitBtn").style.display = "block";
+  document.getElementById("submitBtn").style.display = "inline-block";
 
   loadQuestions();
 }
@@ -793,6 +798,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
