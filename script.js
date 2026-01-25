@@ -504,37 +504,30 @@ function loadQuestions() {
   });
 }
 
-
+//start exam
 function startExam() {
-  // 1️⃣ Input fields se value lo
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
   const dob = document.getElementById("dob").value;
-  const selectedExam = document.getElementById("examSelect").value;
 
-  // 2️⃣ Validation
-  if (!name || !roll || !dob || !selectedExam) {
+  if (!name || !roll || !dob) {
     alert("Please fill all details");
     return;
   }
 
-  // 3️⃣ 👉 "STUDENT OBJECT" 👇
   const student = {
     name: name,
     roll: roll,
     dob: dob,
-    exam: selectedExam
+    exam: examId   // examId upar defined hai
   };
 
-  // 4️⃣ LocalStorage me save
   localStorage.setItem("currentStudent", JSON.stringify(student));
 
-  // 5️⃣ Form hide, exam show
   document.getElementById("studentForm").style.display = "none";
   document.getElementById("quiz").style.display = "block";
   document.getElementById("submitBtn").style.display = "inline-block";
 
-  // 6️⃣ Questions load
   loadQuestions();
 }
 
@@ -593,6 +586,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
