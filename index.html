@@ -10,6 +10,46 @@
 
 <h2>Online Exam</h2>
 
+  
+<div id="roleSelect">
+  <h3>Select Role</h3>
+
+  <button onclick="openTeacher()">Teacher</button>
+  <br><br>
+
+  <button onclick="openStudent()">Student</button>
+</div>
+
+  
+  <div id="teacherSection" style="display:none;">
+  <h3>Teacher Panel</h3>
+
+  <label>Exam Name:</label><br>
+  <input type="text" id="examName"><br><br>
+
+  <label>Question:</label><br>
+  <input type="text" id="qText"><br><br>
+
+  <label>Option A:</label><br>
+  <input type="text" id="optA"><br>
+
+  <label>Option B:</label><br>
+  <input type="text" id="optB"><br>
+
+  <label>Option C:</label><br>
+  <input type="text" id="optC"><br>
+
+  <label>Option D:</label><br>
+  <input type="text" id="optD"><br><br>
+
+  <label>Correct Answer:</label><br>
+  <input type="text" id="correct"><br><br>
+
+  <button onclick="saveQuestion()">Save Question</button>
+</div>
+
+
+
 <!-- Student Details -->
 <div id="studentSection">
   <label>
@@ -58,6 +98,7 @@
 
 </body>
 </html>
+
 
 
 
