@@ -1090,27 +1090,33 @@ function startExam() {
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
   const selectedExam = document.getElementById("examSelect").value;
-  const allPapers = JSON.parse(localStorage.getItem("examPapers")) || {};
-questions = allPapers[selectedExam];
-
 
   if (!name || !roll || !selectedExam) {
     alert("Please enter Name, Roll Number and select Exam");
     return;
   }
 
-  examId = selectedExam;                 // 👈 save exam id
-  questions = examPapers[selectedExam];  // 👈 load exam questions
+  // 🔹 Load exams from localStorage
+  const allPapers = JSON.parse(localStorage.getItem("examPapers")) || {};
 
-  // save student for sheet
+  if (!allPapers[selectedExam]) {
+    alert("Selected exam not found");
+    return;
+  }
+
+  // 🔹 Set global variables
+  examId = selectedExam;
+  questions = allPapers[selectedExam];
+
+  // 🔹 Save student for Google Sheet
   const student = { name, roll };
   localStorage.setItem("currentStudent", JSON.stringify(student));
 
+  // 🔹 UI changes
   document.getElementById("studentSection").style.display = "none";
   loadQuestions();
   document.getElementById("submitBtn").style.display = "inline-block";
 }
-
 
 
 
@@ -1205,6 +1211,7 @@ function openTeacher() {
 function openStudent() {
   document.getElementById("roleSelect").style.display = "none";
   document.getElementById("studentSection").style.display = "block";
+  loadExamList();
 }
 
 
@@ -1231,6 +1238,21 @@ function saveQuestion() {
   localStorage.setItem("examPapers", JSON.stringify(papers));
 
   alert("Question Saved!");
+}
+
+
+
+function loadExamList() {
+  const select = document.getElementById("examSelect");
+  select.innerHTML = "<option value=''>-- Select Exam --</option>";
+
+  const papers = JSON.parse(localStorage.getItem("examPapers")) || {};
+  Object.keys(papers).forEach(exam => {
+    const opt = document.createElement("option");
+    opt.value = exam;
+    opt.textContent = exam;
+    select.appendChild(opt);
+  });
 }
 
 
