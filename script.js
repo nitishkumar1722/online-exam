@@ -127,7 +127,7 @@ sendResultToGoogleSheet(student, score);
 
 
 function sendResultToGoogleSheet(student, score) {
-  fetch("https://script.google.com/macros/s/AKfycbxzHCSz9-jW3NkZs1F4_14eCj8UiW-ESWtZ_RrfKeie2boJJC0LFU19I1gF55ikjJwOzQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzs_Gvns96H1feVgyUvt2sXyQYXDGnlQst12OzQajf2jjork7ofEraKGd3jAVY4QcsxfQ/exec", {
     method: "POST",
     body: JSON.stringify({
       name: student.name,
@@ -141,6 +141,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
