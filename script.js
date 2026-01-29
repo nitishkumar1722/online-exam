@@ -1090,6 +1090,9 @@ function startExam() {
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
   const selectedExam = document.getElementById("examSelect").value;
+  const allPapers = JSON.parse(localStorage.getItem("examPapers")) || {};
+questions = allPapers[selectedExam];
+
 
   if (!name || !roll || !selectedExam) {
     alert("Please enter Name, Roll Number and select Exam");
@@ -1193,6 +1196,44 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
+function openTeacher() {
+  document.getElementById("roleSelect").style.display = "none";
+  document.getElementById("teacherSection").style.display = "block";
+}
+
+function openStudent() {
+  document.getElementById("roleSelect").style.display = "none";
+  document.getElementById("studentSection").style.display = "block";
+}
+
+
+function saveQuestion() {
+  const exam = document.getElementById("examName").value.trim();
+  const question = document.getElementById("qText").value.trim();
+  const options = [
+    document.getElementById("optA").value,
+    document.getElementById("optB").value,
+    document.getElementById("optC").value,
+    document.getElementById("optD").value
+  ];
+  const answer = document.getElementById("correct").value.trim();
+
+  if (!exam || !question || !answer) {
+    alert("Fill all fields");
+    return;
+  }
+
+  let papers = JSON.parse(localStorage.getItem("examPapers")) || {};
+  if (!papers[exam]) papers[exam] = [];
+
+  papers[exam].push({ question, options, answer });
+  localStorage.setItem("examPapers", JSON.stringify(papers));
+
+  alert("Question Saved!");
+}
+
+
 
 
 
