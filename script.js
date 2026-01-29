@@ -67,16 +67,54 @@ function submitQuiz() {
 
   questions.forEach((q, index) => {
     const selected = document.querySelector(
-      'input[name="q' + index + '"]:checked'
+      `input[name="q${index}"]:checked`
     );
+
+    const qDiv = document.getElementById(`question-${index}`);
+    const ansDiv = document.getElementById(`answer-${index}`);
+
     if (selected && selected.value === q.answer) {
       score++;
+      qDiv.style.border = "2px solid green";
+      ansDiv.innerHTML = "✅ Correct";
+    } 
+    else if (selected) {
+      qDiv.style.border = "2px solid red";
+      ansDiv.innerHTML = `❌ Wrong | Correct: <b>${q.answer}</b>`;
+    } 
+    else {
+      qDiv.style.border = "2px solid orange";
+      ansDiv.innerHTML = `⚠ Not Attempted | Correct: <b>${q.answer}</b>`;
     }
+
+    ansDiv.style.display = "block";
   });
 
   document.getElementById("result").innerText =
-    "Score: " + score + " / " + questions.length;
+    `Score: ${score} / ${questions.length}`;
+
+  const student = JSON.parse(localStorage.getItem("currentStudent"));
+sendResultToGoogleSheet(student, score);
 }
+
+
+function sendResultToGoogleSheet(student, score) {
+  fetch("https://script.google.com/macros/s/AKfycbxzHCSz9-jW3NkZs1F4_14eCj8UiW-ESWtZ_RrfKeie2boJJC0LFU19I1gF55ikjJwOzQ/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: student.name,
+      roll: student.roll,
+      dob: student.dob,
+      score: score,
+      total: questions.length,
+      exam: examId
+    })
+  })
+  .then(res => res.text())
+  .then(txt => console.log("Sheet response:", txt))
+  .catch(err => console.error("Fetch error:", err));
+}
+
 
 
 
