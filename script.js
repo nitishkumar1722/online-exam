@@ -48,18 +48,27 @@ function loadQuestions() {
   quizDiv.innerHTML = "";
 
   questions.forEach((q, index) => {
-    quizDiv.innerHTML += `
-      <p>${index + 1}. ${q.question}</p>
+    const div = document.createElement("div");
+    div.id = `question-${index}`;
+    div.style.padding = "10px";
+    div.style.marginBottom = "10px";
+
+    div.innerHTML = `
+      <p><b>${index + 1}. ${q.question}</b></p>
       ${q.options.map(opt => `
         <label>
           <input type="radio" name="q${index}" value="${opt}">
           ${opt}
         </label><br>
       `).join("")}
-      <hr>
+      <div id="answer-${index}" style="display:none;"></div>
     `;
+
+    quizDiv.appendChild(div);
   });
 }
+
+
 
 // SUBMIT QUIZ
 function submitQuiz() {
@@ -98,6 +107,7 @@ sendResultToGoogleSheet(student, score);
 }
 
 
+
 function sendResultToGoogleSheet(student, score) {
   fetch("https://script.google.com/macros/s/AKfycbxzHCSz9-jW3NkZs1F4_14eCj8UiW-ESWtZ_RrfKeie2boJJC0LFU19I1gF55ikjJwOzQ/exec", {
     method: "POST",
@@ -114,6 +124,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
