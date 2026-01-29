@@ -1,21 +1,35 @@
 // QUESTIONS
-const questions = [
-  {
-    question: "2 + 2 = ?",
-    options: ["1", "2", "3", "4"],
-    answer: "4"
-  },
-  {
-    question: "5 × 3 = ?",
-    options: ["10", "15", "20", "25"],
-    answer: "15"
-  },
-  {
-    question: "10 − 4 = ?",
-    options: ["5", "6", "7", "8"],
-    answer: "6"
-  }
-];
+const examPapers = {
+  maths: [
+    {
+      question: "2 + 2 = ?",
+      options: ["1", "2", "3", "4"],
+      answer: "4"
+    },
+    {
+      question: "5 × 3 = ?",
+      options: ["10", "15", "20", "25"],
+      answer: "15"
+    }
+  ],
+
+  reasoning: [
+    {
+      question: "Which number comes next: 2, 4, 8, ?",
+      options: ["10", "12", "16", "18"],
+      answer: "16"
+    },
+    {
+      question: "Odd one out?",
+      options: ["Dog", "Cat", "Cow", "Chair"],
+      answer: "Chair"
+    }
+  ]
+};
+
+let questions = [];
+let examId = "";
+
 
 
 
@@ -23,21 +37,25 @@ const questions = [
 function startExam() {
   const name = document.getElementById("studentName").value.trim();
   const roll = document.getElementById("rollNumber").value.trim();
+  const selectedExam = document.getElementById("examSelect").value;
 
-  if (name === "" || roll === "") {
-    alert("Please enter Name and Roll Number");
+  if (!name || !roll || !selectedExam) {
+    alert("Please enter Name, Roll Number and select Exam");
     return;
   }
 
-  // Student details hide
+  examId = selectedExam;                 // 👈 save exam id
+  questions = examPapers[selectedExam];  // 👈 load exam questions
+
+  // save student for sheet
+  const student = { name, roll };
+  localStorage.setItem("currentStudent", JSON.stringify(student));
+
   document.getElementById("studentSection").style.display = "none";
-
-  // Questions load
   loadQuestions();
-
-  // Submit button show
   document.getElementById("submitBtn").style.display = "inline-block";
 }
+
 
 
 
@@ -114,7 +132,6 @@ function sendResultToGoogleSheet(student, score) {
     body: JSON.stringify({
       name: student.name,
       roll: student.roll,
-      dob: student.dob,
       score: score,
       total: questions.length,
       exam: examId
@@ -124,6 +141,7 @@ function sendResultToGoogleSheet(student, score) {
   .then(txt => console.log("Sheet response:", txt))
   .catch(err => console.error("Fetch error:", err));
 }
+
 
 
 
