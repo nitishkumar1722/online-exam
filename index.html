@@ -34,31 +34,50 @@
 </div>
 
 
+
 <!-- TEACHER AUTH SECTION -->
 <div id="teacherAuth" style="display:none;">
   <button class="backBtn" onclick="goBack()">← Back</button>
 
-  <h3>Teacher Login</h3>
+  <!-- REGISTER FORM -->
+  <div id="registerBox">
+    <h3>Register Teacher</h3>
 
-  <label>Teacher ID:</label>
-  <input type="text" id="teacherId">
+    <label>Teacher ID:</label>
+    <input type="text" id="newTeacherId">
 
-  <label>Password:</label>
-  <input type="password" id="teacherPass">
+    <label>Password:</label>
+    <input type="password" id="newTeacherPass">
 
-  <button onclick="loginTeacher()">Login</button>
+    <button onclick="registerTeacher()">Register</button>
 
-  <hr>
+    <p style="margin-top:15px;">
+      Already Registered?
+      <button onclick="showLogin()" style="background:none;color:#2b7cff;border:none;">
+        Login Here
+      </button>
+    </p>
+  </div>
 
-  <h3>Register New Teacher</h3>
+  <!-- LOGIN FORM -->
+  <div id="loginBox" style="display:none;">
+    <h3>Teacher Login</h3>
 
-  <label>New Teacher ID:</label>
-  <input type="text" id="newTeacherId">
+    <label>Teacher ID:</label>
+    <input type="text" id="teacherId">
 
-  <label>New Password:</label>
-  <input type="password" id="newTeacherPass">
+    <label>Password:</label>
+    <input type="password" id="teacherPass">
 
-  <button onclick="registerTeacher()">Register</button>
+    <button onclick="loginTeacher()">Login</button>
+
+    <p style="margin-top:15px;">
+      New Teacher?
+      <button onclick="showRegister()" style="background:none;color:#2b7cff;border:none;">
+        Register Here
+      </button>
+    </p>
+  </div>
 </div>
 
 <!-- TEACHER PANEL -->
@@ -134,5 +153,6 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
