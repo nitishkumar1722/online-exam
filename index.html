@@ -10,19 +10,27 @@
 </head>
 <body>
 
-<h2 class="dashboardTitle">DASHBOARD</h2>
+<h1 class="mainTitle">Dashboard</h1>
 
-<div id="roleSelect">
+<div class="dashboardContainer">
 
-  <button class="teacherBtn" onclick="openTeacher()">
-    👨‍🏫 TEACHER
-  </button>
+  <div class="card teacherCard" onclick="openTeacher()">
+    <h3>👨‍🏫 Teacher</h3>
+    <p>Set exam, add questions and manage tests</p>
+  </div>
 
-  <button class="studentBtn" onclick="openStudent()">
-    👨‍🎓 STUDENT
-  </button>
+  <div class="card studentCard" onclick="openStudent()">
+    <h3>👨‍🎓 Student</h3>
+    <p>Attend exam and submit answers</p>
+  </div>
+
+  <div class="card resultCard" onclick="openResult()">
+    <h3>📊 Result</h3>
+    <p>View student results and scores</p>
+  </div>
 
 </div>
+
 
 
 
@@ -109,6 +117,7 @@
 
 </body>
 </html>
+
 
 
 
