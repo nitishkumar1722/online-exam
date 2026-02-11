@@ -37,6 +37,7 @@ function startExam() {
   submitBtn.style.display = "block";
 
   history.pushState({ page: "quiz" }, "", "");
+  localStorage.setItem("currentPage", "quiz");
 
 }
 
@@ -158,6 +159,7 @@ function openTeacher() {
   loginBox.style.display = "none";
   
   history.pushState({ page: "teacherAuth" }, "", "");
+  localStorage.setItem("currentPage", "teacherAuth");
 }
 
 
@@ -167,6 +169,7 @@ function openStudent() {
   studentSection.style.display = "block";
 
   history.pushState({ page: "studentPanel" }, "", "");
+  localStorage.setItem("currentPage", "student");
 }
 
 function openResult() {
@@ -174,6 +177,7 @@ function openResult() {
 }
 
 function goBack() {
+  localStorage.removeItem("currentPage");
   teacherAuth.style.display = "none";
   teacherSection.style.display = "none";
   studentSection.style.display = "none";
@@ -322,6 +326,37 @@ function isStrongPassword(password) {
   const strongRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
   return strongRegex.test(password);
 }
+
+
+
+window.onload = function () {
+
+  const page = localStorage.getItem("currentPage");
+
+  // Hide all first
+  teacherAuth.style.display = "none";
+  teacherSection.style.display = "none";
+  studentSection.style.display = "none";
+  quiz.innerHTML = "";
+  submitBtn.style.display = "none";
+
+  if (page === "teacherAuth") {
+    document.querySelector(".dashboardContainer").style.display = "none";
+    teacherAuth.style.display = "block";
+  }
+  else if (page === "student") {
+    document.querySelector(".dashboardContainer").style.display = "none";
+    studentSection.style.display = "block";
+  }
+  else if (page === "quiz") {
+    document.querySelector(".dashboardContainer").style.display = "none";
+    loadExamList();
+  }
+  else {
+    document.querySelector(".dashboardContainer").style.display = "grid";
+  }
+};
+
 
 
 
