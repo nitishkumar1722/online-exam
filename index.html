@@ -36,49 +36,61 @@
 
 
 <!-- TEACHER AUTH SECTION -->
-<div id="teacherAuth" style="display:none;">
-  <button class="backBtn" onclick="goBack()">← Back</button>
+<div id="registerBox">
+  <h3>Register Teacher</h3>
 
-  <!-- REGISTER FORM -->
-  <div id="registerBox">
-    <h3>Register Teacher</h3>
+  <label>Email:</label>
+  <input type="email" id="newTeacherEmail">
 
-    <label>Teacher ID:</label>
-    <input type="text" id="newTeacherId">
+  <label>Teacher ID:</label>
+  <input type="text" id="newTeacherId">
 
-    <label>Password:</label>
+  <label>Password:</label>
+  <div style="position:relative;">
     <input type="password" id="newTeacherPass">
-
-    <button onclick="registerTeacher()">Register</button>
-
-    <p style="margin-top:15px;">
-      Already Registered?
-      <button onclick="showLogin()" style="background:none;color:#2b7cff;border:none;">
-        Login Here
-      </button>
-    </p>
+    <span onclick="togglePassword('newTeacherPass')" 
+          style="position:absolute;right:10px;top:10px;cursor:pointer;">
+      👁
+    </span>
   </div>
+
+  <button onclick="registerTeacher()">Register</button>
+
+  <p style="margin-top:15px;">
+    Already Registered?
+    <button onclick="showLogin()" style="background:none;color:#2b7cff;border:none;">
+      Login Here
+    </button>
+  </p>
+</div>
+
 
   <!-- LOGIN FORM -->
   <div id="loginBox" style="display:none;">
-    <h3>Teacher Login</h3>
+  <h3>Teacher Login</h3>
 
-    <label>Teacher ID:</label>
-    <input type="text" id="teacherId">
+  <label>Teacher ID:</label>
+  <input type="text" id="teacherId">
 
-    <label>Password:</label>
+  <label>Password:</label>
+  <div style="position:relative;">
     <input type="password" id="teacherPass">
-
-    <button onclick="loginTeacher()">Login</button>
-
-    <p style="margin-top:15px;">
-      New Teacher?
-      <button onclick="showRegister()" style="background:none;color:#2b7cff;border:none;">
-        Register Here
-      </button>
-    </p>
+    <span onclick="togglePassword('teacherPass')" 
+          style="position:absolute;right:10px;top:10px;cursor:pointer;">
+      👁
+    </span>
   </div>
+
+  <button onclick="loginTeacher()">Login</button>
+
+  <p style="margin-top:15px;">
+    New Teacher?
+    <button onclick="showRegister()" style="background:none;color:#2b7cff;border:none;">
+      Register Here
+    </button>
+  </p>
 </div>
+
 
 <!-- TEACHER PANEL -->
 <div id="teacherSection" style="display:none;">
@@ -153,6 +165,7 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
 
 
