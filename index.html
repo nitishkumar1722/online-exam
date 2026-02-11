@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Online Exam</title>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2b7cff">
-  
-<link rel="stylesheet" href="style.css">
 
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2b7cff">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <h1 class="mainTitle">Dashboard</h1>
@@ -31,134 +33,76 @@
 
 </div>
 
-
-
-
-  
-  <div id="teacherSection" style="display:none;">
-    <button class="backBtn" onclick="goBack()">← Back</button>
+<!-- TEACHER PANEL -->
+<div id="teacherSection" style="display:none;">
+  <button class="backBtn" onclick="goBack()">← Back</button>
 
   <h3>Teacher Panel</h3>
 
-  <label>Exam Name:</label><br>
-  <input type="text" id="examName"><br><br>
+  <label>Exam Name:</label>
+  <input type="text" id="examName">
 
-  <label>Question:</label><br>
-  <input type="text" id="qText"><br><br>
+  <label>Question:</label>
+  <input type="text" id="qText">
 
-  <label>Option A:</label><br>
-  <input type="text" id="optA"><br>
+  <label>Option A:</label>
+  <input type="text" id="optA">
 
-  <label>Option B:</label><br>
-  <input type="text" id="optB"><br>
+  <label>Option B:</label>
+  <input type="text" id="optB">
 
-  <label>Option C:</label><br>
-  <input type="text" id="optC"><br>
+  <label>Option C:</label>
+  <input type="text" id="optC">
 
-  <label>Option D:</label><br>
-  <input type="text" id="optD"><br><br>
+  <label>Option D:</label>
+  <input type="text" id="optD">
 
-  <label>Correct Answer:</label><br>
-  <input type="text" id="correct"><br><br>
+  <label>Correct Answer:</label>
+  <select id="correct">
+    <option value="A">Option A</option>
+    <option value="B">Option B</option>
+    <option value="C">Option C</option>
+    <option value="D">Option D</option>
+  </select>
 
   <button onclick="saveQuestion()">Save Question</button>
 </div>
 
-
-
-<!-- Student Details -->
+<!-- STUDENT PANEL -->
 <div id="studentSection" style="display:none;">
   <button class="backBtn" onclick="goBack()">← Back</button>
 
-  <h3>Student panel</h3>
-  <label>
-    Name:
-    <input type="text" id="studentName">
-  </label>
-  <br><br>
+  <h3>Student Panel</h3>
 
-  <label>
-    Roll No:
-    <input type="text" id="rollNumber">
-  </label>
-  <br><br>
+  <label>Name:</label>
+  <input type="text" id="studentName">
 
-  <label>
-    Select Exam:
-    <select id="examSelect">
-      <option value="">-- Select Exam --</option>
-      <option value="jan29">Jan 29 (syllogism&venndiagram)</option>
-      <option value="science">Science(cell+Tissue+respiration)</option>
-    </select>
-  </label>
-  <br><br>
+  <label>Roll No:</label>
+  <input type="text" id="rollNumber">
 
-  <button type="button" onclick="startExam()">Start Exam</button>
+  <label>Select Exam:</label>
+  <select id="examSelect"></select>
+
+  <button onclick="startExam()">Start Exam</button>
 </div>
 
 <hr>
 
 <div id="quiz"></div>
 
-<br>
-<button type="button" onclick="submitQuiz()" id="submitBtn" style="display:none;">
+<button onclick="submitQuiz()" id="submitBtn" style="display:none;">
   Submit
 </button>
 
 <p id="result"></p>
 
 <script src="script.js"></script>
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-  }
-</script>
 
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
