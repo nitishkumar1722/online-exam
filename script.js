@@ -361,6 +361,67 @@ window.onload = function () {
 
 
 
+function uploadCSV() {
+
+  if (!currentTeacher) {
+    alert("Login required");
+    return;
+  }
+
+  const file = document.getElementById("csvFile").files[0];
+
+  if (!file) {
+    alert("Select CSV file first");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+
+    const text = e.target.result;
+    const rows = text.split("\n");
+
+    let data = JSON.parse(localStorage.getItem("examData")) || {};
+    const exam = examName.value.trim();
+
+    if (!exam) {
+      alert("Enter Exam Name first");
+      return;
+    }
+
+    if (!data[currentTeacher]) data[currentTeacher] = {};
+    if (!data[currentTeacher][exam]) data[currentTeacher][exam] = [];
+
+    rows.slice(1).forEach(row => {
+      const cols = row.split(",");
+
+      if (cols.length === 6) {
+        data[currentTeacher][exam].push({
+          question: cols[0].trim(),
+          options: [
+            cols[1].trim(),
+            cols[2].trim(),
+            cols[3].trim(),
+            cols[4].trim()
+          ],
+          answer: cols[5].trim()
+        });
+      }
+    });
+
+    localStorage.setItem("examData", JSON.stringify(data));
+
+    alert("Questions Uploaded Successfully!");
+  };
+
+  reader.readAsText(file);
+}
+
+
+
+
+
 
 
 
