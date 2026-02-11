@@ -1256,6 +1256,16 @@ function loadExamList() {
 }
 
 
+function goBack() {
+  document.getElementById("teacherSection").style.display = "none";
+  document.getElementById("studentSection").style.display = "none";
+  document.getElementById("quiz").innerHTML = "";
+  document.getElementById("submitBtn").style.display = "none";
+  document.getElementById("result").innerText = "";
+  document.getElementById("roleSelect").style.display = "block";
+}
+
+
 
 
 
