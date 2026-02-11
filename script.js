@@ -189,11 +189,25 @@ function goBack() {
 let currentTeacher = null;
 
 function registerTeacher() {
+  const email = newTeacherEmail.value.trim();
   const id = newTeacherId.value.trim();
   const pass = newTeacherPass.value.trim();
 
-  if (!id || !pass) {
+  if (!email || !id || !pass) {
     alert("Fill all fields");
+    return;
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Enter valid email address");
+    return;
+  }
+
+  // Strong password validation
+  if (!isStrongPassword(pass)) {
+    alert("Password must be at least 6 characters, include 1 uppercase letter and 1 number.");
     return;
   }
 
@@ -204,11 +218,16 @@ function registerTeacher() {
     return;
   }
 
-  teachers[id] = { password: pass };
+  teachers[id] = {
+    email: email,
+    password: pass
+  };
 
   localStorage.setItem("teachers", JSON.stringify(teachers));
 
   alert("Registration successful!");
+
+  showLogin();
 }
 
 
@@ -291,6 +310,19 @@ function showRegister() {
   loginBox.style.display = "none";
   registerBox.style.display = "block";
 }
+
+
+function togglePassword(id) {
+  const input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+//strong password
+function isStrongPassword(password) {
+  const strongRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+  return strongRegex.test(password);
+}
+
 
 
 
