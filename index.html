@@ -34,8 +34,8 @@
 </div>
 
 
-<!-- TEACHER LOGIN -->
-<div id="teacherLogin" style="display:none;">
+<!-- TEACHER AUTH SECTION -->
+<div id="teacherAuth" style="display:none;">
   <button class="backBtn" onclick="goBack()">← Back</button>
 
   <h3>Teacher Login</h3>
@@ -47,7 +47,20 @@
   <input type="password" id="teacherPass">
 
   <button onclick="loginTeacher()">Login</button>
+
+  <hr>
+
+  <h3>Register New Teacher</h3>
+
+  <label>New Teacher ID:</label>
+  <input type="text" id="newTeacherId">
+
+  <label>New Password:</label>
+  <input type="password" id="newTeacherPass">
+
+  <button onclick="registerTeacher()">Register</button>
 </div>
+
 <!-- TEACHER PANEL -->
 <div id="teacherSection" style="display:none;">
   <button class="backBtn" onclick="goBack()">← Back</button>
@@ -121,4 +134,5 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
 
