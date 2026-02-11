@@ -1,120 +1,178 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exam Portal</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+const API = "http://localhost:5000/api";
 
-<body>
+// ================= NAVIGATION =================
 
-<h1 class="mainTitle">Online Exam Portal</h1>
+function openTeacherAuth() {
+  hideAll();
+  teacherAuth.style.display = "block";
+  showRegister();
+}
 
-<!-- ================= DASHBOARD ================= -->
-<div class="dashboardContainer" id="dashboard">
+function openStudentLogin() {
+  hideAll();
+  studentLogin.style.display = "block";
+}
 
-  <div class="card teacherCard" onclick="openTeacherAuth()">
-    <h3>👨‍🏫 Teacher</h3>
-    <p>Manage exams & students</p>
-  </div>
+function goHome() {
+  hideAll();
+  dashboard.style.display = "grid";
+}
 
-  <div class="card studentCard" onclick="openStudentLogin()">
-    <h3>👨‍🎓 Student</h3>
-    <p>Attend exams</p>
-  </div>
+function hideAll() {
+  dashboard.style.display = "none";
+  teacherAuth.style.display = "none";
+  teacherPanel.style.display = "none";
+  studentLogin.style.display = "none";
+  studentPanel.style.display = "none";
+}
 
-</div>
+function logout() {
+  localStorage.removeItem("token");
+  goHome();
+}
 
+// ================= TOGGLE =================
 
-<!-- ================= TEACHER AUTH ================= -->
-<div id="teacherAuth" style="display:none;">
-  <button onclick="goHome()">← Back</button>
+function showLogin() {
+  registerBox.style.display = "none";
+  forgotBox.style.display = "none";
+  loginBox.style.display = "block";
+}
 
-  <!-- REGISTER -->
-  <div id="registerBox">
-    <h3>Register Teacher</h3>
+function showRegister() {
+  loginBox.style.display = "none";
+  forgotBox.style.display = "none";
+  registerBox.style.display = "block";
+}
 
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPassword" placeholder="Password">
-    <button onclick="registerTeacher()">Register</button>
+function showForgot() {
+  loginBox.style.display = "none";
+  forgotBox.style.display = "block";
+}
 
-    <p>
-      Already Registered?
-      <button onclick="showLogin()">Login</button>
-    </p>
-  </div>
+// ================= AUTH =================
 
-  <!-- LOGIN -->
-  <div id="loginBox" style="display:none;">
-    <h3>Teacher Login</h3>
+async function registerTeacher() {
+  const email = regEmail.value;
+  const password = regPassword.value;
 
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="loginTeacher()">Login</button>
+  const res = await fetch(`${API}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-    <p>
-      Forgot Password?
-      <button onclick="showForgot()">Reset</button>
-    </p>
+  const data = await res.json();
+  alert(data.message || "Registered");
+  showLogin();
+}
 
-    <p>
-      New Teacher?
-      <button onclick="showRegister()">Register</button>
-    </p>
-  </div>
+async function loginTeacher() {
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
-  <!-- FORGOT -->
-  <div id="forgotBox" style="display:none;">
-    <h3>Reset Password</h3>
+  const res = await fetch(`${API}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-    <input type="email" id="forgotEmail" placeholder="Email">
-    <input type="password" id="newPassword" placeholder="New Password">
-    <button onclick="resetPassword()">Update</button>
-  </div>
-</div>
+  const data = await res.json();
 
+  if (data.token) {
+    localStorage.setItem("token", data.token);
+    hideAll();
+    teacherPanel.style.display = "block";
+  } else {
+    alert(data.msg || "Login Failed");
+  }
+}
 
-<!-- ================= TEACHER PANEL ================= -->
-<div id="teacherPanel" style="display:none;">
-  <button onclick="logout()">Logout</button>
-  <h2>Teacher Dashboard</h2>
+async function resetPassword() {
+  const email = forgotEmail.value;
+  const newPassword = newPassword.value;
 
-  <h3>Create Exam</h3>
-  <input type="text" id="examTitle" placeholder="Exam Title">
-  <input type="number" id="examDuration" placeholder="Duration (minutes)">
-  <button onclick="createExam()">Create</button>
+  await fetch(`${API}/auth/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, newPassword })
+  });
 
-  <h3>Add Student</h3>
-  <input type="text" id="studentName" placeholder="Student Name">
-  <input type="text" id="studentReg" placeholder="Registration No">
-  <button onclick="addStudent()">Add</button>
+  alert("Password Updated");
+  showLogin();
+}
 
-  <div id="teacherOutput"></div>
-</div>
+// ================= TEACHER =================
 
+async function createExam() {
+  const title = examTitle.value;
+  const duration = examDuration.value;
 
-<!-- ================= STUDENT LOGIN ================= -->
-<div id="studentLogin" style="display:none;">
-  <button onclick="goHome()">← Back</button>
-  <h3>Student Login</h3>
+  const token = localStorage.getItem("token");
 
-  <input type="text" id="studentLoginName" placeholder="Name">
-  <input type="text" id="studentLoginReg" placeholder="Registration No">
-  <button onclick="studentLogin()">Login</button>
-</div>
+  const res = await fetch(`${API}/exam/create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token
+    },
+    body: JSON.stringify({ title, duration })
+  });
 
+  const data = await res.json();
+  teacherOutput.innerHTML = data.message || "Exam Created";
+}
 
-<!-- ================= STUDENT PANEL ================= -->
-<div id="studentPanel" style="display:none;">
-  <button onclick="logout()">Logout</button>
-  <h2>Student Dashboard</h2>
+async function addStudent() {
+  const name = studentName.value;
+  const reg = studentReg.value;
 
-  <div id="studentExamList"></div>
-</div>
+  const token = localStorage.getItem("token");
 
+  const res = await fetch(`${API}/exam/add-student`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token
+    },
+    body: JSON.stringify({ name, reg })
+  });
 
-<script src="script.js"></script>
+  const data = await res.json();
+  teacherOutput.innerHTML = data.message || "Student Added";
+}
 
-</body>
-</html>
+// ================= STUDENT =================
+
+async function studentLogin() {
+  const name = studentLoginName.value;
+  const reg = studentLoginReg.value;
+
+  const res = await fetch(`${API}/student/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, reg })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    hideAll();
+    studentPanel.style.display = "block";
+    loadStudentExams();
+  } else {
+    alert("Access Denied");
+  }
+}
+
+async function loadStudentExams() {
+  const res = await fetch(`${API}/student/exams`);
+  const data = await res.json();
+
+  studentExamList.innerHTML = data.map(e => `
+    <div>
+      <h4>${e.title}</h4>
+      <p>Duration: ${e.duration} min</p>
+    </div>
+  `).join("");
+}
