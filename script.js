@@ -1,85 +1,70 @@
-// QUESTIONS
-const examPapers = {
-  
+// GLOBAL VARIABLES
 let questions = [];
 let examId = "";
 
-
-
+// LOAD EXAMS ON PAGE LOAD
+window.onload = function () {
+  loadExamList();
+};
 
 // START EXAM
 function startExam() {
-  const name = document.getElementById("studentName").value.trim();
-  const roll = document.getElementById("rollNumber").value.trim();
-  const selectedExam = document.getElementById("examSelect").value;
+  const name = studentName.value.trim();
+  const roll = rollNumber.value.trim();
+  const selectedExam = examSelect.value;
 
   if (!name || !roll || !selectedExam) {
-    alert("Please enter Name, Roll Number and select Exam");
+    alert("Fill all details");
     return;
   }
 
-  // 🔹 Load exams from localStorage
   const allPapers = JSON.parse(localStorage.getItem("examPapers")) || {};
 
   if (!allPapers[selectedExam]) {
-    alert("Selected exam not found");
+    alert("Exam not found");
     return;
   }
 
-  // 🔹 Set global variables
   examId = selectedExam;
   questions = allPapers[selectedExam];
 
-  // 🔹 Save student for Google Sheet
-  const student = { name, roll };
-  localStorage.setItem("currentStudent", JSON.stringify(student));
+  localStorage.setItem("currentStudent", JSON.stringify({ name, roll }));
 
-  // 🔹 UI changes
   document.getElementById("studentSection").style.display = "none";
+  document.querySelector(".dashboardContainer").style.display = "none";
+
   loadQuestions();
-  document.getElementById("submitBtn").style.display = "inline-block";
+  submitBtn.style.display = "block";
 }
-
-
-
 
 // LOAD QUESTIONS
 function loadQuestions() {
-  const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML = "";
+  quiz.innerHTML = "";
 
   questions.forEach((q, index) => {
     const div = document.createElement("div");
     div.id = `question-${index}`;
-    div.style.padding = "10px";
-    div.style.marginBottom = "10px";
+    div.className = "questionBox";
 
     div.innerHTML = `
       <p><b>${index + 1}. ${q.question}</b></p>
-      ${q.options.map(opt => `
-        <label>
-          <input type="radio" name="q${index}" value="${opt}">
-          ${opt}
-        </label><br>
-      `).join("")}
+      <label><input type="radio" name="q${index}" value="A"> ${q.options[0]}</label><br>
+      <label><input type="radio" name="q${index}" value="B"> ${q.options[1]}</label><br>
+      <label><input type="radio" name="q${index}" value="C"> ${q.options[2]}</label><br>
+      <label><input type="radio" name="q${index}" value="D"> ${q.options[3]}</label><br>
       <div id="answer-${index}" style="display:none;"></div>
     `;
 
-    quizDiv.appendChild(div);
+    quiz.appendChild(div);
   });
 }
-
-
 
 // SUBMIT QUIZ
 function submitQuiz() {
   let score = 0;
 
   questions.forEach((q, index) => {
-    const selected = document.querySelector(
-      `input[name="q${index}"]:checked`
-    );
-
+    const selected = document.querySelector(`input[name="q${index}"]:checked`);
     const qDiv = document.getElementById(`question-${index}`);
     const ansDiv = document.getElementById(`answer-${index}`);
 
@@ -87,166 +72,84 @@ function submitQuiz() {
       score++;
       qDiv.style.border = "2px solid green";
       ansDiv.innerHTML = "✅ Correct";
-    } 
-    else if (selected) {
+    } else if (selected) {
       qDiv.style.border = "2px solid red";
-      ansDiv.innerHTML = `❌ Wrong | Correct: <b>${q.answer}</b>`;
-    } 
-    else {
+      ansDiv.innerHTML = `❌ Wrong | Correct: ${q.answer}`;
+    } else {
       qDiv.style.border = "2px solid orange";
-      ansDiv.innerHTML = `⚠ Not Attempted | Correct: <b>${q.answer}</b>`;
+      ansDiv.innerHTML = `⚠ Not Attempted | Correct: ${q.answer}`;
     }
 
     ansDiv.style.display = "block";
   });
 
-  document.getElementById("result").innerText =
-    `Score: ${score} / ${questions.length}`;
+  result.innerText = `Score: ${score} / ${questions.length}`;
 
-  const student = JSON.parse(localStorage.getItem("currentStudent"));
-sendResultToGoogleSheet(student, score);
+  submitBtn.disabled = true;
+
+  document.querySelectorAll("input[type=radio]").forEach(r => r.disabled = true);
 }
 
+// SAVE QUESTION
+function saveQuestion() {
+  const exam = examName.value.trim();
+  const question = qText.value.trim();
+  const options = [optA.value, optB.value, optC.value, optD.value];
+  const answer = correct.value;
 
+  if (!exam || !question || options.includes("")) {
+    alert("Fill all fields");
+    return;
+  }
 
-function sendResultToGoogleSheet(student, score) {
-  fetch("https://script.google.com/macros/s/AKfycbzs_Gvns96H1feVgyUvt2sXyQYXDGnlQst12OzQajf2jjork7ofEraKGd3jAVY4QcsxfQ/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      name: student.name,
-      roll: student.roll,
-      score: score,
-      total: questions.length,
-      exam: examId
-    })
-  })
-  .then(res => res.text())
-  .then(txt => console.log("Sheet response:", txt))
-  .catch(err => console.error("Fetch error:", err));
+  let papers = JSON.parse(localStorage.getItem("examPapers")) || {};
+
+  if (!papers[exam]) papers[exam] = [];
+
+  papers[exam].push({ question, options, answer });
+
+  localStorage.setItem("examPapers", JSON.stringify(papers));
+
+  alert("Question Saved!");
+
+  loadExamList();
 }
 
+// LOAD EXAM LIST
+function loadExamList() {
+  examSelect.innerHTML = "<option value=''>-- Select Exam --</option>";
+
+  const papers = JSON.parse(localStorage.getItem("examPapers")) || {};
+
+  Object.keys(papers).forEach(exam => {
+    const opt = document.createElement("option");
+    opt.value = exam;
+    opt.textContent = exam;
+    examSelect.appendChild(opt);
+  });
+}
+
+// NAVIGATION
 function openTeacher() {
-  document.getElementById("roleSelect").style.display = "none";
-  document.getElementById("teacherSection").style.display = "block";
+  document.querySelector(".dashboardContainer").style.display = "none";
+  teacherSection.style.display = "block";
 }
 
 function openStudent() {
-  document.getElementById("roleSelect").style.display = "none";
-  document.getElementById("studentSection").style.display = "block";
+  document.querySelector(".dashboardContainer").style.display = "none";
+  studentSection.style.display = "block";
 }
 
 function openResult() {
   window.open("YOUR_GOOGLE_SHEET_LINK");
 }
 
-
-
-function saveQuestion() {
-  const exam = document.getElementById("examName").value.trim();
-  const question = document.getElementById("qText").value.trim();
-  const options = [
-    document.getElementById("optA").value,
-    document.getElementById("optB").value,
-    document.getElementById("optC").value,
-    document.getElementById("optD").value
-  ];
-  const answer = document.getElementById("correct").value.trim();
-
-  if (!exam || !question || !answer) {
-    alert("Fill all fields");
-    return;
-  }
-
-  let papers = JSON.parse(localStorage.getItem("examPapers")) || {};
-  if (!papers[exam]) papers[exam] = [];
-
-  papers[exam].push({ question, options, answer });
-  localStorage.setItem("examPapers", JSON.stringify(papers));
-
-  alert("Question Saved!");
-}
-
-
-
-function loadExamList() {
-  const select = document.getElementById("examSelect");
-  select.innerHTML = "<option value=''>-- Select Exam --</option>";
-
-  const papers = JSON.parse(localStorage.getItem("examPapers")) || {};
-  Object.keys(papers).forEach(exam => {
-    const opt = document.createElement("option");
-    opt.value = exam;
-    opt.textContent = exam;
-    select.appendChild(opt);
-  });
-}
-
-
 function goBack() {
-  document.getElementById("teacherSection").style.display = "none";
-  document.getElementById("studentSection").style.display = "none";
-  document.getElementById("quiz").innerHTML = "";
-  document.getElementById("submitBtn").style.display = "none";
-  document.getElementById("result").innerText = "";
-  document.getElementById("roleSelect").style.display = "block";
+  teacherSection.style.display = "none";
+  studentSection.style.display = "none";
+  quiz.innerHTML = "";
+  submitBtn.style.display = "none";
+  submitBtn.disabled = false;
+  result.innerText = "";
+  document.querySelector(".dashboardContainer").style.display = "grid";
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
