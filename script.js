@@ -1,5 +1,11 @@
 const API = "http://localhost:5000/api";
 
+const dashboard = document.getElementById("dashboard");
+const teacherAuth = document.getElementById("teacherAuth");
+const teacherPanel = document.getElementById("teacherPanel");
+const studentLogin = document.getElementById("studentLogin");
+const studentPanel = document.getElementById("studentPanel");
+
 // ================= NAVIGATION =================
 
 function openTeacherAuth() {
@@ -176,3 +182,4 @@ async function loadStudentExams() {
     </div>
   `).join("");
 }
+
