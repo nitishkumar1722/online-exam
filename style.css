@@ -1,74 +1,85 @@
+/* BODY FULL SCREEN APP LOOK */
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  text-align: center;
-  padding: 20px;
+  background: linear-gradient(135deg, #2b7cff, #6dd5ed);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* MAIN CONTAINER */
+#roleSelect,
+#teacherSection,
+#studentSection {
+  width: 95%;
+  max-width: 500px;
+  min-height: 90vh;
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+/* HEADINGS */
 h2, h3 {
+  margin-bottom: 20px;
   color: #333;
 }
 
-/* ROLE BUTTONS */
+/* ROLE BUTTONS BIG */
 #roleSelect button {
-  width: 200px;
-  padding: 15px;
-  font-size: 18px;
-  margin: 10px;
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
+  margin: 12px 0;
   border: none;
-  border-radius: 8px;
-  background: #2b7cff;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2b7cff, #00c6ff);
   color: white;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 #roleSelect button:hover {
-  background: #1f5fd1;
-}
-
-/* PANELS */
-#teacherSection, 
-#studentSection {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 400px;
-  margin: auto;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  text-align: left;
+  transform: scale(1.03);
 }
 
 /* INPUTS */
 input, select {
   width: 100%;
-  padding: 8px;
-  margin: 5px 0 15px 0;
-  border-radius: 5px;
+  padding: 12px;
+  margin: 8px 0 18px 0;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 15px;
 }
 
 /* BUTTONS */
 button {
-  padding: 10px 15px;
-  border-radius: 6px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  background: #2b7cff;
+  background: linear-gradient(135deg, #ff7e5f, #ff9966);
   color: white;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 button:hover {
-  background: #1f5fd1;
+  transform: scale(1.03);
 }
 
 /* BACK BUTTON */
 .backBtn {
-  background: #888;
+  background: #444;
   margin-bottom: 15px;
-}
-
-.backBtn:hover {
-  background: #666;
 }
 
 /* QUIZ AREA */
@@ -77,7 +88,7 @@ button:hover {
   text-align: left;
 }
 
+/* SUBMIT */
 #submitBtn {
-  margin-top: 20px;
+  margin-top: 15px;
 }
-
