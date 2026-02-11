@@ -35,6 +35,9 @@ function startExam() {
 
   loadQuestions();
   submitBtn.style.display = "block";
+
+  history.pushState({ page: "quiz" }, "", "");
+
 }
 
 // LOAD QUESTIONS
@@ -149,12 +152,16 @@ function loadExamList() {
 function openTeacher() {
   document.querySelector(".dashboardContainer").style.display = "none";
   teacherAuth.style.display = "block";
+
+  history.pushState({ page: "teacherAuth" }, "", "");
 }
 
 
 function openStudent() {
   document.querySelector(".dashboardContainer").style.display = "none";
   studentSection.style.display = "block";
+
+  history.pushState({ page: "studentPanel" }, "", "");
 }
 
 function openResult() {
@@ -203,6 +210,9 @@ function loginTeacher() {
   const id = teacherId.value.trim();
   const pass = teacherPass.value.trim();
 
+  history.pushState({ page: "teacherPanel" }, "", "");
+
+
   let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
 
   if (!teachers[id] || teachers[id].password !== pass) {
@@ -216,6 +226,54 @@ function loginTeacher() {
   teacherAuth.style.display = "none";
   teacherSection.style.display = "block";
 }
+
+
+
+window.addEventListener("popstate", function (event) {
+
+  // Hide all sections
+  teacherAuth.style.display = "none";
+  teacherSection.style.display = "none";
+  studentSection.style.display = "none";
+  quiz.innerHTML = "";
+  submitBtn.style.display = "none";
+  result.innerText = "";
+
+  if (!event.state) {
+    // Default → Dashboard
+    document.querySelector(".dashboardContainer").style.display = "grid";
+    return;
+  }
+
+  switch (event.state.page) {
+
+    case "teacherAuth":
+      document.querySelector(".dashboardContainer").style.display = "none";
+      teacherAuth.style.display = "block";
+      break;
+
+    case "teacherPanel":
+      document.querySelector(".dashboardContainer").style.display = "none";
+      teacherSection.style.display = "block";
+      break;
+
+    case "studentPanel":
+      document.querySelector(".dashboardContainer").style.display = "none";
+      studentSection.style.display = "block";
+      break;
+
+    case "quiz":
+      document.querySelector(".dashboardContainer").style.display = "none";
+      loadQuestions();
+      submitBtn.style.display = "block";
+      break;
+
+    default:
+      document.querySelector(".dashboardContainer").style.display = "grid";
+  }
+});
+
+
 
 
 
