@@ -90,8 +90,15 @@ function submitQuiz() {
   document.querySelectorAll("input[type=radio]").forEach(r => r.disabled = true);
 }
 
+
+
 // SAVE QUESTION
 function saveQuestion() {
+  if (!currentTeacher) {
+    alert("Login required");
+    return;
+  }
+
   const exam = examName.value.trim();
   const question = qText.value.trim();
   const options = [optA.value, optB.value, optC.value, optD.value];
@@ -102,37 +109,46 @@ function saveQuestion() {
     return;
   }
 
-  let papers = JSON.parse(localStorage.getItem("examPapers")) || {};
+  let data = JSON.parse(localStorage.getItem("examData")) || {};
 
-  if (!papers[exam]) papers[exam] = [];
+  if (!data[currentTeacher]) data[currentTeacher] = {};
+  if (!data[currentTeacher][exam]) data[currentTeacher][exam] = [];
 
-  papers[exam].push({ question, options, answer });
+  data[currentTeacher][exam].push({
+    question,
+    options,
+    answer
+  });
 
-  localStorage.setItem("examPapers", JSON.stringify(papers));
+  localStorage.setItem("examData", JSON.stringify(data));
 
   alert("Question Saved!");
-
-  loadExamList();
 }
+
+
 
 // LOAD EXAM LIST
 function loadExamList() {
   examSelect.innerHTML = "<option value=''>-- Select Exam --</option>";
 
-  const papers = JSON.parse(localStorage.getItem("examPapers")) || {};
+  const data = JSON.parse(localStorage.getItem("examData")) || {};
 
-  Object.keys(papers).forEach(exam => {
-    const opt = document.createElement("option");
-    opt.value = exam;
-    opt.textContent = exam;
-    examSelect.appendChild(opt);
+  Object.keys(data).forEach(teacher => {
+    Object.keys(data[teacher]).forEach(exam => {
+      const opt = document.createElement("option");
+      opt.value = teacher + "|" + exam;
+      opt.textContent = exam + " (By " + teacher + ")";
+      examSelect.appendChild(opt);
+    });
   });
 }
+
+
 
 // NAVIGATION
 function openTeacher() {
   document.querySelector(".dashboardContainer").style.display = "none";
-  teacherLogin.style.display = "block";
+  teacherAuth.style.display = "block";
 }
 
 
@@ -146,7 +162,7 @@ function openResult() {
 }
 
 function goBack() {
-  teacherLogin.style.display = "none";
+  teacherAuth.style.display = "none";
   teacherSection.style.display = "none";
   studentSection.style.display = "none";
   quiz.innerHTML = "";
@@ -157,25 +173,49 @@ function goBack() {
 
 
 
+
 let currentTeacher = null;
+
+function registerTeacher() {
+  const id = newTeacherId.value.trim();
+  const pass = newTeacherPass.value.trim();
+
+  if (!id || !pass) {
+    alert("Fill all fields");
+    return;
+  }
+
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+
+  if (teachers[id]) {
+    alert("Teacher already exists");
+    return;
+  }
+
+  teachers[id] = { password: pass };
+
+  localStorage.setItem("teachers", JSON.stringify(teachers));
+
+  alert("Registration successful!");
+}
 
 function loginTeacher() {
   const id = teacherId.value.trim();
   const pass = teacherPass.value.trim();
 
-  if (!id || !pass) {
-    alert("Enter ID and Password");
+  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
+
+  if (!teachers[id] || teachers[id].password !== pass) {
+    alert("Invalid ID or Password");
     return;
   }
 
-  if (pass === "1234") {
-    currentTeacher = id;
-    localStorage.setItem("currentTeacher", id);
+  currentTeacher = id;
+  localStorage.setItem("currentTeacher", id);
 
-    teacherLogin.style.display = "none";
-    teacherSection.style.display = "block";
-  } else {
-    alert("Wrong password");
-  }
+  teacherAuth.style.display = "none";
+  teacherSection.style.display = "block";
 }
+
+
 
