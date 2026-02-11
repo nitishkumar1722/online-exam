@@ -153,8 +153,13 @@ function openTeacher() {
   document.querySelector(".dashboardContainer").style.display = "none";
   teacherAuth.style.display = "block";
 
+   // Always start with Register screen
+  registerBox.style.display = "block";
+  loginBox.style.display = "none";
+  
   history.pushState({ page: "teacherAuth" }, "", "");
 }
+
 
 
 function openStudent() {
@@ -205,6 +210,8 @@ function registerTeacher() {
 
   alert("Registration successful!");
 }
+
+
 
 function loginTeacher() {
   const id = teacherId.value.trim();
@@ -272,6 +279,19 @@ window.addEventListener("popstate", function (event) {
       document.querySelector(".dashboardContainer").style.display = "grid";
   }
 });
+
+
+//toggle
+function showLogin() {
+  registerBox.style.display = "none";
+  loginBox.style.display = "block";
+}
+
+function showRegister() {
+  loginBox.style.display = "none";
+  registerBox.style.display = "block";
+}
+
 
 
 
