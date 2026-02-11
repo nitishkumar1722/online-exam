@@ -132,8 +132,9 @@ function loadExamList() {
 // NAVIGATION
 function openTeacher() {
   document.querySelector(".dashboardContainer").style.display = "none";
-  teacherSection.style.display = "block";
+  teacherLogin.style.display = "block";
 }
+
 
 function openStudent() {
   document.querySelector(".dashboardContainer").style.display = "none";
@@ -145,11 +146,36 @@ function openResult() {
 }
 
 function goBack() {
+  teacherLogin.style.display = "none";
   teacherSection.style.display = "none";
   studentSection.style.display = "none";
   quiz.innerHTML = "";
   submitBtn.style.display = "none";
-  submitBtn.disabled = false;
   result.innerText = "";
   document.querySelector(".dashboardContainer").style.display = "grid";
 }
+
+
+
+let currentTeacher = null;
+
+function loginTeacher() {
+  const id = teacherId.value.trim();
+  const pass = teacherPass.value.trim();
+
+  if (!id || !pass) {
+    alert("Enter ID and Password");
+    return;
+  }
+
+  if (pass === "1234") {
+    currentTeacher = id;
+    localStorage.setItem("currentTeacher", id);
+
+    teacherLogin.style.display = "none";
+    teacherSection.style.display = "block";
+  } else {
+    alert("Wrong password");
+  }
+}
+
