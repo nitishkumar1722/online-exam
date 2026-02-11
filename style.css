@@ -1,25 +1,83 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  text-align: center;
+  padding: 20px;
 }
 
-.question {
-    margin-bottom: 15px;
+h2, h3 {
+  color: #333;
 }
 
-button {
-    padding: 10px 15px;
-    font-size: 16px;
+/* ROLE BUTTONS */
+#roleSelect button {
+  width: 200px;
+  padding: 15px;
+  font-size: 18px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #2b7cff;
+  color: white;
+  cursor: pointer;
 }
 
-.question {
-  padding: 10px;
-  margin-bottom: 15px;
+#roleSelect button:hover {
+  background: #1f5fd1;
+}
+
+/* PANELS */
+#teacherSection, 
+#studentSection {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+/* INPUTS */
+input, select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px 0;
   border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
-.answer {
-  margin-top: 5px;
-  font-size: 14px;
+/* BUTTONS */
+button {
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: none;
+  background: #2b7cff;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1f5fd1;
+}
+
+/* BACK BUTTON */
+.backBtn {
+  background: #888;
+  margin-bottom: 15px;
+}
+
+.backBtn:hover {
+  background: #666;
+}
+
+/* QUIZ AREA */
+#quiz {
+  margin-top: 20px;
+  text-align: left;
+}
+
+#submitBtn {
+  margin-top: 20px;
 }
 
