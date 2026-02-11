@@ -1,427 +1,120 @@
-// GLOBAL VARIABLES
-let questions = [];
-let examId = "";
-
-// LOAD EXAMS ON PAGE LOAD
-window.onload = function () {
-  loadExamList();
-};
-
-// START EXAM
-function startExam() {
-  const name = studentName.value.trim();
-  const roll = rollNumber.value.trim();
-  const selectedExam = examSelect.value;
-
-  if (!name || !roll || !selectedExam) {
-    alert("Fill all details");
-    return;
-  }
-
-  const allPapers = JSON.parse(localStorage.getItem("examPapers")) || {};
-
-  if (!allPapers[selectedExam]) {
-    alert("Exam not found");
-    return;
-  }
-
-  examId = selectedExam;
-  questions = allPapers[selectedExam];
-
-  localStorage.setItem("currentStudent", JSON.stringify({ name, roll }));
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  document.getElementById("studentSection").style.display = "none";
-  document.querySelector(".dashboardContainer").style.display = "none";
+<body>
+
+<h1 class="mainTitle">Online Exam Portal</h1>
 
-  loadQuestions();
-  submitBtn.style.display = "block";
+<!-- ================= DASHBOARD ================= -->
+<div class="dashboardContainer" id="dashboard">
 
-  history.pushState({ page: "quiz" }, "", "");
-  localStorage.setItem("currentPage", "quiz");
+  <div class="card teacherCard" onclick="openTeacherAuth()">
+    <h3>👨‍🏫 Teacher</h3>
+    <p>Manage exams & students</p>
+  </div>
 
-}
+  <div class="card studentCard" onclick="openStudentLogin()">
+    <h3>👨‍🎓 Student</h3>
+    <p>Attend exams</p>
+  </div>
 
-// LOAD QUESTIONS
-function loadQuestions() {
-  quiz.innerHTML = "";
+</div>
 
-  questions.forEach((q, index) => {
-    const div = document.createElement("div");
-    div.id = `question-${index}`;
-    div.className = "questionBox";
 
-    div.innerHTML = `
-      <p><b>${index + 1}. ${q.question}</b></p>
-      <label><input type="radio" name="q${index}" value="A"> ${q.options[0]}</label><br>
-      <label><input type="radio" name="q${index}" value="B"> ${q.options[1]}</label><br>
-      <label><input type="radio" name="q${index}" value="C"> ${q.options[2]}</label><br>
-      <label><input type="radio" name="q${index}" value="D"> ${q.options[3]}</label><br>
-      <div id="answer-${index}" style="display:none;"></div>
-    `;
+<!-- ================= TEACHER AUTH ================= -->
+<div id="teacherAuth" style="display:none;">
+  <button onclick="goHome()">← Back</button>
 
-    quiz.appendChild(div);
-  });
-}
+  <!-- REGISTER -->
+  <div id="registerBox">
+    <h3>Register Teacher</h3>
 
-// SUBMIT QUIZ
-function submitQuiz() {
-  let score = 0;
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPassword" placeholder="Password">
+    <button onclick="registerTeacher()">Register</button>
 
-  questions.forEach((q, index) => {
-    const selected = document.querySelector(`input[name="q${index}"]:checked`);
-    const qDiv = document.getElementById(`question-${index}`);
-    const ansDiv = document.getElementById(`answer-${index}`);
+    <p>
+      Already Registered?
+      <button onclick="showLogin()">Login</button>
+    </p>
+  </div>
 
-    if (selected && selected.value === q.answer) {
-      score++;
-      qDiv.style.border = "2px solid green";
-      ansDiv.innerHTML = "✅ Correct";
-    } else if (selected) {
-      qDiv.style.border = "2px solid red";
-      ansDiv.innerHTML = `❌ Wrong | Correct: ${q.answer}`;
-    } else {
-      qDiv.style.border = "2px solid orange";
-      ansDiv.innerHTML = `⚠ Not Attempted | Correct: ${q.answer}`;
-    }
+  <!-- LOGIN -->
+  <div id="loginBox" style="display:none;">
+    <h3>Teacher Login</h3>
 
-    ansDiv.style.display = "block";
-  });
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="loginTeacher()">Login</button>
 
-  result.innerText = `Score: ${score} / ${questions.length}`;
+    <p>
+      Forgot Password?
+      <button onclick="showForgot()">Reset</button>
+    </p>
 
-  submitBtn.disabled = true;
+    <p>
+      New Teacher?
+      <button onclick="showRegister()">Register</button>
+    </p>
+  </div>
 
-  document.querySelectorAll("input[type=radio]").forEach(r => r.disabled = true);
-}
+  <!-- FORGOT -->
+  <div id="forgotBox" style="display:none;">
+    <h3>Reset Password</h3>
 
+    <input type="email" id="forgotEmail" placeholder="Email">
+    <input type="password" id="newPassword" placeholder="New Password">
+    <button onclick="resetPassword()">Update</button>
+  </div>
+</div>
 
 
-// SAVE QUESTION
-function saveQuestion() {
-  if (!currentTeacher) {
-    alert("Login required");
-    return;
-  }
+<!-- ================= TEACHER PANEL ================= -->
+<div id="teacherPanel" style="display:none;">
+  <button onclick="logout()">Logout</button>
+  <h2>Teacher Dashboard</h2>
 
-  const exam = examName.value.trim();
-  const question = qText.value.trim();
-  const options = [optA.value, optB.value, optC.value, optD.value];
-  const answer = correct.value;
+  <h3>Create Exam</h3>
+  <input type="text" id="examTitle" placeholder="Exam Title">
+  <input type="number" id="examDuration" placeholder="Duration (minutes)">
+  <button onclick="createExam()">Create</button>
 
-  if (!exam || !question || options.includes("")) {
-    alert("Fill all fields");
-    return;
-  }
+  <h3>Add Student</h3>
+  <input type="text" id="studentName" placeholder="Student Name">
+  <input type="text" id="studentReg" placeholder="Registration No">
+  <button onclick="addStudent()">Add</button>
 
-  let data = JSON.parse(localStorage.getItem("examData")) || {};
+  <div id="teacherOutput"></div>
+</div>
 
-  if (!data[currentTeacher]) data[currentTeacher] = {};
-  if (!data[currentTeacher][exam]) data[currentTeacher][exam] = [];
 
-  data[currentTeacher][exam].push({
-    question,
-    options,
-    answer
-  });
+<!-- ================= STUDENT LOGIN ================= -->
+<div id="studentLogin" style="display:none;">
+  <button onclick="goHome()">← Back</button>
+  <h3>Student Login</h3>
 
-  localStorage.setItem("examData", JSON.stringify(data));
+  <input type="text" id="studentLoginName" placeholder="Name">
+  <input type="text" id="studentLoginReg" placeholder="Registration No">
+  <button onclick="studentLogin()">Login</button>
+</div>
 
-  alert("Question Saved!");
-}
 
+<!-- ================= STUDENT PANEL ================= -->
+<div id="studentPanel" style="display:none;">
+  <button onclick="logout()">Logout</button>
+  <h2>Student Dashboard</h2>
 
+  <div id="studentExamList"></div>
+</div>
 
-// LOAD EXAM LIST
-function loadExamList() {
-  examSelect.innerHTML = "<option value=''>-- Select Exam --</option>";
 
-  const data = JSON.parse(localStorage.getItem("examData")) || {};
+<script src="script.js"></script>
 
-  Object.keys(data).forEach(teacher => {
-    Object.keys(data[teacher]).forEach(exam => {
-      const opt = document.createElement("option");
-      opt.value = teacher + "|" + exam;
-      opt.textContent = exam + " (By " + teacher + ")";
-      examSelect.appendChild(opt);
-    });
-  });
-}
-
-
-
-// NAVIGATION
-function openTeacher() {
-  document.querySelector(".dashboardContainer").style.display = "none";
-  teacherAuth.style.display = "block";
-
-   // Always start with Register screen
-  registerBox.style.display = "block";
-  loginBox.style.display = "none";
-  
-  history.pushState({ page: "teacherAuth" }, "", "");
-  localStorage.setItem("currentPage", "teacherAuth");
-}
-
-
-
-function openStudent() {
-  document.querySelector(".dashboardContainer").style.display = "none";
-  studentSection.style.display = "block";
-
-  history.pushState({ page: "studentPanel" }, "", "");
-  localStorage.setItem("currentPage", "student");
-}
-
-function openResult() {
-  window.open("YOUR_GOOGLE_SHEET_LINK");
-}
-
-function goBack() {
-  localStorage.removeItem("currentPage");
-  teacherAuth.style.display = "none";
-  teacherSection.style.display = "none";
-  studentSection.style.display = "none";
-  quiz.innerHTML = "";
-  submitBtn.style.display = "none";
-  result.innerText = "";
-  document.querySelector(".dashboardContainer").style.display = "grid";
-}
-
-
-
-
-let currentTeacher = null;
-
-function registerTeacher() {
-  const email = newTeacherEmail.value.trim();
-  const id = newTeacherId.value.trim();
-  const pass = newTeacherPass.value.trim();
-
-  if (!email || !id || !pass) {
-    alert("Fill all fields");
-    return;
-  }
-
-  // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    alert("Enter valid email address");
-    return;
-  }
-
-  // Strong password validation
-  if (!isStrongPassword(pass)) {
-    alert("Password must be at least 6 characters, include 1 uppercase letter and 1 number.");
-    return;
-  }
-
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-
-  if (teachers[id]) {
-    alert("Teacher already exists");
-    return;
-  }
-
-  teachers[id] = {
-    email: email,
-    password: pass
-  };
-
-  localStorage.setItem("teachers", JSON.stringify(teachers));
-
-  alert("Registration successful!");
-
-  showLogin();
-}
-
-
-
-function loginTeacher() {
-  const id = teacherId.value.trim();
-  const pass = teacherPass.value.trim();
-
-  history.pushState({ page: "teacherPanel" }, "", "");
-
-
-  let teachers = JSON.parse(localStorage.getItem("teachers")) || {};
-
-  if (!teachers[id] || teachers[id].password !== pass) {
-    alert("Invalid ID or Password");
-    return;
-  }
-
-  currentTeacher = id;
-  localStorage.setItem("currentTeacher", id);
-
-  teacherAuth.style.display = "none";
-  teacherSection.style.display = "block";
-}
-
-
-
-window.addEventListener("popstate", function (event) {
-
-  // Hide all sections
-  teacherAuth.style.display = "none";
-  teacherSection.style.display = "none";
-  studentSection.style.display = "none";
-  quiz.innerHTML = "";
-  submitBtn.style.display = "none";
-  result.innerText = "";
-
-  if (!event.state) {
-    // Default → Dashboard
-    document.querySelector(".dashboardContainer").style.display = "grid";
-    return;
-  }
-
-  switch (event.state.page) {
-
-    case "teacherAuth":
-      document.querySelector(".dashboardContainer").style.display = "none";
-      teacherAuth.style.display = "block";
-      break;
-
-    case "teacherPanel":
-      document.querySelector(".dashboardContainer").style.display = "none";
-      teacherSection.style.display = "block";
-      break;
-
-    case "studentPanel":
-      document.querySelector(".dashboardContainer").style.display = "none";
-      studentSection.style.display = "block";
-      break;
-
-    case "quiz":
-      document.querySelector(".dashboardContainer").style.display = "none";
-      loadQuestions();
-      submitBtn.style.display = "block";
-      break;
-
-    default:
-      document.querySelector(".dashboardContainer").style.display = "grid";
-  }
-});
-
-
-//toggle
-function showLogin() {
-  registerBox.style.display = "none";
-  loginBox.style.display = "block";
-}
-
-function showRegister() {
-  loginBox.style.display = "none";
-  registerBox.style.display = "block";
-}
-
-
-function togglePassword(id) {
-  const input = document.getElementById(id);
-  input.type = input.type === "password" ? "text" : "password";
-}
-
-//strong password
-function isStrongPassword(password) {
-  const strongRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
-  return strongRegex.test(password);
-}
-
-
-
-window.onload = function () {
-
-  const page = localStorage.getItem("currentPage");
-
-  // Hide all first
-  teacherAuth.style.display = "none";
-  teacherSection.style.display = "none";
-  studentSection.style.display = "none";
-  quiz.innerHTML = "";
-  submitBtn.style.display = "none";
-
-  if (page === "teacherAuth") {
-    document.querySelector(".dashboardContainer").style.display = "none";
-    teacherAuth.style.display = "block";
-  }
-  else if (page === "student") {
-    document.querySelector(".dashboardContainer").style.display = "none";
-    studentSection.style.display = "block";
-  }
-  else if (page === "quiz") {
-    document.querySelector(".dashboardContainer").style.display = "none";
-    loadExamList();
-  }
-  else {
-    document.querySelector(".dashboardContainer").style.display = "grid";
-  }
-};
-
-
-
-
-
-function uploadCSV() {
-
-  if (!currentTeacher) {
-    alert("Login required");
-    return;
-  }
-
-  const file = document.getElementById("csvFile").files[0];
-
-  if (!file) {
-    alert("Select CSV file first");
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-
-    const text = e.target.result;
-    const rows = text.split("\n");
-
-    let data = JSON.parse(localStorage.getItem("examData")) || {};
-    const exam = examName.value.trim();
-
-    if (!exam) {
-      alert("Enter Exam Name first");
-      return;
-    }
-
-    if (!data[currentTeacher]) data[currentTeacher] = {};
-    if (!data[currentTeacher][exam]) data[currentTeacher][exam] = [];
-
-    rows.slice(1).forEach(row => {
-      const cols = row.split(",");
-
-      if (cols.length === 6) {
-        data[currentTeacher][exam].push({
-          question: cols[0].trim(),
-          options: [
-            cols[1].trim(),
-            cols[2].trim(),
-            cols[3].trim(),
-            cols[4].trim()
-          ],
-          answer: cols[5].trim()
-        });
-      }
-    });
-
-    localStorage.setItem("examData", JSON.stringify(data));
-
-    alert("Questions Uploaded Successfully!");
-  };
-
-  reader.readAsText(file);
-}
-
-
-
-
-
-
-
-
+</body>
+</html>
