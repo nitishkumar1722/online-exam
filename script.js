@@ -1,17 +1,21 @@
 const API = "http://localhost:5000/api";
 
+// ===== DOM ELEMENTS =====
 const dashboard = document.getElementById("dashboard");
 const teacherAuth = document.getElementById("teacherAuth");
 const teacherPanel = document.getElementById("teacherPanel");
 const studentLogin = document.getElementById("studentLogin");
 const studentPanel = document.getElementById("studentPanel");
 
+const registerBox = document.getElementById("registerBox");
+const loginBox = document.getElementById("loginBox");
+const forgotBox = document.getElementById("forgotBox");
+
 // ================= NAVIGATION =================
 
 function openTeacherAuth() {
   hideAll();
   teacherAuth.style.display = "block";
-  showRegister();
 }
 
 function openStudentLogin() {
@@ -31,6 +35,7 @@ function hideAll() {
   studentLogin.style.display = "none";
   studentPanel.style.display = "none";
 }
+
 
 function logout() {
   localStorage.removeItem("token");
@@ -182,4 +187,5 @@ async function loadStudentExams() {
     </div>
   `).join("");
 }
+
 
