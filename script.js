@@ -64,8 +64,8 @@ function showForgot() {
 // ================= AUTH =================
 
 async function registerTeacher() {
-  const email = regEmail.value;
-  const password = regPassword.value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
 
   const res = await fetch(`${API}/auth/register`, {
     method: "POST",
@@ -78,9 +78,10 @@ async function registerTeacher() {
   showLogin();
 }
 
+
 async function loginTeacher() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -100,24 +101,25 @@ async function loginTeacher() {
 }
 
 async function resetPassword() {
-  const email = forgotEmail.value;
-  const newPassword = newPassword.value;
+  const email = document.getElementById("forgotEmail").value;
+  const newPass = document.getElementById("newPassword").value;
 
   await fetch(`${API}/auth/reset`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, newPassword })
+    body: JSON.stringify({ email, newPassword: newPass })
   });
 
   alert("Password Updated");
   showLogin();
 }
 
+
 // ================= TEACHER =================
 
 async function createExam() {
-  const title = examTitle.value;
-  const duration = examDuration.value;
+  const title = document.getElementById("examTitle").value;
+  const duration = document.getElementById("examDuration").value;
 
   const token = localStorage.getItem("token");
 
@@ -125,18 +127,20 @@ async function createExam() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token
+      "Authorization": "Bearer " + token
     },
     body: JSON.stringify({ title, duration })
   });
 
   const data = await res.json();
-  teacherOutput.innerHTML = data.message || "Exam Created";
+  document.getElementById("teacherOutput").innerHTML =
+    data.message || "Exam Created";
 }
 
+
 async function addStudent() {
-  const name = studentName.value;
-  const reg = studentReg.value;
+  const name = document.getElementById("studentName").value;
+  const reg = document.getElementById("studentReg").value;
 
   const token = localStorage.getItem("token");
 
@@ -144,20 +148,23 @@ async function addStudent() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token
+      "Authorization": "Bearer " + token
     },
     body: JSON.stringify({ name, reg })
   });
 
   const data = await res.json();
-  teacherOutput.innerHTML = data.message || "Student Added";
+
+  document.getElementById("teacherOutput").innerHTML =
+    data.message || "Student Added";
 }
+
 
 // ================= STUDENT =================
 
 async function studentLogin() {
-  const name = studentLoginName.value;
-  const reg = studentLoginReg.value;
+  const name = document.getElementById("studentLoginName").value;
+  const reg = document.getElementById("studentLoginReg").value;
 
   const res = await fetch(`${API}/student/login`, {
     method: "POST",
@@ -187,5 +194,6 @@ async function loadStudentExams() {
     </div>
   `).join("");
 }
+
 
 
