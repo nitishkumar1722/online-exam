@@ -1,46 +1,42 @@
-const API = "http://localhost:5000/api";
+document.addEventListener("DOMContentLoaded", function () {
 
-// ===== DOM ELEMENTS =====
-const dashboard = document.getElementById("dashboard");
-const teacherAuth = document.getElementById("teacherAuth");
-const teacherPanel = document.getElementById("teacherPanel");
-const studentLogin = document.getElementById("studentLogin");
-const studentPanel = document.getElementById("studentPanel");
+  const API = "http://localhost:5000/api";
 
-const registerBox = document.getElementById("registerBox");
-const loginBox = document.getElementById("loginBox");
-const forgotBox = document.getElementById("forgotBox");
+  const dashboard = document.getElementById("dashboard");
+  const teacherAuth = document.getElementById("teacherAuth");
+  const teacherPanel = document.getElementById("teacherPanel");
+  const studentLogin = document.getElementById("studentLogin");
+  const studentPanel = document.getElementById("studentPanel");
 
-// ================= NAVIGATION =================
+  const registerBox = document.getElementById("registerBox");
+  const loginBox = document.getElementById("loginBox");
+  const forgotBox = document.getElementById("forgotBox");
 
-function openTeacherAuth() {
-  hideAll();
-  teacherAuth.style.display = "block";
-}
+  function hideAll() {
+    dashboard.style.display = "none";
+    teacherAuth.style.display = "none";
+    teacherPanel.style.display = "none";
+    studentLogin.style.display = "none";
+    studentPanel.style.display = "none";
+  }
 
-function openStudentLogin() {
-  hideAll();
-  studentLogin.style.display = "block";
-}
+  window.openTeacherAuth = function () {
+    hideAll();
+    teacherAuth.style.display = "block";
+  };
 
-function goHome() {
-  hideAll();
-  dashboard.style.display = "grid";
-}
+  window.openStudentLogin = function () {
+    hideAll();
+    studentLogin.style.display = "block";
+  };
 
-function hideAll() {
-  dashboard.style.display = "none";
-  teacherAuth.style.display = "none";
-  teacherPanel.style.display = "none";
-  studentLogin.style.display = "none";
-  studentPanel.style.display = "none";
-}
+  window.goHome = function () {
+    hideAll();
+    dashboard.style.display = "grid";
+  };
 
+});
 
-function logout() {
-  localStorage.removeItem("token");
-  goHome();
-}
 
 // ================= TOGGLE =================
 
@@ -194,6 +190,7 @@ async function loadStudentExams() {
     </div>
   `).join("");
 }
+
 
 
 
