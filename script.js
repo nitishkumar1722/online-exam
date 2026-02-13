@@ -1,111 +1,126 @@
 const API = "https://exam-backend-production-407b.up.railway.app/api";
 
-// Elements
-const dashboard = document.getElementById("dashboard");
-const teacherAuth = document.getElementById("teacherAuth");
-const teacherPanel = document.getElementById("teacherPanel");
-const loginBox = document.getElementById("loginBox");
-const registerBox = document.getElementById("registerBox");
+// --- 1. PAGE LOAD LOGIC ---
+document.addEventListener("DOMContentLoaded", function () {
+    // Check karein ki user pehle se login hai ya reload hua hai
+    handleLocation();
 
-function hideAll() {
-    dashboard.style.display = "none";
-    teacherAuth.style.display = "none";
-    teacherPanel.style.display = "none";
-}
+    // Agar user URL badalta hai (Hash change), toh page update karein
+    window.addEventListener("hashchange", handleLocation);
+});
 
-window.goHome = function() {
+// --- 2. NAVIGATION LOGIC (Refresh ke liye) ---
+function handleLocation() {
+    const path = window.location.hash; 
+    const token = localStorage.getItem("token");
+
+    // Agar token nahi hai, toh sirf Login ya Home dikhao
+    if (!token) {
+        if (path === "#teacherAuth") {
+            openTeacherAuth();
+        } else if (path === "#studentLogin") {
+            openStudentLogin();
+        } else {
+            goHome();
+        }
+        return;
+    }
+
+    // Agar token hai, toh Dashboard dikhao
     hideAll();
-    dashboard.style.display = "flex";
+    document.getElementById("teacherPanel").style.display = "block";
+
+    // Hash ke hisaab se sahi section kholo
+    if (path === "#addStudent") {
+        showSection('addStudent');
+    } else if (path === "#createExam") {
+        showSection('createExam');
+    } else {
+        showSection('welcomeNote'); // Default dashboard
+    }
 }
 
-window.openTeacherAuth = function() {
-    hideAll();
-    teacherAuth.style.display = "block";
-    showLogin();
+// URL badalne ke liye function
+window.navigateTo = function(hash) {
+    window.location.hash = hash;
 }
 
-function showLogin() {
-    loginBox.style.display = "block";
-    registerBox.style.display = "none";
-}
-
-function showRegister() {
-    loginBox.style.display = "none";
-    registerBox.style.display = "block";
-}
-
-// TOGGLE SIDEBAR
-function toggleSidebar() {
-    const sb = document.getElementById("sidebar");
-    sb.style.width = sb.style.width === "250px" ? "0" : "250px";
-}
-
-// SHOW PAGE
-function showPage(pageId) {
+function showSection(id) {
+    // Saare sections chhupao
+    document.getElementById("welcomeNote").style.display = "none";
     document.getElementById("createExam").style.display = "none";
     document.getElementById("addStudent").style.display = "none";
-    document.getElementById(pageId).style.display = "block";
-    toggleSidebar();
+    
+    // Target section dikhao
+    if(document.getElementById(id)) {
+        document.getElementById(id).style.display = "block";
+    }
 }
 
-// LOGIN TEACHER
+// --- 3. AUTH FUNCTIONS ---
+
+window.openTeacherAuth = function () {
+    hideAll();
+    window.location.hash = "#teacherAuth";
+    document.getElementById("teacherAuth").style.display = "block";
+};
+
+window.goHome = function () {
+    hideAll();
+    window.location.hash = "";
+    document.getElementById("dashboard").style.display = "flex";
+};
+
 async function loginTeacher() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
 
-    try {
-        const res = await fetch(`${API}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
+    const res = await fetch(`${API}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
 
-        if (data.token) {
-            localStorage.setItem("token", data.token);
-            hideAll();
-            teacherPanel.style.display = "block"; // Login ke baad Dashboard dikhao
-            alert("Login Successful!");
-        } else {
-            alert(data.msg || "Invalid Credentials");
-        }
-    } catch (err) {
-        alert("Backend not connected");
+    const data = await res.json();
+
+    if (data.token) {
+        localStorage.setItem("token", data.token);
+        window.location.hash = "#welcomeNote"; // Dashboard par bhej do
+        handleLocation();
+    } else {
+        alert(data.msg || "Login Failed");
     }
 }
 
-// LOGOUT
-function logout() {
+window.logout = function() {
     localStorage.removeItem("token");
-    location.reload(); // Page refresh karke wapas home par
-}
+    window.location.hash = "";
+    location.reload();
+};
 
-// REGISTER TEACHER (Pehle wala function)
-async function registerTeacher() {
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPassword").value;
-    try {
-        const res = await fetch(`${API}/auth/register`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        alert(data.message || "Registered!");
-        showLogin();
-    } catch (err) { alert("Error"); }
-}
-
-
-function togglePass(inputId) {
+// --- 4. PASSWORD HIDE/SHOW ---
+window.togglePass = function(inputId) {
     const input = document.getElementById(inputId);
-    const icon = input.nextElementSibling; // Span icon ko pakdega
+    const icon = input.nextElementSibling; 
 
     if (input.type === "password") {
         input.type = "text";
-        icon.innerText = "🔒"; // Password dikhne par lock icon
+        icon.innerText = "🔒"; 
     } else {
         input.type = "password";
-        icon.innerText = "👁️"; // Password hide hone par eye icon
+        icon.innerText = "👁️"; 
     }
+}
+
+// --- 5. HELPERS ---
+function hideAll() {
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("teacherAuth").style.display = "none";
+    document.getElementById("teacherPanel").style.display = "none";
+    if(document.getElementById("studentLogin")) document.getElementById("studentLogin").style.display = "none";
+}
+
+function toggleSidebar() {
+    const sb = document.getElementById("sidebar");
+    sb.style.width = sb.style.width === "250px" ? "0" : "250px";
 }
