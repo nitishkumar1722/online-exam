@@ -39,6 +39,14 @@
             <p>Don't have an account? <span class="link" onclick="showRegister()">Register</span></p>
         </div>
 
+        <div id="forgotBox" style="display:none;">
+        <h2>Reset Password</h2>
+        <input type="email" id="resetEmail" placeholder="Enter Email">
+        <button class="primary-btn" onclick="resetPassword()">Send Link</button>
+        <p><span class="link" onclick="navigateTo('#teacherAuth')">Back to Login</span></p>
+        </div>
+        
+
         <div id="registerBox" class="auth-box" style="display:none;">
             <h2>Teacher Register</h2>
             <input type="email" id="regEmail" placeholder="Email">
@@ -49,6 +57,7 @@
             <button class="primary-btn" onclick="registerTeacher()">Register</button>
             <p>Already registered? <span class="link" onclick="showLogin()">Login</span></p>
         </div>
+        
     </div>
 
     <div id="teacherPanel" style="display:none;">
@@ -89,6 +98,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
