@@ -176,3 +176,25 @@ body {
     cursor: pointer;
     text-decoration: underline;
 }
+
+.password-container {
+    position: relative;
+    width: 95%; /* Aapke purane input ki width ke hisab se */
+    margin: 10px auto;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 40px; /* Icon ke liye jagah */
+    box-sizing: border-box;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
