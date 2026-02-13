@@ -99,13 +99,13 @@ async function registerTeacher() {
 
 function togglePass(inputId) {
     const input = document.getElementById(inputId);
-    const icon = input.nextElementSibling; // Span icon ko select karega
+    const icon = input.nextElementSibling; // Span icon ko pakdega
 
     if (input.type === "password") {
         input.type = "text";
-        icon.innerText = "🔒"; // Band aankh ya lock ka icon
+        icon.innerText = "🔒"; // Password dikhne par lock icon
     } else {
         input.type = "password";
-        icon.innerText = "👁️"; // Khuli aankh ka icon
+        icon.innerText = "👁️"; // Password hide hone par eye icon
     }
 }
