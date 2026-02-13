@@ -1,6 +1,6 @@
 const API = "https://exam-backend-production-407b.up.railway.app/api";
 
-// --- 1. PAGE LOAD & NAVIGATION LOGIC ---
+// --- 1. NAVIGATION CONTROL (Back Button & Refresh Fix) ---
 window.addEventListener("load", handleLocation);
 window.addEventListener("hashchange", handleLocation);
 
@@ -8,18 +8,22 @@ function handleLocation() {
     const path = window.location.hash;
     const token = localStorage.getItem("token");
 
-    // Security: Login ke bina dashboard block karna
-    if (!token && path !== "" && path !== "#teacherAuth" && path !== "#forgotPass") {
+    // Agar token nahi hai aur koi andar jana chahe (Security)
+    if (!token && path !== "" && path !== "#teacherAuth" && path !== "#studentLogin" && path !== "#forgotPass") {
         window.location.hash = "";
         goHome();
         return;
     }
 
+    // Login se pehle wale pages
     if (!token) {
         if (path === "#teacherAuth") {
             hideAll();
             document.getElementById("teacherAuth").style.display = "block";
             showLoginBox();
+        } else if (path === "#studentLogin") {
+            hideAll();
+            if(document.getElementById("studentLogin")) document.getElementById("studentLogin").style.display = "block";
         } else if (path === "#forgotPass") {
             showForgotBox();
         } else {
@@ -28,74 +32,35 @@ function handleLocation() {
         return;
     }
 
-    // Dashboard dikhao
+    // Login ke baad (Teacher Dashboard)
     hideAll();
     document.getElementById("teacherPanel").style.display = "block";
 
-    // Sections toggle (Add Student / Create Exam)
     const sections = ['welcomeNote', 'createExam', 'addStudent'];
     sections.forEach(id => {
         const el = document.getElementById(id);
-        if (el) {
-            el.style.display = (path === "#" + id) ? "block" : "none";
-        }
+        if (el) el.style.display = (path === "#" + id) ? "block" : "none";
     });
 
-    // Default view
     if (path === "" || path === "#welcomeNote") {
         document.getElementById("welcomeNote").style.display = "block";
     }
 }
 
-// Sidebar links ke liye function
+// --- 2. GLOBAL FUNCTIONS (Buttons ke liye) ---
+
 window.navigateTo = function(hash) {
     window.location.hash = hash;
-    closeSidebar(); 
+    const sb = document.getElementById("sidebar");
+    if (sb) sb.style.width = "0"; // Sidebar band karein
 };
 
-window.logout = function() {
-    localStorage.removeItem("token");
-    window.location.hash = "";
-    location.reload();
-};
-// --- 2. FORGOT PASSWORD ---
-window.resetPassword = async function() {
-    const email = document.getElementById("resetEmail").value;
-    if (!email) return alert("Email fill karein!");
-
-    try {
-        const res = await fetch(`${API}/auth/reset-password`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        alert(data.msg || "Reset link sent!");
-        navigateTo("#teacherAuth");
-    } catch (err) {
-        alert("Server error!");
-    }
+window.openTeacherAuth = function() {
+    window.navigateTo("#teacherAuth");
 };
 
-window.showForgotBox = function() {
-    hideAll();
-    document.getElementById("teacherAuth").style.display = "block";
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("registerBox").style.display = "none";
-    document.getElementById("forgotBox").style.display = "block";
-};
-
-// --- 3. UI HELPERS ---
-function showLoginBox() {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("registerBox").style.display = "none";
-    if (document.getElementById("forgotBox")) document.getElementById("forgotBox").style.display = "none";
-}
-
-window.hideAll = function() {
-    document.getElementById("dashboard").style.display = "none";
-    document.getElementById("teacherAuth").style.display = "none";
-    document.getElementById("teacherPanel").style.display = "none";
+window.openStudentLogin = function() {
+    window.navigateTo("#studentLogin");
 };
 
 window.goHome = function() {
@@ -104,13 +69,36 @@ window.goHome = function() {
     document.getElementById("dashboard").style.display = "flex";
 };
 
-window.toggleSidebar = function() {
-    const sb = document.getElementById("sidebar");
-    sb.style.width = (sb.style.width === "250px") ? "0" : "250px";
+window.logout = function() {
+    localStorage.removeItem("token");
+    window.location.hash = "";
+    location.reload();
 };
 
-function closeSidebar() {
+// --- 3. UI HELPERS ---
+
+window.hideAll = function() {
+    const ids = ["dashboard", "teacherAuth", "teacherPanel", "studentLogin"];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+    });
+};
+
+window.toggleSidebar = function() {
     const sb = document.getElementById("sidebar");
-    if (sb) sb.style.width = "0";
+    if (sb) sb.style.width = (sb.style.width === "250px") ? "0" : "250px";
+};
+
+function showLoginBox() {
+    if(document.getElementById("loginBox")) document.getElementById("loginBox").style.display = "block";
+    if(document.getElementById("registerBox")) document.getElementById("registerBox").style.display = "none";
+    if(document.getElementById("forgotBox")) document.getElementById("forgotBox").style.display = "none";
 }
 
+function showForgotBox() {
+    hideAll();
+    document.getElementById("teacherAuth").style.display = "block";
+    if(document.getElementById("loginBox")) document.getElementById("loginBox").style.display = "none";
+    if(document.getElementById("forgotBox")) document.getElementById("forgotBox").style.display = "block";
+}
