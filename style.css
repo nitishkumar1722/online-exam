@@ -130,3 +130,81 @@ button {
   font-size: 20px;
   margin-top: 20px;
 }
+
+
+/* Top Bar */
+.top-header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.menu-btn {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu-btn span {
+    width: 25px;
+    height: 3px;
+    background: white;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    height: 100%;
+    width: 0; /* Shuruat mein hidden */
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: 0;
+    background-color: #1a252f;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+}
+
+.sidebar-links button {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #bdc3c7;
+    display: block;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidebar-links button:hover {
+    color: white;
+    background: #34495e;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 36px;
+    color: white;
+    text-decoration: none;
+}
+
+/* Content Container */
+.main-container {
+    padding: 30px;
+    transition: margin-left .3s;
+}
+
+.page-section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
