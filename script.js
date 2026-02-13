@@ -102,3 +102,18 @@ function showForgotBox() {
     if(document.getElementById("loginBox")) document.getElementById("loginBox").style.display = "none";
     if(document.getElementById("forgotBox")) document.getElementById("forgotBox").style.display = "block";
 }
+
+
+function togglePass(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling; // Span icon ko pakdega
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.innerText = "🔒"; // Password dikhne par lock icon
+    } else {
+        input.type = "password";
+        icon.innerText = "👁️"; // Password hide hone par eye icon
+    }
+}
+
