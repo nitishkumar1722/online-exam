@@ -116,3 +116,27 @@ async function loginTeacher() {
 }
 
 
+
+// Sidebar kholne aur band karne ke liye
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar.style.width === "250px") {
+        sidebar.style.width = "0";
+    } else {
+        sidebar.style.width = "250px";
+    }
+}
+
+// Menu ke buttons par click karne par section badalne ke liye
+function showPage(pageId) {
+    // Pehle saari window chhupao
+    document.getElementById("welcomeNote").style.display = "none";
+    document.getElementById("createExam").style.display = "none";
+    document.getElementById("addStudent").style.display = "none";
+    
+    // Jo manga hai use dikhao
+    document.getElementById(pageId).style.display = "block";
+    
+    // Sidebar band kar do section change hone ke baad
+    toggleSidebar();
+}
