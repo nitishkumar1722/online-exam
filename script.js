@@ -14,6 +14,13 @@ function handleLocation() {
     const path = window.location.hash; 
     const token = localStorage.getItem("token");
 
+    if (!token && path !== "" && path !== "#teacherAuth" && path !== "#studentLogin") {
+        window.location.hash = ""; // URL saaf karo
+        goHome(); // Home page par bhej do
+        return;
+    }
+
+    
     // Agar token nahi hai, toh sirf Login ya Home dikhao
     if (!token) {
         if (path === "#teacherAuth") {
@@ -124,3 +131,4 @@ function toggleSidebar() {
     const sb = document.getElementById("sidebar");
     sb.style.width = sb.style.width === "250px" ? "0" : "250px";
 }
+
