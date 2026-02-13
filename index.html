@@ -36,7 +36,13 @@
     <h3>Register Teacher</h3>
 
     <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPassword" placeholder="Password">
+   <div style="position:relative;">
+  <input type="password" id="regPassword" placeholder="Password">
+  <span onclick="togglePassword('regPassword')" 
+        style="position:absolute;right:10px;top:8px;cursor:pointer;">
+    👁
+  </span>
+</div>
     <button onclick="registerTeacher()">Register</button>
 
     <p>
@@ -50,7 +56,13 @@
     <h3>Teacher Login</h3>
 
     <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
+   <div style="position:relative;">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <span onclick="togglePassword('loginPassword')" 
+        style="position:absolute;right:10px;top:8px;cursor:pointer;">
+    👁
+  </span>
+</div>
     <button onclick="loginTeacher()">Login</button>
 
     <p>
@@ -118,4 +130,5 @@
 
 </body>
 </html>
+
 
