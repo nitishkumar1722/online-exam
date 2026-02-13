@@ -1,95 +1,54 @@
-// 1. API URL ko sabse upar rakhein taaki saare functions ise dekh sakein
 const API = "https://exam-backend-production-407b.up.railway.app/api";
 
-// Ye variables global hone chahiye taaki har jagah mil sakein
-let dashboard, teacherAuth, teacherPanel, studentLoginDiv, studentPanel;
-let registerBox, loginBox, forgotBox;
+// Elements
+const dashboard = document.getElementById("dashboard");
+const teacherAuth = document.getElementById("teacherAuth");
+const teacherPanel = document.getElementById("teacherPanel");
+const loginBox = document.getElementById("loginBox");
+const registerBox = document.getElementById("registerBox");
 
-document.addEventListener("DOMContentLoaded", function () {
-    // 2. Elements ko assign karein
-    dashboard = document.getElementById("dashboard");
-    teacherAuth = document.getElementById("teacherAuth");
-    teacherPanel = document.getElementById("teacherPanel");
-    studentLoginDiv = document.getElementById("studentLogin");
-    studentPanel = document.getElementById("studentPanel");
+function hideAll() {
+    dashboard.style.display = "none";
+    teacherAuth.style.display = "none";
+    teacherPanel.style.display = "none";
+}
 
-    registerBox = document.getElementById("registerBox");
-    loginBox = document.getElementById("loginBox");
-    forgotBox = document.getElementById("forgotBox");
+window.goHome = function() {
+    hideAll();
+    dashboard.style.display = "flex";
+}
 
-    function hideAll() {
-        if(dashboard) dashboard.style.display = "none";
-        if(teacherAuth) teacherAuth.style.display = "none";
-        if(teacherPanel) teacherPanel.style.display = "none";
-        if(studentLoginDiv) studentLoginDiv.style.display = "none";
-        if(studentPanel) studentPanel.style.display = "none";
-    }
+window.openTeacherAuth = function() {
+    hideAll();
+    teacherAuth.style.display = "block";
+    showLogin();
+}
 
-    window.openTeacherAuth = function () {
-        hideAll();
-        teacherAuth.style.display = "block";
-    };
-
-    window.openStudentLogin = function () {
-        hideAll();
-        studentLoginDiv.style.display = "block";
-    };
-
-    window.goHome = function () {
-        hideAll();
-        dashboard.style.display = "grid";
-    };
-});
-
-// ================= TOGGLE =================
 function showLogin() {
-    registerBox.style.display = "none";
-    forgotBox.style.display = "none";
     loginBox.style.display = "block";
+    registerBox.style.display = "none";
 }
 
 function showRegister() {
     loginBox.style.display = "none";
-    forgotBox.style.display = "none";
     registerBox.style.display = "block";
 }
 
-function showForgot() {
-    loginBox.style.display = "none";
-    forgotBox.style.display = "block";
+// TOGGLE SIDEBAR
+function toggleSidebar() {
+    const sb = document.getElementById("sidebar");
+    sb.style.width = sb.style.width === "250px" ? "0" : "250px";
 }
 
-// ================= AUTH =================
-async function registerTeacher() {
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPassword").value;
-
-    if (!email || !password) {
-        alert("Please fill all fields");
-        return;
-    }
-
-    try {
-        console.log("Connecting to:", `${API}/auth/register`);
-        const res = await fetch(`${API}/auth/register`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-            alert(data.message || "Registered Successfully!");
-            showLogin();
-        } else {
-            alert(data.message || "Registration Failed");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Backend not connected. Check console.");
-    }
+// SHOW PAGE
+function showPage(pageId) {
+    document.getElementById("createExam").style.display = "none";
+    document.getElementById("addStudent").style.display = "none";
+    document.getElementById(pageId).style.display = "block";
+    toggleSidebar();
 }
 
+// LOGIN TEACHER
 async function loginTeacher() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
@@ -100,43 +59,39 @@ async function loginTeacher() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         });
-
         const data = await res.json();
+
         if (data.token) {
             localStorage.setItem("token", data.token);
-            // Dashboard hide karke panel dikhane ka logic
-            document.getElementById("teacherAuth").style.display = "none";
-            document.getElementById("teacherPanel").style.display = "block";
+            hideAll();
+            teacherPanel.style.display = "block"; // Login ke baad Dashboard dikhao
+            alert("Login Successful!");
         } else {
-            alert(data.msg || "Login Failed");
+            alert(data.msg || "Invalid Credentials");
         }
-    } catch (e) {
-        alert("Login Error");
+    } catch (err) {
+        alert("Backend not connected");
     }
 }
 
-
-
-// Sidebar kholne aur band karne ke liye
-function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    if (sidebar.style.width === "250px") {
-        sidebar.style.width = "0";
-    } else {
-        sidebar.style.width = "250px";
-    }
+// LOGOUT
+function logout() {
+    localStorage.removeItem("token");
+    location.reload(); // Page refresh karke wapas home par
 }
 
-// Menu ke buttons par click karne par section badalne ke liye
-function showPage(pageId) {
-    // Pehle saari window chhupao
-    document.getElementById("welcomeNote").style.display = "none";
-    document.getElementById("createExam").style.display = "none";
-    document.getElementById("addStudent").style.display = "none";
-    
-    // Jo manga hai use dikhao
-    document.getElementById(pageId).style.display = "block";
-    
-    // Sidebar band kar do section change hone ke baad
-    toggleSidebar();
+// REGISTER TEACHER (Pehle wala function)
+async function registerTeacher() {
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+    try {
+        const res = await fetch(`${API}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        alert(data.message || "Registered!");
+        showLogin();
+    } catch (err) { alert("Error"); }
 }
