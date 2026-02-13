@@ -177,24 +177,30 @@ body {
     text-decoration: underline;
 }
 
-.password-container {
+/* Container jo input aur icon ko sath rakhega */
+.password-wrapper {
     position: relative;
-    width: 95%; /* Aapke purane input ki width ke hisab se */
-    margin: 10px auto;
+    width: 90%;      /* Aapke email input ke barabar width */
+    margin: 10px auto; /* Center karne ke liye */
 }
 
-.password-container input {
+.password-wrapper input {
     width: 100%;
-    padding-right: 40px; /* Icon ke liye jagah */
-    box-sizing: border-box;
+    padding: 10px;
+    padding-right: 40px; /* Right side mein jagah taki text eye icon ke piche na jaye */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Padding ko width ke andar rakhega */
 }
 
-.toggle-password {
+/* Eye icon ki position box ke andar */
+.eye-icon {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%); /* Vertical center karne ke liye */
     cursor: pointer;
     font-size: 18px;
-    user-select: none;
+    color: #555;
+    z-index: 10;
 }
