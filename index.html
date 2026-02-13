@@ -30,10 +30,10 @@
             <h2>Teacher Login</h2>
             <input type="email" id="loginEmail" placeholder="Email">
             
-            <div class="password-container">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <span class="toggle-password" onclick="togglePass('loginPassword')">👁️</span>
-    </div>
+           <div class="password-wrapper">
+               <input type="password" id="loginPassword" placeholder="Password">
+               <span class="eye-icon" onclick="togglePass('loginPassword')">👁️</span>
+           </div>
             
             <button class="primary-btn" onclick="loginTeacher()">Login</button>
             <p>Don't have an account? <span class="link" onclick="showRegister()">Register</span></p>
@@ -42,10 +42,10 @@
         <div id="registerBox" class="auth-box" style="display:none;">
             <h2>Teacher Register</h2>
             <input type="email" id="regEmail" placeholder="Email">
-            <div class="password-container">
-        <input type="password" id="regPassword" placeholder="Password">
-        <span class="toggle-password" onclick="togglePass('regPassword')">👁️</span>
-    </div>
+            <div class="password-wrapper">
+                <input type="password" id="regPassword" placeholder="Password">
+                <span class="eye-icon" onclick="togglePass('regPassword')">👁️</span>
+            </div>
             <button class="primary-btn" onclick="registerTeacher()">Register</button>
             <p>Already registered? <span class="link" onclick="showLogin()">Login</span></p>
         </div>
@@ -89,4 +89,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
