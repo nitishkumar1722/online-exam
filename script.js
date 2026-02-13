@@ -206,7 +206,7 @@ async function loadStudentExams() {
 
 
 
-function togglePassword(id) {
+window.togglePassword = function(id) {
   const input = document.getElementById(id);
 
   if (input.type === "password") {
@@ -215,4 +215,3 @@ function togglePassword(id) {
     input.type = "password";
   }
 }
-
