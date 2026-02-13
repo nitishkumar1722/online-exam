@@ -53,6 +53,11 @@ window.navigateTo = function(hash) {
     closeSidebar(); 
 };
 
+window.logout = function() {
+    localStorage.removeItem("token");
+    window.location.hash = "";
+    location.reload();
+};
 // --- 2. FORGOT PASSWORD ---
 window.resetPassword = async function() {
     const email = document.getElementById("resetEmail").value;
@@ -108,3 +113,4 @@ function closeSidebar() {
     const sb = document.getElementById("sidebar");
     if (sb) sb.style.width = "0";
 }
+
