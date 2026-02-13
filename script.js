@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  const API = "https://exam-backend-production-407b.up.railway.app";
+  const API = "https://exam-backend-production-407b.up.railway.app/api";
   
   const dashboard = document.getElementById("dashboard");
   const teacherAuth = document.getElementById("teacherAuth");
@@ -215,4 +215,5 @@ window.togglePassword = function(id) {
     input.type = "password";
   }
 }
+
 
