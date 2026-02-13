@@ -1,172 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exam Portal</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Exam Portal</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1 class="mainTitle">Online Exam Portal</h1>
+    <h1 class="main-title">Online Exam Portal</h1>
 
-<!-- ================= DASHBOARD ================= -->
-<div class="dashboardContainer" id="dashboard">
-
-  <div class="card teacherCard" onclick="openTeacherAuth()">
-    <h3>👨‍🏫 Teacher</h3>
-    <p>Manage exams & students</p>
-  </div>
-
-  <div class="card studentCard" onclick="openStudentLogin()">
-    <h3>👨‍🎓 Student</h3>
-    <p>Attend exams</p>
-  </div>
-
-</div>
-
-
-<!-- ================= TEACHER AUTH ================= -->
-<div id="teacherAuth" style="display:none;">
-  <button onclick="goHome()">← Back</button>
-
-  <!-- REGISTER -->
-  <div id="registerBox">
-    <h3>Register Teacher</h3>
-
-    <input type="email" id="regEmail" placeholder="Email">
-   <div style="position:relative;">
-  <input type="password" id="regPassword" placeholder="Password">
-  <span onclick="togglePassword('regPassword')" 
-        style="position:absolute;right:10px;top:8px;cursor:pointer;">
-    👁
-  </span>
-</div>
-    <button onclick="registerTeacher()">Register</button>
-
-    <p>
-      Already Registered?
-      <button onclick="showLogin()">Login</button>
-    </p>
-  </div>
-
-
-
-  
-  <!-- LOGIN -->
-  <div id="loginBox" style="display:none;">
-    <h3>Teacher Login</h3>
-
-    <input type="email" id="loginEmail" placeholder="Email">
-   <div style="position:relative;">
-  <input type="password" id="loginPassword" placeholder="Password">
-  <span onclick="togglePassword('loginPassword')" 
-        style="position:absolute;right:10px;top:8px;cursor:pointer;">
-    👁
-  </span>
-</div>
-    <button onclick="loginTeacher()">Login</button>
-
-    <p>
-      Forgot Password?
-      <button onclick="showForgot()">Reset</button>
-    </p>
-
-    <p>
-      New Teacher?
-      <button onclick="showRegister()">Register</button>
-    </p>
-  </div>
-
-
-
-  
-  <!-- FORGOT -->
-  <div id="forgotBox" style="display:none;">
-    <h3>Reset Password</h3>
-
-    <input type="email" id="forgotEmail" placeholder="Email">
-    <input type="password" id="newPassword" placeholder="New Password">
-    <button onclick="resetPassword()">Update</button>
-  </div>
-</div>
-
-
-
-
-
-  
-<!-- ================= TEACHER PANEL ================= -->
-<div class="top-header">
-    <div class="menu-btn" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    <h2 class="portal-title">Teacher Dashboard</h2>
-</div>
-
-<div id="sidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>
-    <div class="sidebar-links">
-        <button onclick="showPage('createExam')">📝 Create Exam</button>
-        <button onclick="showPage('addStudent')">👨‍🎓 Add Student</button>
-        <button onclick="showPage('viewData')">📊 View Records</button>
-        <hr>
-        <button onclick="logout()" class="logout-link">🚪 Logout</button>
-    </div>
-</div>
-
-<div id="main-content" class="main-container">
-    <div id="welcomeNote">
-        <h1>Welcome, Teacher!</h1>
-        <p>Menu bar se option select karein.</p>
+    <div id="dashboard" class="home-grid">
+        <div class="card teacher-card" onclick="openTeacherAuth()">
+            <span>🏫</span>
+            <h3>Teacher</h3>
+            <p>Manage exams & students</p>
+        </div>
+        <div class="card student-card" onclick="openStudentLogin()">
+            <span>🎓</span>
+            <h3>Student</h3>
+            <p>Attend exams</p>
+        </div>
     </div>
 
-    <div id="createExam" class="page-section" style="display:none;">
-        <h3>Create New Exam</h3>
-        <input type="text" id="examTitle" placeholder="Exam Title">
-        <input type="number" id="examDuration" placeholder="Duration (min)">
-        <button class="action-btn" onclick="createExam()">Create Now</button>
+    <div id="teacherAuth" style="display:none;">
+        <button class="back-btn" onclick="goHome()">← Back</button>
+        
+        <div id="loginBox" class="auth-box">
+            <h2>Teacher Login</h2>
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button class="primary-btn" onclick="loginTeacher()">Login</button>
+            <p>Don't have an account? <span class="link" onclick="showRegister()">Register</span></p>
+        </div>
+
+        <div id="registerBox" class="auth-box" style="display:none;">
+            <h2>Teacher Register</h2>
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Password">
+            <button class="primary-btn" onclick="registerTeacher()">Register</button>
+            <p>Already registered? <span class="link" onclick="showLogin()">Login</span></p>
+        </div>
     </div>
 
-    <div id="addStudent" class="page-section" style="display:none;">
-        <h3>Register New Student</h3>
-        <input type="text" id="studentName" placeholder="Full Name">
-        <input type="text" id="studentReg" placeholder="Registration Number">
-        <button class="action-btn" onclick="addStudent()">Add to List</button>
+    <div id="teacherPanel" style="display:none;">
+        <div class="top-header">
+            <div class="menu-btn" onclick="toggleSidebar()">
+                <span></span><span></span><span></span>
+            </div>
+            <h2 class="portal-title">Teacher Dashboard</h2>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+
+        <div id="sidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>
+            <div class="sidebar-links">
+                <button onclick="showPage('createExam')">📝 Create Exam</button>
+                <button onclick="showPage('addStudent')">👨‍🎓 Add Student</button>
+            </div>
+        </div>
+
+        <div id="main-content" class="container">
+            <div id="createExam" class="page-section">
+                <h3>Create New Exam</h3>
+                <input type="text" id="examTitle" placeholder="Exam Title">
+                <input type="number" id="examDuration" placeholder="Duration (min)">
+                <button class="action-btn" onclick="createExam()">Create Exam</button>
+            </div>
+
+            <div id="addStudent" class="page-section" style="display:none;">
+                <h3>Register New Student</h3>
+                <input type="text" id="studentName" placeholder="Student Name">
+                <input type="text" id="studentReg" placeholder="Registration No">
+                <button class="action-btn" onclick="addStudent()">Add Student</button>
+            </div>
+            <div id="teacherOutput"></div>
+        </div>
     </div>
-</div>
 
-
-
-
-  
-<!-- ================= STUDENT LOGIN ================= -->
-<div id="studentLogin" style="display:none;">
-  <button onclick="goHome()">← Back</button>
-  <h3>Student Login</h3>
-
-  <input type="text" id="studentLoginName" placeholder="Name">
-  <input type="text" id="studentLoginReg" placeholder="Registration No">
-  <button onclick="studentLogin()">Login</button>
-</div>
-
-
-<!-- ================= STUDENT PANEL ================= -->
-<div id="studentPanel" style="display:none;">
-  <button onclick="logout()">Logout</button>
-  <h2>Student Dashboard</h2>
-
-  <div id="studentExamList"></div>
-</div>
-
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
-
-
-
