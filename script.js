@@ -95,3 +95,17 @@ async function registerTeacher() {
         showLogin();
     } catch (err) { alert("Error"); }
 }
+
+
+function togglePass(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling; // Span icon ko select karega
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.innerText = "🔒"; // Band aankh ya lock ka icon
+    } else {
+        input.type = "password";
+        icon.innerText = "👁️"; // Khuli aankh ka icon
+    }
+}
