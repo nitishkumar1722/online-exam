@@ -10,7 +10,7 @@ body {
     text-align: center;
     margin-top: 20px;
     color: #333;
-}
+} 
 
 /* --- Home Page Cards --- */
 .home-grid {
@@ -204,3 +204,4 @@ body {
     color: #555;
     z-index: 10;
 }
+
