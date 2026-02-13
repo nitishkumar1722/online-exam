@@ -60,18 +60,31 @@ function showForgot() {
 // ================= AUTH =================
 
 async function registerTeacher() {
+
   const email = document.getElementById("regEmail").value;
   const password = document.getElementById("regPassword").value;
 
-  const res = await fetch(`${API}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+  if (!email || !password) {
+    alert("Fill all fields");
+    return;
+  }
 
-  const data = await res.json();
-  alert(data.message || "Registered");
-  showLogin();
+  try {
+    const res = await fetch(`${API}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    alert(data.message || "Registered Successfully");
+    showLogin();
+
+  } catch (error) {
+    console.log(error);
+    alert("Backend not connected");
+  }
 }
 
 
@@ -193,4 +206,13 @@ async function loadStudentExams() {
 
 
 
+function togglePassword(id) {
+  const input = document.getElementById(id);
+
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+}
 
