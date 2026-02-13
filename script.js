@@ -59,34 +59,47 @@ function showForgot() {
 
 // ================= AUTH =================
 
+// Sabse upar check karein ki API URL sahi hai (Bina kisi extra space ke)
 async function registerTeacher() {
-
   const email = document.getElementById("regEmail").value;
   const password = document.getElementById("regPassword").value;
 
+  // 1. Basic Validation
   if (!email || !password) {
-    alert("Fill all fields");
+    alert("Please fill all fields");
     return;
   }
 
   try {
+    console.log("Attempting to register at:", `${API}/auth/register`);
+
     const res = await fetch(`${API}/auth/register`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json" 
+      },
       body: JSON.stringify({ email, password })
     });
 
+    // 2. Response Check
     const data = await res.json();
 
-    alert(data.message || "Registered Successfully");
-    showLogin();
+    if (res.ok) {
+      alert(data.message || "Registered Successfully!");
+      showLogin(); // Login box par le jayein
+    } else {
+      // Agar backend ne error bheja (e.g. Email already exists)
+      alert(data.message || data.msg || "Registration Failed");
+    }
 
   } catch (error) {
-    console.log(error);
-    alert("Backend not connected");
+    // 3. Connection Error Check
+    console.error("Detailed Connection Error:", error);
+    
+    // Agar error "Failed to fetch" hai, toh iska matlab CORS ya URL galat hai
+    alert("Cannot connect to Backend. Please check: \n1. Internet Connection \n2. Backend URL in script.js \n3. If CORS is enabled in server.js");
   }
 }
-
 
 async function loginTeacher() {
   const email = document.getElementById("loginEmail").value;
@@ -215,5 +228,6 @@ window.togglePassword = function(id) {
     input.type = "password";
   }
 }
+
 
 
