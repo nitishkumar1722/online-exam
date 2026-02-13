@@ -1,107 +1,96 @@
 const API = "https://exam-backend-production-407b.up.railway.app/api";
 
-// --- 1. INITIALIZATION & ROUTING ---
-
-// Jab page load ho ya refresh ho
+// --- 1. PAGE LOAD & NAVIGATION LOGIC ---
 window.addEventListener("load", handleLocation);
-
-// Jab mobile ka back button ya browser back/forward dabaya jaye
 window.addEventListener("hashchange", handleLocation);
 
 function handleLocation() {
     const path = window.location.hash;
     const token = localStorage.getItem("token");
 
-    // Security Check: Agar token nahi hai aur koi andar ke page par jana chahe
-    if (!token && path !== "" && path !== "#teacherAuth" && path !== "#studentLogin") {
+    // Security: Login ke bina dashboard block karna
+    if (!token && path !== "" && path !== "#teacherAuth" && path !== "#forgotPass") {
         window.location.hash = "";
         goHome();
         return;
     }
 
-    // Agar user login nahi hai
     if (!token) {
         if (path === "#teacherAuth") {
             hideAll();
             document.getElementById("teacherAuth").style.display = "block";
+            showLoginBox();
+        } else if (path === "#forgotPass") {
+            showForgotBox();
         } else {
             goHome();
         }
         return;
     }
 
-    // Agar user login hai, dashboard dikhao
+    // Dashboard dikhao
     hideAll();
     document.getElementById("teacherPanel").style.display = "block";
 
-    // Hash ke hisab se sahi section load karo
-    if (path === "#addStudent") {
-        showSection('addStudent');
-    } else if (path === "#createExam") {
-        showSection('createExam');
-    } else {
-        showSection('welcomeNote'); // Default dashboard screen
+    // Sections toggle (Add Student / Create Exam)
+    const sections = ['welcomeNote', 'createExam', 'addStudent'];
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.display = (path === "#" + id) ? "block" : "none";
+        }
+    });
+
+    // Default view
+    if (path === "" || path === "#welcomeNote") {
+        document.getElementById("welcomeNote").style.display = "block";
     }
 }
 
-// URL change karne ke liye (Buttons ke liye)
+// Sidebar links ke liye function
 window.navigateTo = function(hash) {
     window.location.hash = hash;
+    closeSidebar(); 
 };
 
-// --- 2. AUTHENTICATION FUNCTIONS ---
-
-window.loginTeacher = async function() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+// --- 2. FORGOT PASSWORD ---
+window.resetPassword = async function() {
+    const email = document.getElementById("resetEmail").value;
+    if (!email) return alert("Email fill karein!");
 
     try {
-        const res = await fetch(`${API}/auth/login`, {
+        const res = await fetch(`${API}/auth/reset-password`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email })
         });
         const data = await res.json();
-
-        if (data.token) {
-            localStorage.setItem("token", data.token);
-            window.location.hash = "#welcomeNote"; // Dashboard par bhej do
-        } else {
-            alert(data.msg || "Login Failed");
-        }
+        alert(data.msg || "Reset link sent!");
+        navigateTo("#teacherAuth");
     } catch (err) {
-        alert("Server error! Please try again.");
+        alert("Server error!");
     }
 };
 
-window.logout = function() {
-    localStorage.removeItem("token");
-    window.location.hash = ""; // URL saaf karo
-    location.reload(); // App reset karo
+window.showForgotBox = function() {
+    hideAll();
+    document.getElementById("teacherAuth").style.display = "block";
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("registerBox").style.display = "none";
+    document.getElementById("forgotBox").style.display = "block";
 };
 
-// --- 3. UI DISPLAY FUNCTIONS ---
-
-window.showSection = function(id) {
-    // Saare dashboard sections ki list
-    const sections = ['welcomeNote', 'createExam', 'addStudent'];
-    sections.forEach(s => {
-        const el = document.getElementById(s);
-        if (el) el.style.display = "none";
-    });
-    
-    // Target section dikhao
-    const target = document.getElementById(id);
-    if (target) target.style.display = "block";
-};
+// --- 3. UI HELPERS ---
+function showLoginBox() {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("registerBox").style.display = "none";
+    if (document.getElementById("forgotBox")) document.getElementById("forgotBox").style.display = "none";
+}
 
 window.hideAll = function() {
     document.getElementById("dashboard").style.display = "none";
     document.getElementById("teacherAuth").style.display = "none";
     document.getElementById("teacherPanel").style.display = "none";
-    if (document.getElementById("studentLogin")) {
-        document.getElementById("studentLogin").style.display = "none";
-    }
 };
 
 window.goHome = function() {
@@ -110,36 +99,12 @@ window.goHome = function() {
     document.getElementById("dashboard").style.display = "flex";
 };
 
-window.openTeacherAuth = function() {
-    hideAll();
-    window.location.hash = "#teacherAuth";
-    document.getElementById("teacherAuth").style.display = "block";
-    showLoginBox();
-};
-
-function showLoginBox() {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("registerBox").style.display = "none";
-}
-
-// --- 4. UTILS & HELPERS ---
-
-window.togglePass = function(inputId) {
-    const input = document.getElementById(inputId);
-    const icon = input.nextElementSibling; 
-
-    if (input.type === "password") {
-        input.type = "text";
-        icon.innerText = "🔒"; 
-    } else {
-        input.type = "password";
-        icon.innerText = "👁️"; 
-    }
-};
-
 window.toggleSidebar = function() {
     const sb = document.getElementById("sidebar");
-    if (sb) {
-        sb.style.width = sb.style.width === "250px" ? "0" : "250px";
-    }
+    sb.style.width = (sb.style.width === "250px") ? "0" : "250px";
 };
+
+function closeSidebar() {
+    const sb = document.getElementById("sidebar");
+    if (sb) sb.style.width = "0";
+}
