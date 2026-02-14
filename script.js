@@ -141,12 +141,10 @@ window.toggleSidebar = function() {
 };
 
 // --- 4. EXAM & QUESTION LOGIC ---
-
 window.parseBulkQuestions = function() {
     const text = document.getElementById("bulkQuestions").value;
     const lines = text.split("\n");
     const questionsList = document.getElementById("questionsList");
-    
     let html = "";
     let processedQuestions = [];
 
@@ -154,29 +152,22 @@ window.parseBulkQuestions = function() {
         if (line.trim() === "") return;
         const parts = line.split("|").map(p => p.trim());
 
-        // Check karein ki kam se kam Question + 4 Options + AnsIndex ho (Total 6 parts)
         if (parts.length >= 6) {
-            const questionObj = {
+            processedQuestions.push({
                 text: parts[0],
                 options: [parts[1], parts[2], parts[3], parts[4]],
                 answer: parts[5],
                 type: 'mcq'
-            };
-            processedQuestions.push(questionObj);
-
-            // Preview UI mein options aur answer bhi jodiye
+            });
+            // Yahan preview mein options bhi jodein
             html += `
-                <div class="q-preview" style="background: #f0f8ff; padding: 10px; margin-bottom: 5px; border-radius: 5px;">
+                <div class="q-preview" style="background:#f9f9f9; padding:10px; margin:5px; border-radius:5px; border-left:3px solid #007bff;">
                     <strong>Q${index + 1}:</strong> ${parts[0]} <br>
-                    <span style="font-size: 0.9em; color: #555;">
-                        A: ${parts[1]} | B: ${parts[2]} | C: ${parts[3]} | D: ${parts[4]} <br>
-                        <b style="color: green;">Correct Ans Index: ${parts[5]}</b>
-                    </span>
-                </div>
-            `;
+                    <small>A: ${parts[1]} | B: ${parts[2]} | C: ${parts[3]} | D: ${parts[4]}</small> <br>
+                    <span style="color:green">Ans Index: ${parts[5]}</span>
+                </div>`;
         }
     });
-
     questionsList.innerHTML = html;
     window.currentExamQuestions = processedQuestions;
 };
@@ -303,4 +294,5 @@ window.loadAvailableExams = async function() {
         listDiv.innerHTML = html || "No exams available.";
     } catch (err) { listDiv.innerHTML = "Error loading exams."; }
 };
+
 
