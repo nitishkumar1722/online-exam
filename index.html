@@ -81,6 +81,13 @@
             <div id="createExam" class="page-section">
                 <h3>Create New Exam</h3>
                 <input type="text" id="examTitle" placeholder="Exam Title">
+                
+                <div class="bulk-section">
+                <h4>Bulk Add MCQs (Super Fast)</h4>
+                <p style="font-size: 12px; color: gray;">Format: Question | Opt1 | Opt2 | Opt3 | Opt4 | AnsIndex(0-3)</p>
+                <textarea id="bulkQuestions" rows="10" style="width: 100%;" placeholder="Example: What is 2+2? | 3 | 4 | 5 | 6 | 1"></textarea>
+                <button class="secondary-btn" onclick="parseBulkQuestions()">Process Questions</button>
+                </div>
                 <input type="number" id="examDuration" placeholder="Duration (min)">
                 <div id="questionsContainer">
                 <h4>Questions</h4>
@@ -119,6 +126,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
