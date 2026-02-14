@@ -249,3 +249,44 @@ window.submitStudent = async function() {
     } catch (err) { alert("Error adding student"); }
 };
 
+
+
+// 1. Student jab registration no. se login karega
+window.studentAuth = async function() {
+    const regNo = document.getElementById("stuRegNo").value;
+    const password = document.getElementById("stuPass").value;
+
+    try {
+        const res = await fetch(`${API}/students/auth`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ regNo, password })
+        });
+        const data = await res.json();
+        
+        if(data.token) {
+            localStorage.setItem("stuToken", data.token); // Student token alag rakhein
+            window.location.hash = "#studentDashboard";
+        } else { alert(data.msg); }
+    } catch (err) { alert("Server error! Backend check karein."); }
+};
+
+// 2. Available Exams dikhana
+window.loadAvailableExams = async function() {
+    const listDiv = document.getElementById("availableExamsList");
+    try {
+        const res = await fetch(`${API}/exams/all`, {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("stuToken")}` }
+        });
+        const exams = await res.json();
+        
+        let html = exams.map(e => `
+            <div class="exam-card">
+                <h3>${e.title}</h3>
+                <p>Duration: ${e.duration} mins</p>
+                <button onclick="startExam('${e._id}', ${e.duration})">Start Exam</button>
+            </div>
+        `).join('');
+        listDiv.innerHTML = html || "No exams available.";
+    } catch (err) { listDiv.innerHTML = "Error loading exams."; }
+};
