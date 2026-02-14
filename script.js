@@ -246,3 +246,72 @@ window.studentAuth = async function() {
 // sections.forEach(id => { ... add 'myExams' to the list ... });
 
 
+
+window.parseBulkQuestions = function() {
+    const text = document.getElementById("bulkQuestions").value;
+    const lines = text.split("\n"); // Har line ek sawal hai
+    const questionsList = document.getElementById("questionsList");
+    
+    let html = "";
+    let processedQuestions = [];
+
+    lines.forEach((line, index) => {
+        if (line.trim() === "") return;
+
+        // Pipe (|) ke basis par todna
+        const parts = line.split("|").map(p => p.trim());
+
+        if (parts.length >= 6) {
+            const questionObj = {
+                text: parts[0],
+                options: [parts[1], parts[2], parts[3], parts[4]],
+                answer: parts[5], // Correct Option ka index (0, 1, 2, 3)
+                type: 'mcq'
+            };
+            processedQuestions.push(questionObj);
+
+            // UI par preview dikhane ke liye
+            html += `
+                <div class="q-preview">
+                    <strong>Q${index + 1}:</strong> ${parts[0]} <br>
+                    <small>A: ${parts[1]}, B: ${parts[2]}, C: ${parts[3]}, D: ${parts[4]} | <b>Ans: ${parts[5]}</b></small>
+                </div>
+            `;
+        }
+    });
+
+    questionsList.innerHTML = html;
+    // Data ko global variable mein save karein taaki saveExam() use kar sake
+    window.currentExamQuestions = processedQuestions;
+    alert(`${processedQuestions.length} Questions processed! Check preview below.`);
+};
+
+// Save function ko update karein taaki wo window.currentExamQuestions ko pick kare
+window.saveExam = async function() {
+    const title = document.getElementById("examTitle").value;
+    const duration = document.getElementById("examDuration").value;
+    
+    if(!window.currentExamQuestions || window.currentExamQuestions.length === 0) {
+        return alert("Pehle questions process karein!");
+    }
+
+    const examData = {
+        title,
+        duration,
+        questions: window.currentExamQuestions
+    };
+
+    try {
+        const res = await fetch(`${API}/exams/create`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify(examData)
+        });
+        alert("Exam Created with " + window.currentExamQuestions.length + " questions!");
+        navigateTo('#myExams');
+    } catch (err) { alert("Error saving exam"); }
+};
+
