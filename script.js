@@ -10,6 +10,15 @@ function handleLocation() {
 
     // Guest Pages (Bina login wale)
     const guestPages = ["#dashboard", "#teacherAuth", "#studentLogin", "#forgotPass"];
+    const sections = ['welcomeNote', 'createExam', 'addStudent', 'myExams']; // myExams yaha add karein
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (path === "#" + id) ? "block" : "none";
+    });
+    if (path === "#myExams") {
+        loadMyExams();
+    }
+}
 
     if (!token && !guestPages.includes(path)) {
         window.location.hash = "#dashboard";
@@ -183,16 +192,41 @@ window.submitStudent = async function() {
 
 // --- 3. TEACHER'S VISIBLE EXAMS ---
 window.loadMyExams = async function() {
+    const examListDiv = document.getElementById("examList");
+    examListDiv.innerHTML = "<p>Loading your exams...</p>";
+
     try {
         const res = await fetch(`${API}/exams/my-exams`, {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            method: "GET",
+            headers: { 
+                "Authorization": `Bearer ${localStorage.getItem("token")}` 
+            }
         });
         const exams = await res.json();
-        let html = exams.map(e => `<div class="exam-card"><h4>${e.title}</h4><p>${e.duration} mins</p></div>`).join('');
-        document.getElementById("examList").innerHTML = html || "No exams found.";
-    } catch (err) { console.log("Error loading exams"); }
-};
 
+        if (exams.length === 0) {
+            examListDiv.innerHTML = "<p>Aapne abhi tak koi exam create nahi kiya hai.</p>";
+            return;
+        }
+
+        // Exam cards generate karna
+        let html = "";
+        exams.forEach(exam => {
+            html += `
+                <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-left:5px solid #28a745; border-radius:8px;">
+                    <h4>Title: ${exam.title}</h4>
+                    <p><b>Duration:</b> ${exam.duration} mins</p>
+                    <p><b>Total Questions:</b> ${exam.questions.length}</p>
+                    <button class="delete-btn" onclick="deleteExam('${exam._id}')" style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer;">Delete</button>
+                </div>
+            `;
+        });
+        examListDiv.innerHTML = html;
+    } catch (err) {
+        examListDiv.innerHTML = "<p style='color:red;'>Exams load karne mein dikkat aa rahi hai.</p>";
+        console.error("Load Exam Error:", err);
+    }
+};
 
 // --- 4. STUDENT PASSWORD SETUP ---
 window.studentAuth = async function() {
@@ -287,3 +321,13 @@ window.saveExam = async function() {
 };
 
 
+window.deleteExam = async function(id) {
+    if(!confirm("Kya aap is exam ko delete karna chahte hain?")) return;
+    try {
+        await fetch(`${API}/exams/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+        loadMyExams(); // List refresh karo
+    } catch (err) { alert("Delete fail ho gaya"); }
+};
