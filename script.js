@@ -8,59 +8,57 @@ function handleLocation() {
     const path = window.location.hash || "#dashboard";
     const token = localStorage.getItem("token");
 
-    // Guest Pages (Bina login wale)
-    const guestPages = ["#dashboard", "#teacherAuth", "#studentLogin", "#forgotPass"];
-    const sections = ['welcomeNote', 'createExam', 'addStudent', 'myExams']; // myExams yaha add karein
-    sections.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = (path === "#" + id) ? "block" : "none";
-    });
-    if (path === "#myExams") {
-        loadMyExams();
-    }
-}
+    // 1. Pehle sab kuchh chhupao
+    hideAll();
 
+    // 2. Security Check
+    const guestPages = ["#dashboard", "#teacherAuth", "#studentLogin", "#forgotPass"];
     if (!token && !guestPages.includes(path)) {
         window.location.hash = "#dashboard";
         return;
     }
 
-    hideAll();
-
+    // 3. UI RENDERING LOGIC
     if (token) {
-        // Teacher Dashboard View
+        // Teacher Login hai toh Panel dikhao
         document.getElementById("teacherPanel").style.display = "block";
-        const sections = ['createExam', 'addStudent'];
+        
+        // Saare sections yahan list karein
+        const sections = ['welcomeNote', 'createExam', 'addStudent', 'myExams'];
         sections.forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.style.display = (path === "#" + id) ? "block" : "none";
+            if (el) {
+                el.style.display = (path === "#" + id) ? "block" : "none";
+            }
         });
-        // Default section agar dashboard par ho
-        if (path === "#dashboard" || path === "#teacherAuth") {
-            window.location.hash = "#createExam";
+
+        // Agar user direct Dashboard ya Auth page par aaye login ke baad
+        if (path === "#dashboard" || path === "#teacherAuth" || path === "#welcomeNote") {
+            // Default screen "createExam" rakhte hain ya welcomeNote
+            document.getElementById("welcomeNote").style.display = "block";
         }
+
+        // AGAR PATH #myExams HAI TO EXAMS LOAD KARO
+        if (path === "#myExams") {
+            loadMyExams();
+        }
+
     } else {
-        // Auth Pages View
+        // Login nahi hai toh Auth pages dikhao
         if (path === "#teacherAuth") {
             document.getElementById("teacherAuth").style.display = "block";
-            showLogin();
+            showLogin(); // Login box dikhao
         } else if (path === "#forgotPass") {
             document.getElementById("teacherAuth").style.display = "block";
-            showForgotBox();
+            showForgotBox(); // Forgot box dikhao
         } else if (path === "#studentLogin") {
-            // Student login div handle karein agar hai
+            const stuDiv = document.getElementById("studentLogin");
+            if(stuDiv) stuDiv.style.display = "block";
         } else {
             document.getElementById("dashboard").style.display = "flex";
         }
     }
 }
-
-window.navigateTo = function(hash) {
-    window.location.hash = hash;
-    const sb = document.getElementById("sidebar");
-    if (sb) sb.style.width = "0"; 
-};
-
 // --- 2. TEACHER AUTH FUNCTIONS ---
 
 window.loginTeacher = async function() {
@@ -190,44 +188,59 @@ window.submitStudent = async function() {
 };
 
 
-// --- 3. TEACHER'S VISIBLE EXAMS ---
+// --- MY EXAMS KO LOAD KARNE KA LOGIC ---
 window.loadMyExams = async function() {
     const examListDiv = document.getElementById("examList");
-    examListDiv.innerHTML = "<p>Loading your exams...</p>";
+    if (!examListDiv) return;
+
+    // Loading indicator dikhao
+    examListDiv.innerHTML = "<p style='text-align:center;'>Exams load ho rahe hain, kripya intezar karein...</p>";
 
     try {
         const res = await fetch(`${API}/exams/my-exams`, {
             method: "GET",
             headers: { 
-                "Authorization": `Bearer ${localStorage.getItem("token")}` 
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
             }
         });
+        
         const exams = await res.json();
 
-        if (exams.length === 0) {
-            examListDiv.innerHTML = "<p>Aapne abhi tak koi exam create nahi kiya hai.</p>";
+        // Agar koi exam nahi mila
+        if (!exams || exams.length === 0) {
+            examListDiv.innerHTML = `
+                <div style="text-align:center; padding:20px; border: 2px dashed #ccc;">
+                    <p>Aapne abhi tak koi exam nahi banaya hai.</p>
+                    <button onclick="navigateTo('#createExam')" class="primary-btn">Pehla Exam Banayein</button>
+                </div>`;
             return;
         }
 
-        // Exam cards generate karna
+        // HTML Cards generate karna
         let html = "";
         exams.forEach(exam => {
             html += `
-                <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-left:5px solid #28a745; border-radius:8px;">
-                    <h4>Title: ${exam.title}</h4>
-                    <p><b>Duration:</b> ${exam.duration} mins</p>
-                    <p><b>Total Questions:</b> ${exam.questions.length}</p>
-                    <button class="delete-btn" onclick="deleteExam('${exam._id}')" style="background:red; color:white; border:none; padding:5px 10px; cursor:pointer;">Delete</button>
+                <div class="exam-card" style="background:#fff; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 6px solid #4CAF50;">
+                    <h3 style="margin:0; color:#2c3e50;">${exam.title}</h3>
+                    <div style="margin: 10px 0; font-size: 14px; color: #555;">
+                        <span>⏱️ <b>Duration:</b> ${exam.duration} mins</span> | 
+                        <span>❓ <b>Questions:</b> ${exam.questions ? exam.questions.length : 0}</span>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="deleteExam('${exam._id}')" style="background:#e74c3c; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-weight:bold;">Delete</button>
+                        <button onclick="alert('Exam ID: ${exam._id}')" style="background:#3498db; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-weight:bold;">Details</button>
+                    </div>
                 </div>
             `;
         });
         examListDiv.innerHTML = html;
+
     } catch (err) {
-        examListDiv.innerHTML = "<p style='color:red;'>Exams load karne mein dikkat aa rahi hai.</p>";
-        console.error("Load Exam Error:", err);
+        console.error("Fetch Error:", err);
+        examListDiv.innerHTML = "<p style='color:red; text-align:center;'>⚠️ Server se connect nahi ho pa rahe. Internet check karein.</p>";
     }
 };
-
 // --- 4. STUDENT PASSWORD SETUP ---
 window.studentAuth = async function() {
     const regNo = document.getElementById("stuRegNo").value;
@@ -321,13 +334,23 @@ window.saveExam = async function() {
 };
 
 
+// --- EXAM DELETE KARNE KA LOGIC ---
 window.deleteExam = async function(id) {
-    if(!confirm("Kya aap is exam ko delete karna chahte hain?")) return;
+    if(!confirm("Kya aap wakayi is exam ko delete karna chahte hain?")) return;
+
     try {
-        await fetch(`${API}/exams/${id}`, {
+        const res = await fetch(`${API}/exams/${id}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
-        loadMyExams(); // List refresh karo
-    } catch (err) { alert("Delete fail ho gaya"); }
+        
+        if(res.ok) {
+            alert("Exam delete ho gaya!");
+            loadMyExams(); // List ko refresh karo
+        } else {
+            alert("Delete nahi ho paya.");
+        }
+    } catch (err) {
+        alert("Server error!");
+    }
 };
