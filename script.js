@@ -146,26 +146,39 @@ window.parseBulkQuestions = function() {
     const text = document.getElementById("bulkQuestions").value;
     const lines = text.split("\n");
     const questionsList = document.getElementById("questionsList");
+    
     let html = "";
     let processedQuestions = [];
 
     lines.forEach((line, index) => {
         if (line.trim() === "") return;
         const parts = line.split("|").map(p => p.trim());
+
+        // Check karein ki kam se kam Question + 4 Options + AnsIndex ho (Total 6 parts)
         if (parts.length >= 6) {
-            processedQuestions.push({
+            const questionObj = {
                 text: parts[0],
                 options: [parts[1], parts[2], parts[3], parts[4]],
                 answer: parts[5],
                 type: 'mcq'
-            });
-            html += `<div class="q-preview"><strong>Q${index + 1}:</strong> ${parts[0]}</div>`;
+            };
+            processedQuestions.push(questionObj);
+
+            // Preview UI mein options aur answer bhi jodiye
+            html += `
+                <div class="q-preview" style="background: #f0f8ff; padding: 10px; margin-bottom: 5px; border-radius: 5px;">
+                    <strong>Q${index + 1}:</strong> ${parts[0]} <br>
+                    <span style="font-size: 0.9em; color: #555;">
+                        A: ${parts[1]} | B: ${parts[2]} | C: ${parts[3]} | D: ${parts[4]} <br>
+                        <b style="color: green;">Correct Ans Index: ${parts[5]}</b>
+                    </span>
+                </div>
+            `;
         }
     });
 
     questionsList.innerHTML = html;
     window.currentExamQuestions = processedQuestions;
-    alert(`${processedQuestions.length} Questions processed!`);
 };
 
 window.saveExam = async function() {
@@ -290,3 +303,4 @@ window.loadAvailableExams = async function() {
         listDiv.innerHTML = html || "No exams available.";
     } catch (err) { listDiv.innerHTML = "Error loading exams."; }
 };
+
