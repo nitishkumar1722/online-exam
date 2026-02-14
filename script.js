@@ -277,22 +277,16 @@ window.studentAuth = async function() {
 
 // 2. Available Exams dikhana
 window.loadAvailableExams = async function() {
-    const listDiv = document.getElementById("availableExamsList");
     try {
-        const res = await fetch(`${API}/exams/all`, {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("stuToken")}` }
-        });
+        const res = await fetch(`${API}/exams/all`); // Sabhi exams lene ke liye
         const exams = await res.json();
-        
         let html = exams.map(e => `
             <div class="exam-card">
                 <h3>${e.title}</h3>
-                <p>Duration: ${e.duration} mins</p>
-                <button onclick="startExam('${e._id}', ${e.duration})">Start Exam</button>
-            </div>
-        `).join('');
-        listDiv.innerHTML = html || "No exams available.";
-    } catch (err) { listDiv.innerHTML = "Error loading exams."; }
-};
+                <button onclick="startExam('${e._id}')">Start Now</button>
+            </div>`).join('');
+        document.getElementById("availableExamsList").innerHTML = html;
+    } catch(err) { console.log("Exams load nahi huye"); }
+}
 
 
