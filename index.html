@@ -82,22 +82,44 @@
                 <h3>Create New Exam</h3>
                 <input type="text" id="examTitle" placeholder="Exam Title">
                 <input type="number" id="examDuration" placeholder="Duration (min)">
-                <button class="action-btn" onclick="createExam()">Create Exam</button>
+                <div id="questionsContainer">
+                <h4>Questions</h4>
+                <div id="questionsList"></div>
+                <button class="secondary-btn" onclick="addQuestionField('mcq')">+ Add MCQ</button>
+                <button class="secondary-btn" onclick="addQuestionField('subjective')">+ Add Subjective</button>
+                </div>
+    
+                <button class="action-btn" onclick="saveExam()" style="margin-top:20px;">Save & Publish Exam</button>
+                </div>
+                </div>
+                <div id="myExams" class="page-section" style="display:none;">
+                <h3>My Created Exams</h3>
+                <div id="examList">Loading exams...</div>
+             </div>
+
+
+        
+            <div id="addStudent" class="page-section" style="display:none;">
+            <h3>Register New Student</h3>
+            <input type="text" id="studentName" placeholder="Student Name">
+            <input type="text" id="studentReg" placeholder="Registration No (Unique)">
+            <button class="action-btn" onclick="submitStudent()">Add Student</button>
             </div>
 
-            <div id="addStudent" class="page-section" style="display:none;">
-                <h3>Register New Student</h3>
-                <input type="text" id="studentName" placeholder="Student Name">
-                <input type="text" id="studentReg" placeholder="Registration No">
-                <button class="action-btn" onclick="addStudent()">Add Student</button>
+            <div id="studentLogin" class="auth-box" style="display:none;">
+            <h2>Student Portal</h2>
+            <input type="text" id="stuRegNo" placeholder="Registration Number">
+            <input type="password" id="stuPass" placeholder="Set or Enter Password">
+            <button class="primary-btn" onclick="studentAuth()">Login / Set Password</button>
             </div>
             <div id="teacherOutput"></div>
-        </div>
-    </div>
+            </div>
+            </div>
 
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
