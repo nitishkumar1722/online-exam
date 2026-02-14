@@ -158,36 +158,7 @@ window.addQuestionField = function(type) {
     document.getElementById('questionsList').appendChild(qDiv);
 };
 
-window.saveExam = async function() {
-    const title = document.getElementById("examTitle").value;
-    const duration = document.getElementById("examDuration").value;
-    
-    // Yahan saare questions ko collect karenge
-    const qItems = document.querySelectorAll('.question-item');
-    let examData = { title, duration, questions: [] };
 
-    qItems.forEach(item => {
-        examData.questions.push({
-            text: item.querySelector('.q-text').value,
-            type: item.querySelector('.opt') ? 'mcq' : 'subjective',
-            options: item.querySelector('.opt') ? [item.querySelectorAll('.opt')[0].value, item.querySelectorAll('.opt')[1].value] : [],
-            answer: item.querySelector('.q-ans') ? item.querySelector('.q-ans').value : ""
-        });
-    });
-
-    try {
-        const res = await fetch(`${API}/exams/create`, {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify(examData)
-        });
-        alert("Exam Created Successfully!");
-        navigateTo('#myExams');
-    } catch (err) { alert("Error saving exam"); }
-};
 
 
 // --- 2. ADD STUDENT FIX ---
@@ -314,4 +285,5 @@ window.saveExam = async function() {
         navigateTo('#myExams');
     } catch (err) { alert("Error saving exam"); }
 };
+
 
