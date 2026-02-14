@@ -198,26 +198,29 @@ window.loadMyExams = async function() {
     try {
         const res = await fetch(`${API}/exams/my-exams`, {
             method: "GET",
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+            headers: { 
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json"
+            }
         });
-        const exams = await res.json();
-        if (!exams || exams.length === 0) {
-            examListDiv.innerHTML = "<p>No exams found.</p>";
+
+        // Agar response 200 (OK) nahi hai
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error("Backend Error:", errorData);
+            examListDiv.innerHTML = `<p style="color:red;">Server Error: ${errorData.msg || "Unauthorized"}</p>`;
             return;
         }
 
-        let html = "";
-        exams.forEach(exam => {
-            html += `
-                <div class="exam-card" style="border-left: 5px solid green; padding: 10px; margin: 10px 0; background: #f9f9f9;">
-                    <h3>${exam.title}</h3>
-                    <p>Duration: ${exam.duration} mins | Questions: ${exam.questions.length}</p>
-                    <button onclick="deleteExam('${exam._id}')">Delete</button>
-                </div>`;
-        });
-        examListDiv.innerHTML = html;
-    } catch (err) { examListDiv.innerHTML = "Error loading exams."; }
+        const exams = await res.json();
+        // Baki ka rendering logic...
+        
+    } catch (err) { 
+        console.error("Connection Error:", err);
+        examListDiv.innerHTML = "Internet/Server connection error."; 
+    }
 };
+
 
 window.deleteExam = async function(id) {
     if(!confirm("Delete this exam?")) return;
@@ -245,3 +248,4 @@ window.submitStudent = async function() {
         alert("Student Added!");
     } catch (err) { alert("Error adding student"); }
 };
+
