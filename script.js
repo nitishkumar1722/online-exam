@@ -136,12 +136,37 @@ window.copyExamId = (id) => {
 };
 
 
+window.submitStudent = async function() {
+    const name = document.getElementById("studentName").value;
+    const rollNo = document.getElementById("studentReg").value;
+    // Hum Exam ID prompt se mang sakte hain ya My Exams list se pick kar sakte hain
+    const examId = prompt("Pehle Exam ID paste karein (My Exams se copy karke):");
+
+    if(!name || !rollNo || !examId) return alert("Pura data daalo!");
+
+    const url = `${API}/student/add?name=${encodeURIComponent(name)}&rollNo=${rollNo}&examId=${examId}`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        alert(data.msg || data.message);
+        
+        // Input clear kar do
+        document.getElementById("studentName").value = "";
+        document.getElementById("studentReg").value = "";
+    } catch (err) {
+        alert("Server error! Railway check karo.");
+    }
+};
+
+
 
 // UI Helpers
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
