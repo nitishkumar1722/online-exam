@@ -120,18 +120,15 @@
             <input type="password" id="stuPass" placeholder="Set or Enter Password">
             <button class="primary-btn" onclick="studentAuth()">Login / Set Password</button>
             </div>
-       <div id="studentDashboard" class="container">
+      <div id="studentPanel" style="display:none;">
+    <div id="studentDashboard">
         <h2>Available Exams</h2>
-        <div id="availableExams">Loading exams...</div>
+        <div id="availableExams"></div>
     </div>
-
-    <div id="examWindow" class="container" style="display:none;">
-        <div id="examHeader" style="display:flex; justify-content:space-between; background:white; padding:10px; border-bottom:2px solid #eee;">
-            <h3 id="activeExamTitle">Exam</h3>
-            <h3 id="timer" style="color:red;">00:00</h3>
-        </div>
-        <div id="questionArea" style="padding:20px; background:white; margin-top:10px;"></div>
-        <button class="primary-btn" onclick="submitExam()">Finish Exam</button>
+    <div id="examWindow" style="display:none;">
+        <h3 id="timer"></h3>
+        <div id="questionArea"></div>
+        <button onclick="submitExam()">Finish</button>
     </div>
 </div>
             <div id="teacherOutput"></div>
@@ -141,6 +138,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
