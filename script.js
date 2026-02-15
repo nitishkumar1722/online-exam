@@ -1,64 +1,59 @@
 const API = "https://exam-backend-production-407b.up.railway.app/api";
 
-// --- 1. NAVIGATION SYSTEM ---
+// --- 1. CORE NAVIGATION ---
 function handleLocation() {
     const path = window.location.hash || "#dashboard";
     const token = localStorage.getItem("token");
     const stuToken = localStorage.getItem("stuToken");
 
-    // Pehle sab kuch hide karo
-    const allDivs = ["dashboard", "teacherAuth", "teacherPanel", "studentLogin", "studentPanel"];
-    allDivs.forEach(id => {
+    // Hide all main containers
+    ["dashboard", "teacherAuth", "teacherPanel", "studentLogin", "studentPanel"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = "none";
     });
 
-    // ROUTING LOGIC
     if (path === "#teacherAuth") {
         document.getElementById("teacherAuth").style.display = "block";
-        showLogin();
     } 
     else if (path === "#studentLogin") {
         document.getElementById("studentLogin").style.display = "block";
     } 
-    else if (token && path.startsWith("#")) {
-        // Teacher Sections
+    else if (token && path !== "#studentDashboard") {
         document.getElementById("teacherPanel").style.display = "block";
         const sections = ['welcomeNote', 'createExam', 'addStudent', 'myExams'];
         sections.forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.style.display = (path === "#" + id) ? "block" : "none";
+            if (el) el.style.display = (path === "#" + id || (path === "#dashboard" && id === 'welcomeNote')) ? "block" : "none";
         });
         if (path === "#myExams") loadMyExams();
-        if (path === "#dashboard") document.getElementById("welcomeNote").style.display = "block";
     } 
-    else if (stuToken && path === "#studentDashboard") {
+    else if (stuToken) {
         document.getElementById("studentPanel").style.display = "block";
-        document.getElementById("studentDashboard").style.display = "block";
-        loadStudentExams();
+        if (path === "#studentDashboard" || path === "#dashboard") {
+            document.getElementById("studentDashboard").style.display = "block";
+            document.getElementById("examWindow").style.display = "none";
+            loadStudentExams();
+        }
     } 
     else {
-        // Default Home Dashboard
         document.getElementById("dashboard").style.display = "flex";
     }
 }
 
-// Listen for hash changes
 window.addEventListener("hashchange", handleLocation);
 window.addEventListener("load", handleLocation);
 
-window.navigateTo = function(hash) {
-    window.location.hash = hash;
-};
+window.navigateTo = (hash) => window.location.hash = hash;
 
-window.goBack = function() {
-    if (localStorage.getItem("token")) window.location.hash = "#welcomeNote";
-    else if (localStorage.getItem("stuToken")) window.location.hash = "#studentDashboard";
+window.goBack = () => {
+    const token = localStorage.getItem("token");
+    const stuToken = localStorage.getItem("stuToken");
+    if (token) window.location.hash = "#welcomeNote";
+    else if (stuToken) window.location.hash = "#studentDashboard";
     else window.location.hash = "#dashboard";
 };
 
 // --- 2. TEACHER & STUDENT AUTH ---
-
 window.loginTeacher = async function() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
@@ -73,7 +68,7 @@ window.loginTeacher = async function() {
             localStorage.setItem("token", data.token);
             window.location.hash = "#welcomeNote";
         } else { alert(data.msg); }
-    } catch (err) { alert("Server error"); }
+    } catch (err) { alert("Server Error"); }
 };
 
 window.studentAuth = async function() {
@@ -86,59 +81,77 @@ window.studentAuth = async function() {
             body: JSON.stringify({ regNo, password })
         });
         const data = await res.json();
-        if(data.token) {
+        if (data.token) {
             localStorage.setItem("stuToken", data.token);
             window.location.hash = "#studentDashboard";
         } else { alert(data.msg); }
-    } catch (err) { alert("Student Login Failed"); }
+    } catch (err) { alert("Login Failed"); }
 };
 
-window.logout = function() {
+window.logout = () => {
     localStorage.clear();
     window.location.hash = "#dashboard";
     location.reload();
 };
 
-// --- 3. EXAM LOGIC ---
+// --- 3. EXAM & STUDENT MGMT ---
+window.parseBulkQuestions = function() {
+    const text = document.getElementById("bulkQuestions").value;
+    const lines = text.split("\n");
+    let html = "";
+    window.currentExamQuestions = [];
+    lines.forEach((line, i) => {
+        const p = line.split("|").map(s => s.trim());
+        if (p.length >= 6) {
+            window.currentExamQuestions.push({ text: p[0], options: [p[1], p[2], p[3], p[4]], answer: p[5] });
+            html += `<p>Q${i+1}: ${p[0]} (Ans Index: ${p[5]})</p>`;
+        }
+    });
+    document.getElementById("questionsList").innerHTML = html;
+};
 
 window.saveExam = async function() {
     const title = document.getElementById("examTitle").value;
     const duration = document.getElementById("examDuration").value;
-    if(!window.currentExamQuestions?.length) return alert("Add questions!");
-
     try {
-        const res = await fetch(`${API}/exams/create`, {
+        await fetch(`${API}/exams/create`, {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
             body: JSON.stringify({ title, duration, questions: window.currentExamQuestions })
         });
-        if(res.ok) {
-            alert("Exam Created!");
-            window.location.hash = "#myExams";
-        }
-    } catch (err) { alert("Save Error"); }
+        alert("Exam Saved!");
+        window.location.hash = "#myExams";
+    } catch (err) { alert("Error saving"); }
 };
 
 window.loadMyExams = async function() {
     const div = document.getElementById("examList");
-    if(!div) return;
-    div.innerHTML = "Loading...";
     try {
         const res = await fetch(`${API}/exams/my-exams`, {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
         const exams = await res.json();
         div.innerHTML = exams.map(e => `
-            <div style="border:1px solid #ddd; padding:10px; margin:10px; border-radius:5px;">
-                <h3>${e.title}</h3>
-                <p>Time: ${e.duration}m | Questions: ${e.questions.length}</p>
-                <button onclick="deleteExam('${e._id}')" style="color:red;">Delete</button>
+            <div class="exam-card" style="border:1px solid #ddd; padding:10px; margin:5px;">
+                <h4>${e.title}</h4>
+                <p>${e.questions.length} Questions</p>
             </div>
-        `).join('') || "No exams found.";
+        `).join('') || "No exams.";
     } catch (err) { div.innerHTML = "Error loading."; }
+};
+
+window.loadStudentExams = async function() {
+    const div = document.getElementById("availableExams");
+    try {
+        const res = await fetch(`${API}/exams/all`);
+        const exams = await res.json();
+        div.innerHTML = exams.map(e => `
+            <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin:10px;">
+                <h3>${e.title}</h3>
+                <button onclick="alert('Exam Started')">Start Exam</button>
+            </div>
+        `).join('') || "No exams available.";
+    } catch (err) { div.innerHTML = "Error fetching exams."; }
 };
 
 window.submitStudent = async function() {
@@ -147,18 +160,15 @@ window.submitStudent = async function() {
     try {
         await fetch(`${API}/students/add`, {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
             body: JSON.stringify({ name, regNo })
         });
-        alert("Student Added!");
-        document.getElementById("studentName").value = "";
-        document.getElementById("studentReg").value = "";
-    } catch (err) { alert("Add failed"); }
+        alert("Student Added Successfully!");
+    } catch (err) { alert("Error adding student"); }
 };
 
-// --- 4. HELPERS ---
-window.showRegister = () => { document.getElementById("loginBox").style.display = "none"; document.getElementById("registerBox").style.display = "block"; };
-window.showLogin = () => { document.getElementById("loginBox").style.display = "block"; document.getElementById("registerBox").style.display = "none"; };
+// --- UI HELPERS ---
+window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
+window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
+window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+window.togglePass = (id) => { const x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; };
