@@ -245,11 +245,47 @@ window.startExam = async function(examId) {
 };
 
 
+window.loadStudentPortal = async function(examId) {
+    if (!examId) {
+        document.getElementById("availableExams").innerHTML = "<p>Koi exam assigned nahi hai.</p>";
+        return;
+    }
+
+    const url = `${API}/exam/get-assigned?examId=${examId}`;
+
+    try {
+        const res = await fetch(url);
+        const exam = await res.json();
+
+        // Student Dashboard mein data bharna
+        const container = document.getElementById("availableExams");
+        container.innerHTML = `
+            <div class="exam-card" style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center;">
+                <h2 style="color: #2c3e50;">${exam.examTitle || "Untitled Exam"}</h2>
+                <p style="color: #7f8c8d;">Time: ${exam.duration} mins | Marks: ${exam.totalMarks}</p>
+                <button class="primary-btn" onclick="startOfficialExam('${exam._id}')">Start Exam Now</button>
+            </div>
+        `;
+    } catch (err) {
+        console.error("Error loading portal:", err);
+    }
+};
+
+// Exam start karne ka function jo blank screen ko hatayega
+window.startOfficialExam = async function(id) {
+    // Yahan hum wahi startExam wala logic use karenge jo questions render karta hai
+    navigateTo("#examWindow"); 
+    // ... baaki questions dikhane ka code yahan aayega
+};
+
+
+
 // UI Helpers
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
