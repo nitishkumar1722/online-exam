@@ -109,10 +109,13 @@
 
     <div id="studentPanel" style="display:none;" class="container">
     <div id="studentDashboard">
-        <h2>Your Assigned Exam</h2>
-        <div id="availableExams"><p>Loading your exam details...</p></div> 
-        <button onclick="logout()" class="logout-btn" style="margin-top:20px;">Logout</button>
+        <h2 style="text-align:center;">Assigned Exams</h2>
+        <div id="availableExams">
+            <p style="text-align:center;">Checking for exams...</p>
+        </div>
+        <button onclick="logout()" class="logout-btn" style="display:block; margin: 30px auto;">Logout</button>
     </div>
+</div>
 
     <div id="examWindow" style="display:none;">
         <h3 id="timer"></h3>
@@ -125,6 +128,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
