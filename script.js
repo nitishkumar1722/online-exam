@@ -94,6 +94,25 @@ window.logout = () => {
     location.reload();
 };
 
+window.toggleSidebar = function() {
+    const sb = document.getElementById("sidebar");
+    // Debugging ke liye console log
+    console.log("Sidebar current width:", sb.style.width);
+
+    if (sb.style.width === "250px") {
+        sb.style.width = "0";
+    } else {
+        sb.style.width = "250px";
+    }
+};
+
+// Jab button click ho toh sidebar band bhi hona chahiye
+window.navigateTo = function(hash) {
+    window.location.hash = hash;
+    const sb = document.getElementById("sidebar");
+    if (sb) sb.style.width = "0"; // Automatic close after selection
+};
+
 // --- 3. EXAM & STUDENT MGMT ---
 window.parseBulkQuestions = function() {
     const text = document.getElementById("bulkQuestions").value;
@@ -172,3 +191,4 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
 window.togglePass = (id) => { const x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; };
+
