@@ -161,11 +161,41 @@ window.submitStudent = async function() {
 
 
 
+window.studentAuth = async function() {
+    const rollNo = document.getElementById("stuRegNo").value; // HTML ID matching
+
+    if (!rollNo) return alert("Registration Number daalo bhai!");
+
+    const url = `${API}/student/login?rollNo=${rollNo}`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (res.ok) {
+            alert("Welcome " + data.studentName);
+            // Student ka data save kar lo taaki exam dikha sako
+            localStorage.setItem("studentRoll", rollNo);
+            localStorage.setItem("assignedExamId", data.examId);
+            
+            navigateTo("#studentPanel");
+            loadStudentExam(data.examId); // Exam load karne ka function
+        } else {
+            alert(data.msg);
+        }
+    } catch (err) {
+        alert("Student Portal Error! Check Connection.");
+    }
+};
+
+
+
 // UI Helpers
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
