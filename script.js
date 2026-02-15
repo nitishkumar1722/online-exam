@@ -162,10 +162,7 @@ window.submitStudent = async function() {
 
 
 window.studentAuth = async function() {
-    const rollNo = document.getElementById("stuRegNo").value; // HTML ID matching
-
-    if (!rollNo) return alert("Registration Number daalo bhai!");
-
+    const rollNo = document.getElementById("stuRegNo").value;
     const url = `${API}/student/login?rollNo=${rollNo}`;
 
     try {
@@ -173,20 +170,42 @@ window.studentAuth = async function() {
         const data = await res.json();
 
         if (res.ok) {
-            alert("Welcome " + data.studentName);
-            // Student ka data save kar lo taaki exam dikha sako
-            localStorage.setItem("studentRoll", rollNo);
             localStorage.setItem("assignedExamId", data.examId);
-            
             navigateTo("#studentPanel");
-            loadStudentExam(data.examId); // Exam load karne ka function
+            // Blank screen hatane ke liye function call karein
+            displayStudentDashboard(data.examId); 
         } else {
             alert(data.msg);
         }
+    } catch (err) { alert("Login Error!"); }
+};
+
+window.displayStudentDashboard = async function(examId) {
+    const container = document.getElementById("availableExams");
+    if (!container) return; // Agar HTML mein ID nahi mili
+
+    const url = `${API}/exam/assigned-exam?examId=${examId}`;
+
+    try {
+        const res = await fetch(url);
+        const exam = await res.json();
+
+        // Screen par card dikhana
+        container.innerHTML = `
+            <div class="exam-card" style="background:#fff; padding:25px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.1); border:1px solid #e0e0e0; margin-top:20px;">
+                <h2 style="color:#2c3e50; margin-bottom:10px;">📝 ${exam.examTitle || "Test Paper"}</h2>
+                <div style="color:#7f8c8d; margin-bottom:20px;">
+                    <p>⏱️ Duration: <b>${exam.duration} Minutes</b></p>
+                    <p>📊 Total Marks: <b>${exam.totalMarks}</b></p>
+                </div>
+                <button class="primary-btn" onclick="startOfficialTest('${exam._id}')" style="width:100%;">Start Exam</button>
+            </div>
+        `;
     } catch (err) {
-        alert("Student Portal Error! Check Connection.");
+        container.innerHTML = `<p style="color:red;">Exam load nahi ho paya. Refresh karein.</p>`;
     }
 };
+
 
 
 window.loadStudentExam = async function(examId) {
@@ -285,6 +304,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
