@@ -73,13 +73,16 @@
 
             <div id="createExam" class="page-section" style="display:none;">
                 <button class="back-btn" onclick="navigateTo('#welcomeNote')">← Back</button>
-                <h3>Create New Exam</h3>
-                <input type="text" id="examTitle" placeholder="Exam Title">
-                <input type="number" id="examDuration" placeholder="Duration (min)">
-                <input type="number" id="totalMarks" placeholder="Total Marks">
-                <button class="action-btn" onclick="createExam()">Save & Publish</button>
-            </div>
-
+               <h3>Bulk Create Exam</h3>
+    <input type="text" id="examTitle" placeholder="Exam Title (e.g. Unit Test 1)">
+    <input type="number" id="examDuration" placeholder="Duration (min)">
+    <input type="number" id="totalMarks" placeholder="Total Marks">
+    
+    <p style="font-size: 12px; color: gray;">Format: Question | Opt1 | Opt2 | Opt3 | Opt4 | CorrectOpt</p>
+    <textarea id="bulkQuestions" rows="10" placeholder="What is 2+2? | 3 | 4 | 5 | 6 | 4"></textarea>
+    
+    <button class="action-btn" onclick="createBulkExam()">Save & Publish All</button>
+</div>
             <div id="myExams" class="page-section" style="display:none;">
                 <button class="back-btn" onclick="navigateTo('#welcomeNote')">← Back</button>
                 <h3>My Created Exams</h3>
@@ -107,4 +110,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
