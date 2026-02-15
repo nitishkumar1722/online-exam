@@ -75,6 +75,32 @@ window.createExam = async function() {
     } catch (err) { alert("Exam Create Error"); }
 };
 
+
+window.createBulkExam = async function() {
+    const examName = document.getElementById("examTitle").value;
+    const duration = document.getElementById("examDuration").value;
+    const totalMarks = document.getElementById("totalMarks").value;
+    const rawQuestions = document.getElementById("bulkQuestions").value; 
+    const teacherEmail = localStorage.getItem("userEmail");
+
+    // Line breaks ko separator mein badalna
+    // Har line ek naya question: Q|O1|O2|O3|O4|Ans
+    const formattedQuestions = rawQuestions.split("\n").join("///");
+
+    const url = `${API}/exam/create?examName=${encodeURIComponent(examName)}&duration=${duration}&totalMarks=${totalMarks}&teacherEmail=${teacherEmail}&questionsData=${encodeURIComponent(formattedQuestions)}`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        alert(data.message);
+        navigateTo("#myExams");
+    } catch (err) {
+        alert("Error creating exam. Check format!");
+    }
+};
+
+
+
 window.loadMyExams = async function() {
     const email = localStorage.getItem("userEmail");
     const url = `${API}/exam/my-exams?teacherEmail=${email}`;
@@ -97,3 +123,4 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
