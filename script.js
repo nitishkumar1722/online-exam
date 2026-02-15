@@ -169,53 +169,46 @@ window.submitStudent = async function() {
 
 
 
+// --- STUDENT LOGIN & DASHBOARD ---
 window.studentAuth = async function() {
     const rollNo = document.getElementById("stuRegNo").value;
-    const url = `${API}/student/login?rollNo=${rollNo}`;
+    if (!rollNo) return alert("Enter Roll No");
 
     try {
-        const res = await fetch(url);
+        const res = await fetch(`${API}/student/login?rollNo=${rollNo}`);
         const data = await res.json();
 
         if (res.ok) {
             localStorage.setItem("assignedExamId", data.examId);
-            localStorage.setItem("studentName", data.studentName); // Name save karo
+            localStorage.setItem("studentName", data.studentName);
             navigateTo("#studentPanel");
-            displayStudentDashboard(data.examId); // Dashboard load karo
+            displayStudentDashboard(data.examId);
         } else {
             alert(data.msg);
         }
-    } catch (err) { alert("Login Error!"); }
+    } catch (err) { alert("Server Down!"); }
 };
-
-
 
 window.displayStudentDashboard = async function(examId) {
     const container = document.getElementById("availableExams");
-    if (!container) return;
-
-    // Yahan hum assigned-exam wala route use karenge jo humne pehle banaya tha
-    const url = `${API}/exam/assigned-exam?examId=${examId}`;
+    // ID check: Hum wahi route use karenge jo backend mein working hai
+    const url = `${API}/exam/get-exam?examId=${examId}`;
 
     try {
         const res = await fetch(url);
         const exam = await res.json();
 
         container.innerHTML = `
-            <div class="exam-card" style="background:#fff; padding:25px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.1); border-left: 5px solid #3498db;">
-                <h2 style="color:#2c3e50; margin-bottom:10px;">📝 ${exam.examTitle || "Test Paper"}</h2>
-                <div style="color:#7f8c8d; margin-bottom:20px;">
-                    <p>⏱️ Duration: <b>${exam.duration} Minutes</b></p>
-                    <p>📊 Total Marks: <b>${exam.totalMarks}</b></p>
-                </div>
-                <button class="primary-btn" onclick="startExam('${exam._id}')" style="width:100%;">Start My Exam</button>
+            <div class="exam-card" style="background:white; padding:20px; border-radius:10px; border-left:5px solid #3498db;">
+                <h3>${exam.examTitle || "Exam"}</h3>
+                <p>Duration: ${exam.duration}m | Marks: ${exam.totalMarks}</p>
+                <button class="primary-btn" onclick="startExam('${exam._id}')">Start My Exam</button>
             </div>
         `;
     } catch (err) {
-        container.innerHTML = `<p style="color:red;">Exam load nahi ho paya. Server check karein.</p>`;
+        container.innerHTML = "<p>Exam load nahi ho raha.</p>";
     }
 };
-
 
 window.loadStudentExam = async function(examId) {
     if (!examId) return;
@@ -350,6 +343,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
