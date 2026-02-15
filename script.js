@@ -11,59 +11,55 @@ function handleLocation() {
 
     hideAll();
 
-    // 1. Guest Pages Logic
-    const guestPages = ["#dashboard", "#teacherAuth", "#studentLogin", "#forgotPass"];
-    
-    // Teacher Access
+    // Sections for Teacher
+    const teacherSections = ['welcomeNote', 'createExam', 'addStudent', 'myExams'];
+    // Sections for Student
+    const studentSections = ['studentDashboard', 'examWindow'];
+
+    // LOGIC: Kaun sa panel dikhana hai
     if (token) {
+        // Teacher logged in
         document.getElementById("teacherPanel").style.display = "block";
-        const sections = ['welcomeNote', 'createExam', 'addStudent', 'myExams'];
-        sections.forEach(id => {
+        teacherSections.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = (path === "#" + id) ? "block" : "none";
         });
         if (path === "#myExams") loadMyExams();
-        if (path === "#dashboard" || path === "#welcomeNote") {
-            document.getElementById("welcomeNote").style.display = "block";
-        }
+        if (path === "#dashboard") document.getElementById("welcomeNote").style.display = "block";
     } 
-    // Student Access
     else if (stuToken) {
+        // Student logged in
         document.getElementById("studentPanel").style.display = "block";
-        const stuSections = ['studentDashboard', 'examWindow'];
-        stuSections.forEach(id => {
+        studentSections.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = (path === "#" + id) ? "block" : "none";
         });
         if (path === "#studentDashboard") loadStudentExams();
-    }
-    // Guest Access
+    } 
     else {
+        // Not logged in (Guest)
         if (path === "#teacherAuth") {
             document.getElementById("teacherAuth").style.display = "block";
             showLogin();
         } else if (path === "#studentLogin") {
             document.getElementById("studentLogin").style.display = "block";
-        } else if (path === "#forgotPass") {
-            document.getElementById("teacherAuth").style.display = "block";
-            showForgotBox();
         } else {
             document.getElementById("dashboard").style.display = "flex";
         }
     }
 }
 
-// Global Navigate with Sidebar Close
 window.navigateTo = function(hash) {
     window.location.hash = hash;
-    const sb = document.getElementById("sidebar");
-    if (sb) sb.style.width = "0"; 
 };
 
-// Global Back Button Logic
+// --- BACK BUTTON LOGIC ---
 window.goBack = function() {
-    if (localStorage.getItem("token")) window.location.hash = "#welcomeNote";
-    else if (localStorage.getItem("stuToken")) window.location.hash = "#studentDashboard";
+    const token = localStorage.getItem("token");
+    const stuToken = localStorage.getItem("stuToken");
+
+    if (token) window.location.hash = "#welcomeNote";
+    else if (stuToken) window.location.hash = "#studentDashboard";
     else window.location.hash = "#dashboard";
 };
 
@@ -99,8 +95,8 @@ window.studentAuth = async function() {
         if(data.token) {
             localStorage.setItem("stuToken", data.token);
             window.location.hash = "#studentDashboard";
-        } else { alert(data.msg || "Invalid Registration"); }
-    } catch (err) { alert("Server error! Backend check karein."); }
+        } else { alert(data.msg || "Login Failed"); }
+    } catch (err) { alert("Invalid Student Credentials"); }
 };
 
 window.logout = function() {
@@ -109,15 +105,42 @@ window.logout = function() {
     location.reload();
 };
 
-// --- 3. TEACHER DASHBOARD LOGIC (EXAMS & STUDENTS) ---
+// --- 3. TEACHER ACTIONS ---
+
+window.parseBulkQuestions = function() {
+    const text = document.getElementById("bulkQuestions").value;
+    const lines = text.split("\n");
+    const questionsList = document.getElementById("questionsList");
+    let html = "";
+    let processedQuestions = [];
+
+    lines.forEach((line, index) => {
+        if (!line.trim()) return;
+        const parts = line.split("|").map(p => p.trim());
+        if (parts.length >= 6) {
+            processedQuestions.push({
+                text: parts[0],
+                options: [parts[1], parts[2], parts[3], parts[4]],
+                answer: parts[5],
+                type: 'mcq'
+            });
+            html += `<div style="padding:10px; border-bottom:1px solid #ddd;">
+                <b>Q${index+1}:</b> ${parts[0]} <br>
+                <small>Ans Index: ${parts[5]}</small>
+            </div>`;
+        }
+    });
+    questionsList.innerHTML = html;
+    window.currentExamQuestions = processedQuestions;
+};
 
 window.saveExam = async function() {
     const title = document.getElementById("examTitle").value;
     const duration = document.getElementById("examDuration").value;
-    if(!window.currentExamQuestions?.length) return alert("Pehle questions process karein!");
+    if(!window.currentExamQuestions?.length) return alert("Add questions first!");
 
     try {
-        const res = await fetch(`${API}/exams/create`, {
+        await fetch(`${API}/exams/create`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -125,30 +148,28 @@ window.saveExam = async function() {
             },
             body: JSON.stringify({ title, duration, questions: window.currentExamQuestions })
         });
-        if(res.ok) {
-            alert("Exam Created!");
-            window.location.hash = "#myExams";
-        }
-    } catch (err) { alert("Error saving exam"); }
+        alert("Exam Published!");
+        window.location.hash = "#myExams";
+    } catch (err) { alert("Save failed"); }
 };
 
 window.loadMyExams = async function() {
-    const list = document.getElementById("examList");
-    if (!list) return;
-    list.innerHTML = "Loading...";
+    const div = document.getElementById("examList");
+    if(!div) return;
+    div.innerHTML = "Loading...";
     try {
         const res = await fetch(`${API}/exams/my-exams`, {
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
         const exams = await res.json();
-        list.innerHTML = exams.length ? exams.map(e => `
-            <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:8px;">
+        div.innerHTML = exams.map(e => `
+            <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin:10px; border-radius:10px;">
                 <h3>${e.title}</h3>
-                <p>Time: ${e.duration} mins | Questions: ${e.questions.length}</p>
+                <p>Questions: ${e.questions.length} | Time: ${e.duration}m</p>
                 <button onclick="deleteExam('${e._id}')" style="background:red; color:white;">Delete</button>
             </div>
-        `).join('') : "No exams created yet.";
-    } catch (err) { list.innerHTML = "Error loading exams."; }
+        `).join('') || "No exams found.";
+    } catch (err) { div.innerHTML = "Error loading exams."; }
 };
 
 window.submitStudent = async function() {
@@ -163,61 +184,29 @@ window.submitStudent = async function() {
             },
             body: JSON.stringify({ name, regNo })
         });
-        alert(`Student ${name} Added Successfully!`);
+        alert("Student Added Successfully!");
         document.getElementById("studentName").value = "";
         document.getElementById("studentReg").value = "";
-    } catch (err) { alert("Error adding student"); }
+    } catch (err) { alert("Failed to add student"); }
 };
 
-// --- 4. STUDENT EXAM INTERFACE ---
+// --- 4. STUDENT ACTIONS ---
 
 window.loadStudentExams = async function() {
-    const list = document.getElementById("availableExams");
+    const div = document.getElementById("availableExams");
     try {
         const res = await fetch(`${API}/exams/all`, {
             headers: { "Authorization": `Bearer ${localStorage.getItem("stuToken")}` }
         });
         const exams = await res.json();
-        list.innerHTML = exams.map(e => `
-            <div class="exam-card" style="border:1px solid #ccc; padding:15px; margin:10px;">
-                <h4>${e.title}</h4>
-                <button class="primary-btn" onclick="startExamProcess('${e._id}')">Start Exam</button>
+        div.innerHTML = exams.map(e => `
+            <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin:10px;">
+                <h3>${e.title}</h3>
+                <button onclick="startExamProcess('${e._id}')">Start Exam</button>
             </div>
         `).join('');
-    } catch (err) { list.innerHTML = "No exams available."; }
+    } catch (err) { div.innerHTML = "No exams available."; }
 };
-
-window.startExamProcess = async function(id) {
-    try {
-        const res = await fetch(`${API}/exams/${id}`, {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("stuToken")}` }
-        });
-        const exam = await res.json();
-        document.getElementById("studentDashboard").style.display = "none";
-        document.getElementById("examWindow").style.display = "block";
-        renderQuestions(exam.questions);
-        startTimer(exam.duration);
-    } catch (err) { alert("Exam Load Error"); }
-};
-
-function renderQuestions(qs) {
-    document.getElementById("questionArea").innerHTML = qs.map((q, i) => `
-        <div class="q-block" style="margin-bottom:20px;">
-            <p><strong>Q${i+1}: ${q.text}</strong></p>
-            ${q.options.map((opt, idx) => `<label style="display:block;"><input type="radio" name="q${i}" value="${idx}"> ${opt}</label>`).join('')}
-        </div>
-    `).join('');
-}
-
-function startTimer(mins) {
-    let time = mins * 60;
-    const timerEl = document.getElementById("timer");
-    const interval = setInterval(() => {
-        let m = Math.floor(time / 60), s = time % 60;
-        timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if (time-- <= 0) { clearInterval(interval); submitExam(); }
-    }, 1000);
-}
 
 // --- UI HELPERS ---
 window.hideAll = function() {
@@ -226,6 +215,5 @@ window.hideAll = function() {
         if (el) el.style.display = "none";
     });
 };
-
 window.showRegister = () => { document.getElementById("loginBox").style.display = "none"; document.getElementById("registerBox").style.display = "block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display = "block"; document.getElementById("registerBox").style.display = "none"; };
