@@ -189,12 +189,68 @@ window.studentAuth = async function() {
 };
 
 
+window.loadStudentExam = async function(examId) {
+    if (!examId) return;
+
+    const url = `${API}/exam/get-exam?examId=${examId}`;
+
+    try {
+        const res = await fetch(url);
+        const exam = await res.json();
+
+        const container = document.getElementById("availableExams");
+        
+        // Agar exam mil gaya toh card dikhao
+        container.innerHTML = `
+            <div class="exam-card" style="border: 2px solid #007bff; padding: 20px; border-radius: 10px; background: white;">
+                <h2 style="color: #333;">${exam.examTitle}</h2>
+                <p><strong>Total Marks:</strong> ${exam.totalMarks}</p>
+                <p><strong>Duration:</strong> ${exam.duration} Minutes</p>
+                <hr>
+                <button class="primary-btn" onclick="startExam('${exam._id}')">Start Test Now</button>
+            </div>
+        `;
+    } catch (err) {
+        console.error("Exam load nahi ho paya:", err);
+    }
+};
+
+// Exam Start karne ka function
+window.startExam = async function(examId) {
+    const url = `${API}/exam/get-exam?examId=${examId}`;
+    try {
+        const res = await fetch(url);
+        const exam = await res.json();
+        
+        document.getElementById("studentDashboard").style.display = "none";
+        document.getElementById("examWindow").style.display = "block";
+        
+        const questionArea = document.getElementById("questionArea");
+        
+        // Saare questions dikhana
+        questionArea.innerHTML = exam.questions.map((q, index) => `
+            <div class="question-box" style="margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee;">
+                <p><strong>Q${index + 1}: ${q.question}</strong></p>
+                ${q.options.map((opt, optIndex) => `
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="radio" name="q${index}" value="${optIndex + 1}"> ${opt}
+                    </label>
+                `).join('')}
+            </div>
+        `).join('');
+
+    } catch (err) {
+        alert("Facing problem to Exam start!");
+    }
+};
+
 
 // UI Helpers
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
