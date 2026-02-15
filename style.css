@@ -125,6 +125,16 @@ body {
     background-color: #333;
 }
 
+.closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: white;
+    text-decoration: none;
+}
+
 
 /* --- Content Styling --- */
 .container {
@@ -192,5 +202,6 @@ body {
     color: #555;
     z-index: 10;
 }
+
 
 
