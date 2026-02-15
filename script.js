@@ -57,19 +57,20 @@ window.goBack = () => {
 window.loginTeacher = async function() {
     const email = document.getElementById("loginEmail").value;
     const password = document.getElementById("loginPassword").value;
+    
     try {
-        const res = await fetch(`${API}/auth/login`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+        // Body hata kar data URL ke peeche "?" ke sath joda
+        const res = await fetch(`${API}/auth/login?email=${email}&password=${password}`, {
+            method: "GET"
         });
         const data = await res.json();
         if (data.token) {
             localStorage.setItem("token", data.token);
             window.location.hash = "#welcomeNote";
         } else { alert(data.msg); }
-    } catch (err) { alert("Server Error"); }
+    } catch (err) { alert("Server error"); }
 };
+
 
 window.studentAuth = async function() {
     const regNo = document.getElementById("stuRegNo").value;
@@ -191,5 +192,6 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
 window.togglePass = (id) => { const x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; };
+
 
 
