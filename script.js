@@ -290,3 +290,71 @@ window.loadAvailableExams = async function() {
 }
 
 
+
+
+let currentExamData = null;
+
+// 1. Student Exams Load karna
+window.loadStudentExams = async function() {
+    try {
+        const res = await fetch(`${API}/exams/all`); // Sabhi available exams
+        const exams = await res.json();
+        let html = exams.map(e => `
+            <div class="exam-card" style="border:1px solid #ccc; padding:15px; margin:10px;">
+                <h4>${e.title}</h4>
+                <p>Time: ${e.duration} mins</p>
+                <button class="primary-btn" onclick="startExamProcess('${e._id}')">Start Exam</button>
+            </div>
+        `).join('');
+        document.getElementById("availableExams").innerHTML = html || "No exams available";
+    } catch (err) { alert("Exams load nahi huye. Backend check karein."); }
+};
+
+// 2. Exam Shuru karna
+window.startExamProcess = async function(examId) {
+    if(!confirm("Kya aap exam shuru karna chahte hain?")) return;
+    
+    try {
+        const res = await fetch(`${API}/exams/${examId}`);
+        currentExamData = await res.json();
+        
+        document.getElementById("studentDashboard").style.display = "none";
+        document.getElementById("examWindow").style.display = "block";
+        document.getElementById("activeExamTitle").innerText = currentExamData.title;
+        
+        renderQuestions(currentExamData.questions);
+        startTimer(currentExamData.duration);
+    } catch (err) { alert("Exam start error"); }
+};
+
+function renderQuestions(qs) {
+    let html = qs.map((q, i) => `
+        <div class="q-block" style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <p><strong>Q${i+1}: ${q.text}</strong></p>
+            ${q.options.map((opt, optIdx) => `
+                <label style="display:block;"><input type="radio" name="q${i}" value="${optIdx}"> ${opt}</label>
+            `).join('')}
+        </div>
+    `).join('');
+    document.getElementById("questionArea").innerHTML = html;
+}
+
+function startTimer(mins) {
+    let time = mins * 60;
+    let timerEl = document.getElementById("timer");
+    let interval = setInterval(() => {
+        let m = Math.floor(time / 60);
+        let s = time % 60;
+        timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if (time <= 0) {
+            clearInterval(interval);
+            submitExam();
+        }
+        time--;
+    }, 1000);
+}
+
+window.submitExam = function() {
+    alert("Exam Submitted Successfully! Result will be shown later.");
+    location.reload(); // Wapas dashboard par
+};
