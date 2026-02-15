@@ -99,44 +99,32 @@ body {
 /* --- Sidebar Navigation --- */
 .sidebar {
     height: 100%;
-    width: 0; /* JS handle karega width */
+    width: 0; /* Default band */
     position: fixed;
     z-index: 1000;
     top: 0;
     left: 0;
-    background-color: #1a252f;
+    background-color: #111;
     overflow-x: hidden;
-    transition: 0.3s;
+    transition: 0.3s; /* Smooth effect ke liye */
     padding-top: 60px;
 }
 
 .sidebar-links button {
-    padding: 15px 25px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #bdc3c7;
     display: block;
-    background: none;
-    border: none;
     width: 100%;
+    padding: 10px 15px;
+    background: none;
+    color: white;
+    border: none;
     text-align: left;
     cursor: pointer;
-    transition: 0.2s;
 }
 
 .sidebar-links button:hover {
-    color: white;
-    background-color: #34495e;
+    background-color: #333;
 }
 
-.sidebar .closebtn {
-    position: absolute;
-    top: 10px;
-    right: 25px;
-    font-size: 36px;
-    color: white;
-    text-decoration: none;
-}
 
 /* --- Content Styling --- */
 .container {
@@ -204,4 +192,5 @@ body {
     color: #555;
     z-index: 10;
 }
+
 
