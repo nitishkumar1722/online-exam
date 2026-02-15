@@ -9,28 +9,37 @@ window.navigateTo = function(hash) {
 function handleLocation() {
     const path = window.location.hash || "#dashboard";
     
-    // Sab sections ko hide karo
-    document.querySelectorAll('#dashboard, #teacherAuth, #teacherPanel, #studentLogin, #studentPanel, .page-section').forEach(el => {
-        el.style.display = "none";
+    // 1. Pehle saare sections ko hide karo (Strict Hide)
+    const sections = ['#dashboard', '#teacherAuth', '#teacherPanel', '#studentLogin', '#studentPanel', '#examWindow'];
+    sections.forEach(id => {
+        const el = document.querySelector(id);
+        if (el) el.style.display = "none";
     });
+    
+    // Sabhi page-sections ko bhi hide karo
+    document.querySelectorAll('.page-section').forEach(el => el.style.display = "none");
 
+    // 2. Click hone pe sahi section dikhao
     if (path === "#dashboard") {
-        document.getElementById("dashboard").style.display = "grid";
-    } else if (path === "#teacherAuth") {
-        document.getElementById("teacherAuth").style.display = "block";
-    } else if (path === "#studentLogin") {
-        document.getElementById("studentLogin").style.display = "block";
+        document.getElementById("dashboard").style.display = "grid"; // Home page grid mein hai
     } 
-    // YEH LINE ADD KI HAI - Student Panel ko dikhane ke liye
+    else if (path === "#teacherAuth") {
+        document.getElementById("teacherAuth").style.display = "block"; // Teacher login khulega
+    } 
+    else if (path === "#studentLogin") {
+        document.getElementById("studentLogin").style.display = "block"; // Student login khulega
+    } 
     else if (path === "#studentPanel") {
         document.getElementById("studentPanel").style.display = "block";
         const savedId = localStorage.getItem("assignedExamId");
         if(savedId) displayStudentDashboard(savedId);
-    } 
+    }
+    // 3. Teacher Dashboard ke andar ke pages
     else if (["#welcomeNote", "#createExam", "#myExams", "#addStudent"].includes(path)) {
         document.getElementById("teacherPanel").style.display = "block";
-        document.querySelector(path).style.display = "block";
-        if(path === "#myExams") loadMyExams();
+        const targetSection = document.querySelector(path);
+        if (targetSection) targetSection.style.display = "block";
+        if (path === "#myExams") loadMyExams();
     }
 }
 
@@ -343,6 +352,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
