@@ -77,25 +77,27 @@ window.createExam = async function() {
 
 
 window.createBulkExam = async function() {
-    const examName = document.getElementById("examTitle").value;
+    const examTitle = document.getElementById("examTitle").value;
     const duration = document.getElementById("examDuration").value;
     const totalMarks = document.getElementById("totalMarks").value;
-    const rawQuestions = document.getElementById("bulkQuestions").value; 
+    const rawQuestions = document.getElementById("bulkQuestions").value;
     const teacherEmail = localStorage.getItem("userEmail");
 
-    // Line breaks ko separator mein badalna
-    // Har line ek naya question: Q|O1|O2|O3|O4|Ans
-    const formattedQuestions = rawQuestions.split("\n").join("///");
+    if(!examTitle || !rawQuestions) return alert("Kuch toh likho bhai!");
 
-    const url = `${API}/exam/create?examName=${encodeURIComponent(examName)}&duration=${duration}&totalMarks=${totalMarks}&teacherEmail=${teacherEmail}&questionsData=${encodeURIComponent(formattedQuestions)}`;
+    // Line breaks ko separator mein badlo
+    const questionsData = rawQuestions.trim().split("\n").join("###");
+
+    const url = `${API}/exam/create?examTitle=${encodeURIComponent(examTitle)}&duration=${duration}&totalMarks=${totalMarks}&teacherEmail=${teacherEmail}&questionsData=${encodeURIComponent(questionsData)}`;
 
     try {
         const res = await fetch(url);
         const data = await res.json();
-        alert(data.message);
-        navigateTo("#myExams");
+        // data.msg ya data.message dono check kar lo
+        alert(data.msg || data.message || "Unknown Response"); 
+        if(res.ok) navigateTo("#myExams");
     } catch (err) {
-        alert("Error creating exam. Check format!");
+        alert("Network Error: Backend crashed!");
     }
 };
 
@@ -123,4 +125,5 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
