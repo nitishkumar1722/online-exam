@@ -190,36 +190,30 @@ window.studentAuth = async function() {
 
 
 
-window.displayStudentDashboard = async function(examId, name) {
+window.displayStudentDashboard = async function(examId) {
     const container = document.getElementById("availableExams");
-    const welcome = document.getElementById("studentWelcomeName");
-    
-    if(welcome) welcome.innerText = "Student: " + name;
+    if (!container) return;
 
-    const url = `${API}/exam/get-exam?examId=${examId}`;
+    const url = `${API}/exam/get-exam?examId=${examId}`; // Hum get-exam use kar rahe hain
 
     try {
         const res = await fetch(url);
         const exam = await res.json();
 
-        if (!exam || !exam.examTitle) {
-            container.innerHTML = "<p>No exam details found.</p>";
-            return;
-        }
-
         container.innerHTML = `
-            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #3498db; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <h3 style="margin-top: 0;">${exam.examTitle}</h3>
-                <p><b>Duration:</b> ${exam.duration} Minutes</p>
-                <p><b>Total Marks:</b> ${exam.totalMarks}</p>
-                <button onclick="startExam('${exam._id}')" class="primary-btn" style="width: 100%; padding: 12px;">Start My Exam</button>
+            <div class="exam-card" style="background:#fff; padding:25px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.1); border:1px solid #e0e0e0; margin-top:20px;">
+                <h2 style="color:#2c3e50; margin-bottom:10px;">📝 ${exam.examTitle || "Test Paper"}</h2>
+                <div style="color:#7f8c8d; margin-bottom:20px;">
+                    <p>⏱️ Duration: <b>${exam.duration} Minutes</b></p>
+                    <p>📊 Total Marks: <b>${exam.totalMarks}</b></p>
+                </div>
+                <button class="primary-btn" onclick="startExam('${exam._id}')" style="width:100%;">Start Exam Now</button>
             </div>
         `;
     } catch (err) {
-        container.innerHTML = "<p style='color:red;'>Error loading exam. Please refresh.</p>";
+        container.innerHTML = `<p style="color:red;">Exam load nahi ho paya.</p>`;
     }
 };
-
 
 window.loadStudentExam = async function(examId) {
     if (!examId) return;
@@ -247,34 +241,60 @@ window.loadStudentExam = async function(examId) {
     }
 };
 
-// Exam Start karne ka function
 window.startExam = async function(examId) {
     const url = `${API}/exam/get-exam?examId=${examId}`;
     try {
         const res = await fetch(url);
         const exam = await res.json();
         
-        document.getElementById("studentDashboard").style.display = "none";
+        // 1. Dashboard chhupao aur Exam Window dikhao
+        document.getElementById("studentPanel").style.display = "none";
         document.getElementById("examWindow").style.display = "block";
         
         const questionArea = document.getElementById("questionArea");
         
-        // Saare questions dikhana
-        questionArea.innerHTML = exam.questions.map((q, index) => `
-            <div class="question-box" style="margin-bottom: 20px; padding: 15px; border-bottom: 1px solid #eee;">
-                <p><strong>Q${index + 1}: ${q.question}</strong></p>
-                ${q.options.map((opt, optIndex) => `
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="radio" name="q${index}" value="${optIndex + 1}"> ${opt}
-                    </label>
-                `).join('')}
-            </div>
-        `).join('');
+        // 2. Questions render karo
+        if (exam.questions && exam.questions.length > 0) {
+            questionArea.innerHTML = exam.questions.map((q, index) => `
+                <div class="question-box" style="margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+                    <p style="font-size: 18px;"><strong>Q${index + 1}:</strong> ${q.question}</p>
+                    <div class="options-grid" style="display: grid; gap: 10px; margin-top: 10px;">
+                        ${q.options.map((opt, optIndex) => `
+                            <label style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; display: block;">
+                                <input type="radio" name="q${index}" value="${opt}"> ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            
+            // 3. Timer start kar sakte ho yahan (Optional)
+            startTimer(exam.duration);
+        } else {
+            questionArea.innerHTML = "<p>No questions found in this exam.</p>";
+        }
 
     } catch (err) {
-        alert("Facing problem to Exam start!");
+        alert("Error starting exam: " + err.message);
     }
 };
+
+// Timer function (Basic)
+function startTimer(duration) {
+    let timer = duration * 60;
+    const display = document.getElementById("timer");
+    const interval = setInterval(() => {
+        let minutes = Math.floor(timer / 60);
+        let seconds = timer % 60;
+        display.innerText = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        if (--timer < 0) {
+            clearInterval(interval);
+            alert("Time's up!");
+            submitExam();
+        }
+    }, 1000);
+}
+
 
 
 window.loadStudentPortal = async function(examId) {
@@ -317,6 +337,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
