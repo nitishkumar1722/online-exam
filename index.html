@@ -107,7 +107,7 @@
         <button class="primary-btn" onclick="studentAuth()">Login</button>
     </div>
 
-    <div id="studentPanel" class="container page-section" style="display:none;">
+   <div id="studentPanel" class="container page-section" style="display:none;">
     <div style="text-align: center; margin-bottom: 20px;">
         <h2 style="color: #2c3e50;">Welcome to Student Portal</h2>
         <p id="studentWelcomeName" style="font-weight: bold; color: #3498db;"></p>
@@ -120,6 +120,11 @@
     <button onclick="logout()" class="logout-btn" style="display: block; margin: 20px auto;">Logout</button>
 </div>
 
+<div id="examWindow" class="container" style="display:none; background: white; padding: 20px; border-radius: 10px;">
+    <h3 id="timer" style="text-align: right; color: red;"></h3>
+    <div id="questionArea"></div>
+    <button class="primary-btn" onclick="submitExam()" style="margin-top: 20px;">Finish Exam</button>
+</div>
     <div id="examWindow" style="display:none;">
         <h3 id="timer"></h3>
         <div id="questionArea"></div>
@@ -131,6 +136,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
