@@ -110,20 +110,38 @@ window.loadMyExams = async function() {
     try {
         const res = await fetch(url);
         const exams = await res.json();
-        const list = document.getElementById("examsList");
+        const list = document.getElementById("examsList"); // HTML ID check karna
+        
+        if (exams.length === 0) {
+            list.innerHTML = "<p>No exams created yet.</p>";
+            return;
+        }
+
         list.innerHTML = exams.map(ex => `
-            <div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                <h4>${ex.examName}</h4>
-                <p>Marks: ${ex.totalMarks} | Time: ${ex.duration}m</p>
+            <div class="exam-card" style="border:1px solid #ccc; padding:15px; margin-bottom:10px; border-radius:8px;">
+                <h4 style="margin:0; color:#333;">${ex.examTitle || "Untitled Exam"}</h4> 
+                <p style="margin:5px 0; color:#666;">Marks: ${ex.totalMarks} | Time: ${ex.duration}m</p>
+                <button onclick="copyExamId('${ex._id}')" class="secondary-btn" style="font-size:12px;">Copy Exam ID</button>
             </div>
         `).join('');
-    } catch (err) { console.log(err); }
+    } catch (err) { 
+        console.error("Error loading exams:", err); 
+    }
 };
+
+// Exam ID copy karne ke liye function
+window.copyExamId = (id) => {
+    navigator.clipboard.writeText(id);
+    alert("Exam ID Copied: " + id);
+};
+
+
 
 // UI Helpers
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
