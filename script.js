@@ -7,61 +7,67 @@ window.addEventListener("hashchange", handleLocation);
 function handleLocation() {
     const path = window.location.hash || "#dashboard";
     const token = localStorage.getItem("token");
+    const stuToken = localStorage.getItem("stuToken");
 
-    // Sabse pehle saare main divs chhupao
     hideAll();
 
-    // Security Check: Bina token ke dashboard block karna
+    // 1. Guest Pages Logic
     const guestPages = ["#dashboard", "#teacherAuth", "#studentLogin", "#forgotPass"];
-    if (!token && !guestPages.includes(path)) {
-        window.location.hash = "#dashboard";
-        return;
-    }
-
+    
+    // Teacher Access
     if (token) {
-        // TEACHER LOGGED IN
         document.getElementById("teacherPanel").style.display = "block";
-        
         const sections = ['welcomeNote', 'createExam', 'addStudent', 'myExams'];
         sections.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = (path === "#" + id) ? "block" : "none";
         });
-
-        // Default screen handle karein
-        if (path === "#dashboard" || path === "#teacherAuth" || path === "#welcomeNote") {
+        if (path === "#myExams") loadMyExams();
+        if (path === "#dashboard" || path === "#welcomeNote") {
             document.getElementById("welcomeNote").style.display = "block";
         }
-
-        // AGAR PATH #myExams HAI TO EXAMS LOAD KARO
-        if (path === "#myExams") {
-            loadMyExams();
-        }
-
-    } else {
-        // GUEST / NOT LOGGED IN
+    } 
+    // Student Access
+    else if (stuToken) {
+        document.getElementById("studentPanel").style.display = "block";
+        const stuSections = ['studentDashboard', 'examWindow'];
+        stuSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = (path === "#" + id) ? "block" : "none";
+        });
+        if (path === "#studentDashboard") loadStudentExams();
+    }
+    // Guest Access
+    else {
         if (path === "#teacherAuth") {
             document.getElementById("teacherAuth").style.display = "block";
             showLogin();
+        } else if (path === "#studentLogin") {
+            document.getElementById("studentLogin").style.display = "block";
         } else if (path === "#forgotPass") {
             document.getElementById("teacherAuth").style.display = "block";
             showForgotBox();
-        } else if (path === "#studentLogin") {
-            const stuDiv = document.getElementById("studentLogin");
-            if(stuDiv) stuDiv.style.display = "block";
         } else {
             document.getElementById("dashboard").style.display = "flex";
         }
     }
 }
 
+// Global Navigate with Sidebar Close
 window.navigateTo = function(hash) {
     window.location.hash = hash;
     const sb = document.getElementById("sidebar");
     if (sb) sb.style.width = "0"; 
 };
 
-// --- 2. TEACHER AUTH FUNCTIONS ---
+// Global Back Button Logic
+window.goBack = function() {
+    if (localStorage.getItem("token")) window.location.hash = "#welcomeNote";
+    else if (localStorage.getItem("stuToken")) window.location.hash = "#studentDashboard";
+    else window.location.hash = "#dashboard";
+};
+
+// --- 2. AUTH FUNCTIONS ---
 
 window.loginTeacher = async function() {
     const email = document.getElementById("loginEmail").value;
@@ -80,105 +86,35 @@ window.loginTeacher = async function() {
     } catch (err) { alert("Server error"); }
 };
 
-window.registerTeacher = async function() {
-    const email = document.getElementById("regEmail").value;
-    const password = document.getElementById("regPassword").value;
+window.studentAuth = async function() {
+    const regNo = document.getElementById("stuRegNo").value;
+    const password = document.getElementById("stuPass").value;
     try {
-        const res = await fetch(`${API}/auth/register`, {
+        const res = await fetch(`${API}/students/auth`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ regNo, password })
         });
         const data = await res.json();
-        alert(data.msg || "Registration Successful");
-        showLogin();
-    } catch (err) { alert("Server error"); }
+        if(data.token) {
+            localStorage.setItem("stuToken", data.token);
+            window.location.hash = "#studentDashboard";
+        } else { alert(data.msg || "Invalid Registration"); }
+    } catch (err) { alert("Server error! Backend check karein."); }
 };
 
 window.logout = function() {
-    localStorage.removeItem("token");
+    localStorage.clear();
     window.location.hash = "#dashboard";
     location.reload();
 };
 
-// --- 3. UI HELPERS ---
-
-window.togglePass = function(id) {
-    const x = document.getElementById(id);
-    x.type = x.type === "password" ? "text" : "password";
-};
-
-window.showRegister = () => {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("forgotBox").style.display = "none";
-    document.getElementById("registerBox").style.display = "block";
-};
-
-window.showLogin = () => {
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("registerBox").style.display = "none";
-    document.getElementById("forgotBox").style.display = "none";
-};
-
-window.showForgotBox = () => {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("registerBox").style.display = "none";
-    document.getElementById("forgotBox").style.display = "block";
-};
-
-window.hideAll = function() {
-    ["dashboard", "teacherAuth", "teacherPanel"].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "none";
-    });
-};
-
-window.goHome = () => window.location.hash = "#dashboard";
-
-window.toggleSidebar = function() {
-    const sb = document.getElementById("sidebar");
-    sb.style.width = (sb.style.width === "250px") ? "0" : "250px";
-};
-
-// --- 4. EXAM & QUESTION LOGIC ---
-window.parseBulkQuestions = function() {
-    const text = document.getElementById("bulkQuestions").value;
-    const lines = text.split("\n");
-    const questionsList = document.getElementById("questionsList");
-    let html = "";
-    let processedQuestions = [];
-
-    lines.forEach((line, index) => {
-        if (line.trim() === "") return;
-        const parts = line.split("|").map(p => p.trim());
-
-        if (parts.length >= 6) {
-            processedQuestions.push({
-                text: parts[0],
-                options: [parts[1], parts[2], parts[3], parts[4]],
-                answer: parts[5],
-                type: 'mcq'
-            });
-            // Yahan preview mein options bhi jodein
-            html += `
-                <div class="q-preview" style="background:#f9f9f9; padding:10px; margin:5px; border-radius:5px; border-left:3px solid #007bff;">
-                    <strong>Q${index + 1}:</strong> ${parts[0]} <br>
-                    <small>A: ${parts[1]} | B: ${parts[2]} | C: ${parts[3]} | D: ${parts[4]}</small> <br>
-                    <span style="color:green">Ans Index: ${parts[5]}</span>
-                </div>`;
-        }
-    });
-    questionsList.innerHTML = html;
-    window.currentExamQuestions = processedQuestions;
-};
+// --- 3. TEACHER DASHBOARD LOGIC (EXAMS & STUDENTS) ---
 
 window.saveExam = async function() {
     const title = document.getElementById("examTitle").value;
     const duration = document.getElementById("examDuration").value;
-    
-    if(!window.currentExamQuestions || window.currentExamQuestions.length === 0) {
-        return alert("Pehle questions process karein!");
-    }
+    if(!window.currentExamQuestions?.length) return alert("Pehle questions process karein!");
 
     try {
         const res = await fetch(`${API}/exams/create`, {
@@ -189,59 +125,37 @@ window.saveExam = async function() {
             },
             body: JSON.stringify({ title, duration, questions: window.currentExamQuestions })
         });
-        alert("Exam Created Successfully!");
-        window.location.hash = "#myExams";
+        if(res.ok) {
+            alert("Exam Created!");
+            window.location.hash = "#myExams";
+        }
     } catch (err) { alert("Error saving exam"); }
 };
 
 window.loadMyExams = async function() {
-    const examListDiv = document.getElementById("examList");
-    if (!examListDiv) return;
-    examListDiv.innerHTML = "<p>Loading...</p>";
-
+    const list = document.getElementById("examList");
+    if (!list) return;
+    list.innerHTML = "Loading...";
     try {
         const res = await fetch(`${API}/exams/my-exams`, {
-            method: "GET",
-            headers: { 
-                "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json"
-            }
-        });
-
-        // Agar response 200 (OK) nahi hai
-        if (!res.ok) {
-            const errorData = await res.json();
-            console.error("Backend Error:", errorData);
-            examListDiv.innerHTML = `<p style="color:red;">Server Error: ${errorData.msg || "Unauthorized"}</p>`;
-            return;
-        }
-
-        const exams = await res.json();
-        // Baki ka rendering logic...
-        
-    } catch (err) { 
-        console.error("Connection Error:", err);
-        examListDiv.innerHTML = "Internet/Server connection error."; 
-    }
-};
-
-
-window.deleteExam = async function(id) {
-    if(!confirm("Delete this exam?")) return;
-    try {
-        await fetch(`${API}/exams/${id}`, {
-            method: "DELETE",
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
-        loadMyExams();
-    } catch (err) { alert("Delete failed"); }
+        const exams = await res.json();
+        list.innerHTML = exams.length ? exams.map(e => `
+            <div class="exam-card" style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:8px;">
+                <h3>${e.title}</h3>
+                <p>Time: ${e.duration} mins | Questions: ${e.questions.length}</p>
+                <button onclick="deleteExam('${e._id}')" style="background:red; color:white;">Delete</button>
+            </div>
+        `).join('') : "No exams created yet.";
+    } catch (err) { list.innerHTML = "Error loading exams."; }
 };
 
 window.submitStudent = async function() {
     const name = document.getElementById("studentName").value;
     const regNo = document.getElementById("studentReg").value;
     try {
-        const res = await fetch(`${API}/students/add`, {
+        await fetch(`${API}/students/add`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -249,112 +163,69 @@ window.submitStudent = async function() {
             },
             body: JSON.stringify({ name, regNo })
         });
-        alert("Student Added!");
+        alert(`Student ${name} Added Successfully!`);
+        document.getElementById("studentName").value = "";
+        document.getElementById("studentReg").value = "";
     } catch (err) { alert("Error adding student"); }
 };
 
+// --- 4. STUDENT EXAM INTERFACE ---
 
-
-// 1. Student jab registration no. se login karega
-window.studentAuth = async function() {
-    const regNo = document.getElementById("stuRegNo").value;
-    const password = document.getElementById("stuPass").value;
-
-    try {
-        const res = await fetch(`${API}/students/auth`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ regNo, password })
-        });
-        const data = await res.json();
-        
-        if(data.token) {
-            localStorage.setItem("stuToken", data.token); // Student token alag rakhein
-            window.location.hash = "#studentDashboard";
-        } else { alert(data.msg); }
-    } catch (err) { alert("Server error! Backend check karein."); }
-};
-
-// 2. Available Exams dikhana
-window.loadAvailableExams = async function() {
-    try {
-        const res = await fetch(`${API}/exams/all`); // Sabhi exams lene ke liye
-        const exams = await res.json();
-        let html = exams.map(e => `
-            <div class="exam-card">
-                <h3>${e.title}</h3>
-                <button onclick="startExam('${e._id}')">Start Now</button>
-            </div>`).join('');
-        document.getElementById("availableExamsList").innerHTML = html;
-    } catch(err) { console.log("Exams load nahi huye"); }
-}
-
-
-
-
-let currentExamData = null;
-
-// 1. Student Exams Load karna
 window.loadStudentExams = async function() {
+    const list = document.getElementById("availableExams");
     try {
-        const res = await fetch(`${API}/exams/all`); // Sabhi available exams
+        const res = await fetch(`${API}/exams/all`, {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("stuToken")}` }
+        });
         const exams = await res.json();
-        let html = exams.map(e => `
+        list.innerHTML = exams.map(e => `
             <div class="exam-card" style="border:1px solid #ccc; padding:15px; margin:10px;">
                 <h4>${e.title}</h4>
-                <p>Time: ${e.duration} mins</p>
                 <button class="primary-btn" onclick="startExamProcess('${e._id}')">Start Exam</button>
             </div>
         `).join('');
-        document.getElementById("availableExams").innerHTML = html || "No exams available";
-    } catch (err) { alert("Exams load nahi huye. Backend check karein."); }
+    } catch (err) { list.innerHTML = "No exams available."; }
 };
 
-// 2. Exam Shuru karna
-window.startExamProcess = async function(examId) {
-    if(!confirm("Kya aap exam shuru karna chahte hain?")) return;
-    
+window.startExamProcess = async function(id) {
     try {
-        const res = await fetch(`${API}/exams/${examId}`);
-        currentExamData = await res.json();
-        
+        const res = await fetch(`${API}/exams/${id}`, {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("stuToken")}` }
+        });
+        const exam = await res.json();
         document.getElementById("studentDashboard").style.display = "none";
         document.getElementById("examWindow").style.display = "block";
-        document.getElementById("activeExamTitle").innerText = currentExamData.title;
-        
-        renderQuestions(currentExamData.questions);
-        startTimer(currentExamData.duration);
-    } catch (err) { alert("Exam start error"); }
+        renderQuestions(exam.questions);
+        startTimer(exam.duration);
+    } catch (err) { alert("Exam Load Error"); }
 };
 
 function renderQuestions(qs) {
-    let html = qs.map((q, i) => `
-        <div class="q-block" style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">
+    document.getElementById("questionArea").innerHTML = qs.map((q, i) => `
+        <div class="q-block" style="margin-bottom:20px;">
             <p><strong>Q${i+1}: ${q.text}</strong></p>
-            ${q.options.map((opt, optIdx) => `
-                <label style="display:block;"><input type="radio" name="q${i}" value="${optIdx}"> ${opt}</label>
-            `).join('')}
+            ${q.options.map((opt, idx) => `<label style="display:block;"><input type="radio" name="q${i}" value="${idx}"> ${opt}</label>`).join('')}
         </div>
     `).join('');
-    document.getElementById("questionArea").innerHTML = html;
 }
 
 function startTimer(mins) {
     let time = mins * 60;
-    let timerEl = document.getElementById("timer");
-    let interval = setInterval(() => {
-        let m = Math.floor(time / 60);
-        let s = time % 60;
+    const timerEl = document.getElementById("timer");
+    const interval = setInterval(() => {
+        let m = Math.floor(time / 60), s = time % 60;
         timerEl.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if (time <= 0) {
-            clearInterval(interval);
-            submitExam();
-        }
-        time--;
+        if (time-- <= 0) { clearInterval(interval); submitExam(); }
     }, 1000);
 }
 
-window.submitExam = function() {
-    alert("Exam Submitted Successfully! Result will be shown later.");
-    location.reload(); // Wapas dashboard par
+// --- UI HELPERS ---
+window.hideAll = function() {
+    ["dashboard", "teacherAuth", "teacherPanel", "studentLogin", "studentPanel"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+    });
 };
+
+window.showRegister = () => { document.getElementById("loginBox").style.display = "none"; document.getElementById("registerBox").style.display = "block"; };
+window.showLogin = () => { document.getElementById("loginBox").style.display = "block"; document.getElementById("registerBox").style.display = "none"; };
