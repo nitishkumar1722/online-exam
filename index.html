@@ -107,14 +107,17 @@
         <button class="primary-btn" onclick="studentAuth()">Login</button>
     </div>
 
-    <div id="studentPanel" style="display:none;" class="container">
-    <div id="studentDashboard">
-        <h2 style="text-align:center;">Assigned Exams</h2>
-        <div id="availableExams">
-            <p style="text-align:center;">Checking for exams...</p>
-        </div>
-        <button onclick="logout()" class="logout-btn" style="display:block; margin: 30px auto;">Logout</button>
+    <div id="studentPanel" class="container page-section" style="display:none;">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #2c3e50;">Welcome to Student Portal</h2>
+        <p id="studentWelcomeName" style="font-weight: bold; color: #3498db;"></p>
     </div>
+
+    <div id="availableExams">
+        <p style="text-align: center; color: gray;">Loading your exam details...</p>
+    </div>
+
+    <button onclick="logout()" class="logout-btn" style="display: block; margin: 20px auto;">Logout</button>
 </div>
 
     <div id="examWindow" style="display:none;">
@@ -128,6 +131,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
