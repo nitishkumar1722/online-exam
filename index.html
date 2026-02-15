@@ -11,57 +11,38 @@
     <h1 class="main-title">Learn & Build</h1>
 
     <div id="dashboard" class="home-grid">
-        <div class="card teacher-card" onclick="openTeacherAuth()">  
+        <div class="card teacher-card" onclick="navigateTo('#teacherAuth')">  
             <span>🏫</span>
             <h3>Teacher</h3>
             <p>Manage exams & students</p>
         </div>
-        <div class="card student-card" onclick="openStudentLogin()">
+        <div class="card student-card" onclick="navigateTo('#studentLogin')">
             <span>🎓</span>
             <h3>Student</h3>
             <p>Practice & Attend exams</p>
         </div>
     </div>
 
-    <div id="teacherAuth" style="display:none;">
-        <button class="back-btn" onclick="goHome()">← Back</button>
-
-        <button onclick="navigateTo('#teacherAuth')" class="btn">Teacher Login</button>
-        <button onclick="navigateTo('#studentLogin')" class="btn">Student Login</button>
-
-        
+    <div id="teacherAuth" style="display:none;" class="container">
+        <button class="back-btn" onclick="goBack()">← Back</button>
         <div id="loginBox" class="auth-box">
             <h2>Teacher Login</h2>
             <input type="email" id="loginEmail" placeholder="Email">
-            
-           <div class="password-wrapper">
-               <input type="password" id="loginPassword" placeholder="Password">
-               <span class="eye-icon" onclick="togglePass('loginPassword')">👁️</span>
-           </div>
-            
+            <div class="password-wrapper">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <span class="eye-icon" onclick="togglePass('loginPassword')">👁️</span>
+            </div>
             <button class="primary-btn" onclick="loginTeacher()">Login</button>
             <p>Don't have an account? <span class="link" onclick="showRegister()">Register</span></p>
         </div>
 
-        <div id="forgotBox" style="display:none;">
-        <h2>Reset Password</h2>
-        <input type="email" id="resetEmail" placeholder="Enter Email">
-        <button class="primary-btn" onclick="resetPassword()">Send Link</button>
-        <p><span class="link" onclick="navigateTo('#teacherAuth')">Back to Login</span></p>
-        </div>
-        
-
         <div id="registerBox" class="auth-box" style="display:none;">
             <h2>Teacher Register</h2>
             <input type="email" id="regEmail" placeholder="Email">
-            <div class="password-wrapper">
-                <input type="password" id="regPassword" placeholder="Password">
-                <span class="eye-icon" onclick="togglePass('regPassword')">👁️</span>
-            </div>
+            <input type="password" id="regPassword" placeholder="Password">
             <button class="primary-btn" onclick="registerTeacher()">Register</button>
             <p>Already registered? <span class="link" onclick="showLogin()">Login</span></p>
         </div>
-        
     </div>
 
     <div id="teacherPanel" style="display:none;">
@@ -72,7 +53,7 @@
             <h2 class="portal-title">Teacher Dashboard</h2>
             <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
-        <button onclick="goBack()" style="margin: 10px; padding: 5px 10px; cursor: pointer;">⬅ Back</button>
+
         <div id="sidebar" class="sidebar">
             <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>
             <div class="sidebar-links">
@@ -82,80 +63,60 @@
             </div>
         </div>
 
-        <div id="main-content" class="container">
-            <div id="createExam" class="page-section">
+        <div class="container">
+            <div id="welcomeNote" class="page-section">
+                <h3>Welcome, Teacher!</h3>
+                <p>Please select an option from the sidebar to begin.</p>
+            </div>
+
+            <div id="createExam" class="page-section" style="display:none;">
+                <button class="back-btn" onclick="goBack()">← Back</button>
                 <h3>Create New Exam</h3>
                 <input type="text" id="examTitle" placeholder="Exam Title">
-                
-                <div class="bulk-section">
-                <h4>Bulk Add MCQs (Super Fast)</h4>
-                <p style="font-size: 12px; color: gray;">Format: Question | Opt1 | Opt2 | Opt3 | Opt4 | AnsIndex(0-3)</p>
-                <textarea id="bulkQuestions" rows="10" style="width: 100%;" placeholder="Example: What is 2+2? | 3 | 4 | 5 | 6 | 1"></textarea>
+                <textarea id="bulkQuestions" rows="5" placeholder="Q | Opt1 | Opt2 | Opt3 | Opt4 | AnsIndex"></textarea>
                 <button class="secondary-btn" onclick="parseBulkQuestions()">Process Questions</button>
-                </div>
-                <input type="number" id="examDuration" placeholder="Duration (min)">
-                <div id="questionsContainer">
-                <h4>Questions</h4>
                 <div id="questionsList"></div>
-                <button class="secondary-btn" onclick="addQuestionField('mcq')">+ Add MCQ</button>
-                <button class="secondary-btn" onclick="addQuestionField('subjective')">+ Add Subjective</button>
-                </div>
-    
-                <button class="action-btn" onclick="saveExam()" style="margin-top:20px;">Save & Publish Exam</button>
-                </div>
-                </div>
-                <div id="myExams" class="page-section" style="display:none;">
+                <input type="number" id="examDuration" placeholder="Duration (min)">
+                <button class="action-btn" onclick="saveExam()">Save & Publish</button>
+            </div>
+
+            <div id="myExams" class="page-section" style="display:none;">
+                <button class="back-btn" onclick="goBack()">← Back</button>
                 <h3>My Created Exams</h3>
-                <div id="examList">Loading exams...</div>
-             </div>
+                <div id="examList"></div>
+            </div>
 
-
-        
             <div id="addStudent" class="page-section" style="display:none;">
-            <h3>Register New Student</h3>
-            <input type="text" id="studentName" placeholder="Student Name">
-            <input type="text" id="studentReg" placeholder="Registration No (Unique)">
-            <button class="action-btn" onclick="submitStudent()">Add Student</button>
+                <button class="back-btn" onclick="goBack()">← Back</button>
+                <h3>Add New Student</h3>
+                <input type="text" id="studentName" placeholder="Name">
+                <input type="text" id="studentReg" placeholder="Reg No">
+                <button class="action-btn" onclick="submitStudent()">Add</button>
             </div>
+        </div>
+    </div>
 
-            <div id="studentLogin" class="auth-box" style="display:none;">
-            <h2>Student Portal</h2>
-            <input type="text" id="stuRegNo" placeholder="Registration Number">
-            <input type="password" id="stuPass" placeholder="Set or Enter Password">
-            <button class="primary-btn" onclick="studentAuth()">Login / Set Password</button>
-            </div>
-        <button onclick="goBack()" style="margin: 10px; padding: 5px 10px; cursor: pointer;">⬅ Back</button>
-      <div id="studentPanel" style="display:none;">
-    <div id="studentDashboard">
-        <h2>Available Exams</h2>
-        <div id="availableExams"></div>
+    <div id="studentLogin" class="container auth-box" style="display:none;">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h2>Student Portal</h2>
+        <input type="text" id="stuRegNo" placeholder="Registration Number">
+        <input type="password" id="stuPass" placeholder="Password">
+        <button class="primary-btn" onclick="studentAuth()">Login</button>
     </div>
-    <div id="examWindow" style="display:none;">
-        <h3 id="timer"></h3>
-        <div id="questionArea"></div>
-        <button onclick="submitExam()">Finish</button>
+
+    <div id="studentPanel" style="display:none;" class="container">
+        <div id="studentDashboard">
+            <h2>Available Exams</h2>
+            <div id="availableExams"></div>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+        <div id="examWindow" style="display:none;">
+            <h3 id="timer"></h3>
+            <div id="questionArea"></div>
+            <button class="primary-btn" onclick="submitExam()">Finish Exam</button>
+        </div>
     </div>
-          <button onclick="goBack()" style="margin: 10px; padding: 5px 10px; cursor: pointer;">⬅ Back</button>
-</div>
-            <div id="teacherOutput"></div>
-            </div>
-            </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
