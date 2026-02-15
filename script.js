@@ -5,6 +5,7 @@ window.navigateTo = function(hash) {
     window.location.hash = hash;
 };
 
+// --- NAVIGATION SYSTEM FIX ---
 function handleLocation() {
     const path = window.location.hash || "#dashboard";
     
@@ -19,7 +20,14 @@ function handleLocation() {
         document.getElementById("teacherAuth").style.display = "block";
     } else if (path === "#studentLogin") {
         document.getElementById("studentLogin").style.display = "block";
-    } else if (["#welcomeNote", "#createExam", "#myExams", "#addStudent"].includes(path)) {
+    } 
+    // YEH LINE ADD KI HAI - Student Panel ko dikhane ke liye
+    else if (path === "#studentPanel") {
+        document.getElementById("studentPanel").style.display = "block";
+        const savedId = localStorage.getItem("assignedExamId");
+        if(savedId) displayStudentDashboard(savedId);
+    } 
+    else if (["#welcomeNote", "#createExam", "#myExams", "#addStudent"].includes(path)) {
         document.getElementById("teacherPanel").style.display = "block";
         document.querySelector(path).style.display = "block";
         if(path === "#myExams") loadMyExams();
@@ -163,8 +171,6 @@ window.submitStudent = async function() {
 
 window.studentAuth = async function() {
     const rollNo = document.getElementById("stuRegNo").value;
-    if (!rollNo) return alert("Please enter Registration Number");
-
     const url = `${API}/student/login?rollNo=${rollNo}`;
 
     try {
@@ -172,22 +178,17 @@ window.studentAuth = async function() {
         const data = await res.json();
 
         if (res.ok) {
-            // Data Save Karo
             localStorage.setItem("assignedExamId", data.examId);
-            localStorage.setItem("studentName", data.studentName);
-            
-            // Screen Switch Karo
+            localStorage.setItem("studentName", data.studentName); // Name save karo
             navigateTo("#studentPanel");
-            
-            // Dashboard ko Force Load karo
-            displayStudentDashboard(data.examId, data.studentName);
+            displayStudentDashboard(data.examId); // Dashboard load karo
         } else {
-            alert(data.msg || "Login Failed");
+            alert(data.msg);
         }
-    } catch (err) {
-        alert("Server Error! Railway is sleeping or crashed.");
-    }
+    } catch (err) { alert("Login Error!"); }
 };
+
+
 
 window.displayStudentDashboard = async function(examId, name) {
     const container = document.getElementById("availableExams");
@@ -316,6 +317,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
