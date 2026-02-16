@@ -193,104 +193,103 @@ function startTimer(duration) {
 
 
 window.submitExam = async function() {
-    const questionBoxes = document.querySelectorAll(".question-box");
-    let score = 0;
-    let analysisHTML = "";
-    const studentName = localStorage.getItem("studentName") || "Student";
     const examId = localStorage.getItem("assignedExamId");
-
-    // Hum dobara exam data lenge correct answers check karne ke liye
-    const res = await fetch(`${API}/exam/get-exam?examId=${examId}`);
-    const exam = await res.json();
-
-    exam.questions.forEach((q, index) => {
-        const selectedOpt = document.querySelector(`input[name="q${index}"]:checked`);
-        const correctIndex = parseInt(q.correctOption) - 1; // Backend se 1-4 aayega
-        const correctAnswer = q.options[correctIndex];
+    const studentName = localStorage.getItem("studentName") || "Student";
+    
+    try {
+        const res = await fetch(`${API}/exam/get-exam?examId=${examId}`);
+        const exam = await res.json();
         
-        let status = "";
-        let color = "";
+        let score = 0;
+        let analysisHTML = "<h3>Detailed Analysis:</h3>";
 
-        if (!selectedOpt) {
-            status = "⚠️ Unattempted";
-            color = "orange";
-        } else if (selectedOpt.value === correctAnswer) {
-            score++;
-            status = "✅ Correct";
-            color = "green";
-        } else {
-            status = `❌ Wrong (Correct: ${correctAnswer})`;
-            color = "red";
-        }
+        exam.questions.forEach((q, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            
+            // Format check: Backend se correctOption number (1-4) aayega
+            const correctNum = parseInt(q.correctOption); 
+            const correctAnswerText = q.options[correctNum - 1];
+            
+            let status = "";
+            let color = "";
 
-        analysisHTML += `
-            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <p><strong>Q${index + 1}:</strong> ${q.question}</p>
-                <p style="color: ${color}; font-weight: bold;">${status}</p>
-            </div>`;
-    });
+            if (!selected) {
+                status = "⚠️ Unattempted";
+                color = "orange";
+            } else if (selected.value === correctAnswerText) {
+                score++;
+                status = "✅ Correct";
+                color = "green";
+            } else {
+                status = `❌ Wrong (Correct: ${correctAnswerText})`;
+                color = "red";
+            }
 
-    // Result display logic
-    navigateTo("#resultPage");
-    document.getElementById("resExamTitle").innerText = exam.examTitle;
-    document.getElementById("resStudentName").innerText = `Student: ${studentName}`;
-    document.getElementById("scoreSummary").innerHTML = `Score: <b>${score} / ${exam.questions.length}</b>`;
-    document.getElementById("detailedAnalysis").innerHTML = analysisHTML;
+            analysisHTML += `
+                <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                    <p><strong>Q${index + 1}:</strong> ${q.question}</p>
+                    <p style="color: ${color}; font-weight: bold;">${status}</p>
+                </div>`;
+        });
 
-    // TODO: Send this score to Backend so Teacher can see it
-    saveResultToDatabase(studentName, exam.examTitle, score);
+        // 1. Result UI dikhao
+        navigateTo("#resultSection");
+        document.getElementById("resTitle").innerText = `Result: ${exam.examTitle}`;
+        document.getElementById("resStudentInfo").innerText = `Name: ${studentName}`;
+        document.getElementById("resScore").innerText = `Final Score: ${score} / ${exam.questions.length}`;
+        document.getElementById("resAnalysis").innerHTML = analysisHTML;
+
+        // 2. Result Backend par save karo (Is API call ko dhyan se dekho)
+        await fetch(`${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`);
+
+    } catch (err) {
+        alert("Exam Submit Error: Backend se contact nahi ho raha!");
+    }
 };
 
-async function saveResultToDatabase(name, title, marks) {
-    // Teacher ko dikhane ke liye backend pe save karne ka API call
-    await fetch(`${API}/exam/save-result?name=${name}&exam=${title}&marks=${marks}`);
-}
 
 // --- TEACHER: VIEW ALL RESULTS ---
 window.viewAllResults = async function() {
-    try {
-        // Teacher dashboard ke section ko badalne ke liye
-        document.getElementById("welcomeNote").style.display = "none";
-        document.getElementById("myExams").style.display = "block";
-        const list = document.getElementById("examsList");
-        list.innerHTML = "<p>Loading Results...</p>";
+    navigateTo("#myExams");
+    const list = document.getElementById("examsList");
+    list.innerHTML = "<h3>Student Results</h3><p>Loading...</p>";
 
+    try {
         const res = await fetch(`${API}/exam/all-results`);
+        if (!res.ok) throw new Error("API Issue");
+        
         const results = await res.json();
 
         if (results.length === 0) {
-            list.innerHTML = "<p>Abhi tak kisi student ne exam nahi diya hai.</p>";
+            list.innerHTML = "<h3>Student Results</h3><p>No results found in database.</p>";
             return;
         }
 
-        // Result Table Table Format mein
         let html = `
-            <table style="width:100%; border-collapse: collapse; margin-top:20px;">
-                <tr style="background:#3498db; color:white;">
-                    <th style="padding:10px; border:1px solid #ddd;">Student Name</th>
-                    <th style="padding:10px; border:1px solid #ddd;">Exam Title</th>
-                    <th style="padding:10px; border:1px solid #ddd;">Score</th>
+            <table style="width:100%; border-collapse: collapse; background: white;">
+                <tr style="background:#2c3e50; color:white;">
+                    <th style="padding:10px; border:1px solid #ddd;">Student</th>
+                    <th style="padding:10px; border:1px solid #ddd;">Exam</th>
+                    <th style="padding:10px; border:1px solid #ddd;">Marks</th>
                 </tr>
         `;
 
         results.forEach(r => {
             html += `
                 <tr style="text-align:center;">
-                    <td style="padding:10px; border:1px solid #ddd;">${r.studentName}</td>
-                    <td style="padding:10px; border:1px solid #ddd;">${r.examTitle}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">${r.studentName || r.name}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">${r.examTitle || r.exam}</td>
                     <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#27ae60;">${r.marks}</td>
                 </tr>
             `;
         });
 
-        html += "</table>";
-        list.innerHTML = "<h3>Student Results</h3>" + html;
-
+        list.innerHTML = "<h3>Student Results</h3>" + html + "</table>";
     } catch (err) {
-        alert("Results load karne mein error!");
-        console.error(err);
+        list.innerHTML = "<h3>Student Results</h3><p style='color:red;'>Error: Backend ka /all-results route nahi mil raha.</p>";
     }
 };
+
 
 
 
@@ -299,4 +298,5 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
