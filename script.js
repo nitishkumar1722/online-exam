@@ -190,13 +190,113 @@ function startTimer(duration) {
     }, 1000);
 }
 
-window.submitExam = () => {
-    alert("Exam Submitted Successfully!");
-    navigateTo("#dashboard");
+
+
+window.submitExam = async function() {
+    const questionBoxes = document.querySelectorAll(".question-box");
+    let score = 0;
+    let analysisHTML = "";
+    const studentName = localStorage.getItem("studentName") || "Student";
+    const examId = localStorage.getItem("assignedExamId");
+
+    // Hum dobara exam data lenge correct answers check karne ke liye
+    const res = await fetch(`${API}/exam/get-exam?examId=${examId}`);
+    const exam = await res.json();
+
+    exam.questions.forEach((q, index) => {
+        const selectedOpt = document.querySelector(`input[name="q${index}"]:checked`);
+        const correctIndex = parseInt(q.correctOption) - 1; // Backend se 1-4 aayega
+        const correctAnswer = q.options[correctIndex];
+        
+        let status = "";
+        let color = "";
+
+        if (!selectedOpt) {
+            status = "⚠️ Unattempted";
+            color = "orange";
+        } else if (selectedOpt.value === correctAnswer) {
+            score++;
+            status = "✅ Correct";
+            color = "green";
+        } else {
+            status = `❌ Wrong (Correct: ${correctAnswer})`;
+            color = "red";
+        }
+
+        analysisHTML += `
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <p><strong>Q${index + 1}:</strong> ${q.question}</p>
+                <p style="color: ${color}; font-weight: bold;">${status}</p>
+            </div>`;
+    });
+
+    // Result display logic
+    navigateTo("#resultPage");
+    document.getElementById("resExamTitle").innerText = exam.examTitle;
+    document.getElementById("resStudentName").innerText = `Student: ${studentName}`;
+    document.getElementById("scoreSummary").innerHTML = `Score: <b>${score} / ${exam.questions.length}</b>`;
+    document.getElementById("detailedAnalysis").innerHTML = analysisHTML;
+
+    // TODO: Send this score to Backend so Teacher can see it
+    saveResultToDatabase(studentName, exam.examTitle, score);
 };
+
+async function saveResultToDatabase(name, title, marks) {
+    // Teacher ko dikhane ke liye backend pe save karne ka API call
+    await fetch(`${API}/exam/save-result?name=${name}&exam=${title}&marks=${marks}`);
+}
+
+// --- TEACHER: VIEW ALL RESULTS ---
+window.viewAllResults = async function() {
+    try {
+        // Teacher dashboard ke section ko badalne ke liye
+        document.getElementById("welcomeNote").style.display = "none";
+        document.getElementById("myExams").style.display = "block";
+        const list = document.getElementById("examsList");
+        list.innerHTML = "<p>Loading Results...</p>";
+
+        const res = await fetch(`${API}/exam/all-results`);
+        const results = await res.json();
+
+        if (results.length === 0) {
+            list.innerHTML = "<p>Abhi tak kisi student ne exam nahi diya hai.</p>";
+            return;
+        }
+
+        // Result Table Table Format mein
+        let html = `
+            <table style="width:100%; border-collapse: collapse; margin-top:20px;">
+                <tr style="background:#3498db; color:white;">
+                    <th style="padding:10px; border:1px solid #ddd;">Student Name</th>
+                    <th style="padding:10px; border:1px solid #ddd;">Exam Title</th>
+                    <th style="padding:10px; border:1px solid #ddd;">Score</th>
+                </tr>
+        `;
+
+        results.forEach(r => {
+            html += `
+                <tr style="text-align:center;">
+                    <td style="padding:10px; border:1px solid #ddd;">${r.studentName}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">${r.examTitle}</td>
+                    <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#27ae60;">${r.marks}</td>
+                </tr>
+            `;
+        });
+
+        html += "</table>";
+        list.innerHTML = "<h3>Student Results</h3>" + html;
+
+    } catch (err) {
+        alert("Results load karne mein error!");
+        console.error(err);
+    }
+};
+
+
 
 // --- UI HELPERS ---
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
