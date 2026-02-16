@@ -124,21 +124,23 @@
     <div id="questionArea"></div>
     <button class="primary-btn" onclick="submitExam()" style="margin-top: 20px;">Finish Exam</button>
 </div>
-<div id="resultSection" class="container page-section" style="display:none; background:white; padding:30px; border-radius:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-    <h2 id="resTitle" style="color:#2c3e50;"></h2>
-    <hr>
-    <div style="margin:20px 0;">
-        <span style="font-size:1.2rem;">Student: </span><b id="resName" style="color:#3498db;"></b><br>
-        <span style="font-size:1.5rem;">Your Score: </span><b id="resScore" style="color:#27ae60; font-size:2rem;"></b>
+<div id="resultSection" class="container page-section" style="display:none; background:white; padding:30px; border-radius:15px; text-align:center;">
+    <h2 id="resTitle" style="color:#2c3e50;">Exam Result</h2>
+    <div style="margin:20px 0; padding:15px; border:2px solid #3498db; border-radius:10px; display:inline-block;">
+        <p style="font-size:1.2rem;">Student: <b id="resName"></b></p>
+        <p style="font-size:2rem; color:#27ae60; margin:10px 0;">Score: <span id="resScore"></span></p>
     </div>
-    <div id="resAnalysis" style="text-align:left; max-height:300px; overflow-y:auto; border:1px solid #eee; padding:15px; border-radius:10px;">
+    
+    <div id="resAnalysis" style="text-align:left; margin-top:20px; max-height:300px; overflow-y:auto; border-top:1px solid #eee; padding-top:15px;">
         </div>
-    <button onclick="location.reload()" class="primary-btn" style="margin-top:20px;">Return to Dashboard</button>
+
+    <button onclick="location.reload()" class="primary-btn" style="margin-top:25px; width:100%;">Back to Dashboard</button>
 </div>
     
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
