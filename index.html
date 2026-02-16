@@ -124,11 +124,21 @@
     <button class="primary-btn" onclick="submitExam()" style="margin-top: 20px;">Finish Exam</button>
 </div>
     
-
+<div id="resultPage" class="container page-section" style="display:none;">
+    <button class="back-btn" onclick="navigateTo('#studentPanel')">← Back to Dashboard</button>
+    <div class="auth-box" style="background: white; padding: 20px; border-radius: 15px; text-align: left;">
+        <h2 id="resExamTitle" style="color: #2c3e50;">Result</h2>
+        <p id="resStudentName" style="color: #3498db; font-weight: bold;"></p>
+        <hr>
+        <div id="scoreSummary" style="font-size: 20px; margin: 15px 0;"></div>
+        <div id="detailedAnalysis"></div>
+    </div>
+</div>
     
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
