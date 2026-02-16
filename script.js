@@ -200,52 +200,53 @@ window.submitExam = async function() {
         const exam = await res.json();
         
         let score = 0;
-        let analysisHTML = "<h4>Question Analysis:</h4>";
+        let analysisHTML = "<h3>Analysis:</h3>";
 
         exam.questions.forEach((q, index) => {
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            // Backend se correctOption number (1,2,3,4) aata hai
             const correctIdx = parseInt(q.correctOption) - 1; 
             const correctAnswerText = q.options[correctIdx];
             
-            let resultMsg = "";
-            let rowColor = "";
+            let status = "";
+            let color = "";
 
             if (!selected) {
-                resultMsg = "⚠️ Unattempted";
-                rowColor = "#fff3cd"; // Yellow
+                status = "⚠️ Unattempted";
+                color = "orange";
             } else if (selected.value === correctAnswerText) {
                 score++;
-                resultMsg = "✅ Correct";
-                rowColor = "#d4edda"; // Green
+                status = "✅ Correct";
+                color = "green";
             } else {
-                resultMsg = `❌ Wrong (Correct: ${correctAnswerText})`;
-                rowColor = "#f8d7da"; // Red
+                status = `❌ Wrong (Right: ${correctAnswerText})`;
+                color = "red";
             }
 
-            analysisHTML += `
-                <div style="background:${rowColor}; padding:10px; margin-bottom:5px; border-radius:5px;">
-                    <b>Q${index+1}:</b> ${q.question}<br>
-                    <small>${resultMsg}</small>
-                </div>`;
+            analysisHTML += `<div style="padding:10px; border-bottom:1px solid #f0f0f0;">
+                <b>Q${index+1}:</b> ${q.question}<br>
+                <span style="color:${color}">${status}</span>
+            </div>`;
         });
 
-        // UI Update: Result dikhao
-        navigateTo("#resultSection");
+        // Blank screen fix: Navigation se pehle data fill karo
         document.getElementById("resTitle").innerText = exam.examTitle;
         document.getElementById("resName").innerText = studentName;
         document.getElementById("resScore").innerText = `${score} / ${exam.questions.length}`;
         document.getElementById("resAnalysis").innerHTML = analysisHTML;
 
-        // Backend pe result save karo
-        const saveRes = await fetch(`${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`);
-        if(!saveRes.ok) throw new Error("Save failed");
+        // Ab section change karo
+        navigateTo("#resultSection");
+
+        // Backend pe result save karne ki koshish (background mein)
+        fetch(`${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`)
+        .catch(e => console.log("Save error, but student saw result."));
 
     } catch (err) {
+        alert("Finish karne mein error: Backend se questions load nahi ho paye.");
         console.error(err);
-        alert("Exam submitted but score couldn't be saved to teacher dashboard.");
     }
 };
+
 
 // TEACHER VIEW RESULTS
 window.viewAllResults = async function() {
@@ -267,6 +268,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
