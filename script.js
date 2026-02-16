@@ -191,8 +191,6 @@ function startTimer(duration) {
 }
 
 
-
-// EXAM SUBMIT LOGIC
 window.submitExam = async function() {
     const examId = localStorage.getItem("assignedExamId");
     const studentName = localStorage.getItem("studentName") || "Student";
@@ -200,34 +198,54 @@ window.submitExam = async function() {
     try {
         const res = await fetch(`${API}/exam/get-exam?examId=${examId}`);
         const exam = await res.json();
+        
         let score = 0;
-        let analysisHTML = "";
+        let analysisHTML = "<h4>Question Analysis:</h4>";
 
         exam.questions.forEach((q, index) => {
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            const correctIndex = parseInt(q.correctOption) - 1; 
-            const correctAnswerText = q.options[correctIndex];
+            // Backend se correctOption number (1,2,3,4) aata hai
+            const correctIdx = parseInt(q.correctOption) - 1; 
+            const correctAnswerText = q.options[correctIdx];
+            
+            let resultMsg = "";
+            let rowColor = "";
 
-            let status = selected ? (selected.value === correctAnswerText ? "✅ Correct" : `❌ Wrong (Ans: ${correctAnswerText})`) : "⚠️ Unattempted";
-            if (selected && selected.value === correctAnswerText) score++;
+            if (!selected) {
+                resultMsg = "⚠️ Unattempted";
+                rowColor = "#fff3cd"; // Yellow
+            } else if (selected.value === correctAnswerText) {
+                score++;
+                resultMsg = "✅ Correct";
+                rowColor = "#d4edda"; // Green
+            } else {
+                resultMsg = `❌ Wrong (Correct: ${correctAnswerText})`;
+                rowColor = "#f8d7da"; // Red
+            }
 
-            analysisHTML += `<p><b>Q${index+1}:</b> ${status}</p>`;
+            analysisHTML += `
+                <div style="background:${rowColor}; padding:10px; margin-bottom:5px; border-radius:5px;">
+                    <b>Q${index+1}:</b> ${q.question}<br>
+                    <small>${resultMsg}</small>
+                </div>`;
         });
 
-        // UI Update
+        // UI Update: Result dikhao
         navigateTo("#resultSection");
         document.getElementById("resTitle").innerText = exam.examTitle;
-        document.getElementById("resScore").innerText = `Marks: ${score} / ${exam.questions.length}`;
+        document.getElementById("resName").innerText = studentName;
+        document.getElementById("resScore").innerText = `${score} / ${exam.questions.length}`;
         document.getElementById("resAnalysis").innerHTML = analysisHTML;
 
-        // Backend Save
-        await fetch(`${API}/exam/save-result?name=${studentName}&examTitle=${exam.examTitle}&marks=${score}`);
+        // Backend pe result save karo
+        const saveRes = await fetch(`${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`);
+        if(!saveRes.ok) throw new Error("Save failed");
+
     } catch (err) {
-        alert("Problem saving result!");
+        console.error(err);
+        alert("Exam submitted but score couldn't be saved to teacher dashboard.");
     }
 };
-
-
 
 // TEACHER VIEW RESULTS
 window.viewAllResults = async function() {
@@ -244,13 +262,12 @@ window.viewAllResults = async function() {
     list.innerHTML = table + "</table>";
 };
 
-
-
 // --- UI HELPERS ---
 window.showRegister = () => { document.getElementById("loginBox").style.display="none"; document.getElementById("registerBox").style.display="block"; };
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
