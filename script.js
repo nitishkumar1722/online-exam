@@ -215,6 +215,10 @@ window.submitExam = async function() {
     const examId = localStorage.getItem("assignedExamId");
     const studentName = localStorage.getItem("studentName") || "Student";
 
+    // Button ko disable karein taaki student baar-baar click na kare
+    const finishBtn = document.querySelector('button[onclick="submitExam()"]');
+    if(finishBtn) finishBtn.disabled = true;
+
     try {
         const res = await fetch(`${API}/exam/get-exam?examId=${examId}`);
         const exam = await res.json();
@@ -224,8 +228,11 @@ window.submitExam = async function() {
 
         exam.questions.forEach((q, index) => {
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            const correctIdx = parseInt(q.correctOption) - 1; 
-            const correctAnswerText = q.options[correctIdx];
+            
+            // Backend se correctOption number (1,2,3,4) aata hai
+            // parseInt zaroori hai taaki string calculation error na ho
+            const correctOptionNumber = parseInt(q.correctOption); 
+            const correctAnswerText = q.options[correctOptionNumber - 1];
             
             let statusLabel = "";
             let cardStyle = "";
@@ -243,11 +250,33 @@ window.submitExam = async function() {
             }
 
             analysisHTML += `
-                <div style="padding:15px; margin-bottom:10px; border-radius:8px; ${cardStyle}">
+                <div style="padding:15px; margin-bottom:10px; border-radius:8px; ${cardStyle} text-align:left;">
                     <p style="margin:0; font-weight:bold;">Q${index+1}: ${q.question}</p>
                     <p style="margin:5px 0 0 0; font-size:0.9rem;">${statusLabel}</p>
                 </div>`;
         });
+
+        // 1. Student UI Update (Ye IDs index.html mein honi chahiye)
+        document.getElementById("resTitle").innerText = exam.examTitle;
+        document.getElementById("resName").innerText = studentName;
+        document.getElementById("resScore").innerText = `${score} / ${exam.questions.length}`;
+        document.getElementById("resAnalysis").innerHTML = analysisHTML;
+
+        // 2. Screen Change (Result dikhao)
+        navigateTo("#resultSection");
+
+        // 3. Backend Save (Teacher Dashboard ke liye)
+        // EncodeURIComponent use karein taaki name/title mein space ho toh error na aaye
+        const saveUrl = `${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`;
+        
+        const saveRes = await fetch(saveUrl);
+        if(!saveRes.ok) console.error("Database mein save nahi ho paya");
+
+    } catch (err) {
+        alert("Finish karne mein issue aaya: " + err.message);
+        if(finishBtn) finishBtn.disabled = false;
+    }
+};
 
         // Student ki screen par data bharo
         document.getElementById("resTitle").innerText = exam.examTitle;
@@ -288,6 +317,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
