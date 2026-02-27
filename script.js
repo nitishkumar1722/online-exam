@@ -200,49 +200,49 @@ window.submitExam = async function() {
         const exam = await res.json();
         
         let score = 0;
-        let analysisHTML = "<h3>Analysis:</h3>";
+        let analysisHTML = `<h3 style="margin-bottom:15px; color:#2c3e50;">Question Analysis:</h3>`;
 
         exam.questions.forEach((q, index) => {
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
             const correctIdx = parseInt(q.correctOption) - 1; 
             const correctAnswerText = q.options[correctIdx];
             
-            let status = "";
-            let color = "";
+            let statusLabel = "";
+            let cardStyle = "";
 
             if (!selected) {
-                status = "⚠️ Unattempted";
-                color = "orange";
+                statusLabel = `<span style="color:#e67e22;">⚠️ Unattempted</span>`;
+                cardStyle = "border-left: 5px solid #f1c40f; background:#fff9e6;";
             } else if (selected.value === correctAnswerText) {
                 score++;
-                status = "✅ Correct";
-                color = "green";
+                statusLabel = `<span style="color:#27ae60;">✅ Correct</span>`;
+                cardStyle = "border-left: 5px solid #2ecc71; background:#f0fff4;";
             } else {
-                status = `❌ Wrong (Right: ${correctAnswerText})`;
-                color = "red";
+                statusLabel = `<span style="color:#e74c3c;">❌ Wrong (Correct: ${correctAnswerText})</span>`;
+                cardStyle = "border-left: 5px solid #e74c3c; background:#fff5f5;";
             }
 
-            analysisHTML += `<div style="padding:10px; border-bottom:1px solid #f0f0f0;">
-                <b>Q${index+1}:</b> ${q.question}<br>
-                <span style="color:${color}">${status}</span>
-            </div>`;
+            analysisHTML += `
+                <div style="padding:15px; margin-bottom:10px; border-radius:8px; ${cardStyle}">
+                    <p style="margin:0; font-weight:bold;">Q${index+1}: ${q.question}</p>
+                    <p style="margin:5px 0 0 0; font-size:0.9rem;">${statusLabel}</p>
+                </div>`;
         });
 
-        // Blank screen fix: Navigation se pehle data fill karo
+        // Student ki screen par data bharo
         document.getElementById("resTitle").innerText = exam.examTitle;
         document.getElementById("resName").innerText = studentName;
         document.getElementById("resScore").innerText = `${score} / ${exam.questions.length}`;
         document.getElementById("resAnalysis").innerHTML = analysisHTML;
 
-        // Ab section change karo
+        // Student ko Result waale card par le jao
         navigateTo("#resultSection");
 
-        // Backend pe result save karne ki koshish (background mein)
-        fetch(`${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`)
-        .catch(e => console.log("Save error, but student saw result."));
+        // Teacher ko data bhejo (pehle student ko result dikha diya, ab backend save hoga)
+        fetch(`${API}/exam/save-result?name=${encodeURIComponent(studentName)}&examTitle=${encodeURIComponent(exam.examTitle)}&marks=${score}`);
 
     } catch (err) {
-        alert("Finish karne mein error: Backend se questions load nahi ho paye.");
+        alert("Finish karne mein issue aa raha hai. Check your internet connection.");
         console.error(err);
     }
 };
@@ -268,6 +268,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
