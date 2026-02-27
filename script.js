@@ -72,14 +72,31 @@ window.loginTeacher = async function() {
 
 window.createBulkExam = async function() {
     const examTitle = document.getElementById("examTitle").value;
-    const duration = document.getElementById("examDuration").value;
+    const duration = document.getElementById("examDuration").value; // Form ID check kar lena
     const totalMarks = document.getElementById("totalMarks").value;
     const rawQuestions = document.getElementById("bulkQuestions").value;
     const teacherEmail = localStorage.getItem("userEmail");
 
-    if(!examTitle || !rawQuestions) return alert("Details bhariye!");
+    if(!examTitle || !rawQuestions) return alert("please , give title and questions");
 
-    const questionsData = rawQuestions.trim().split("\n").join("###");
+    // 1. Pehle hum questions ko parse karenge taaki format check ho sake
+    const lines = rawQuestions.trim().split("\n");
+    const formattedQuestions = [];
+
+    for (let line of lines) {
+        const parts = line.split("|").map(p => p.trim());
+        
+        // Format check: Question | O1 | O2 | O3 | O4 | CorrectOptionNumber
+        if (parts.length === 6) {
+            formattedQuestions.push(line.trim());
+        } else {
+            return alert(`there is some mistakes in the line : "${line}" \nCheck the format: Question | Opt1 | Opt2 | Opt3 | Opt4 | Number`);
+        }
+    }
+
+    // 2. Ab hum join karenge '###' ke saath jaisa backend expect kar raha hai
+    const questionsData = formattedQuestions.join("###");
+
     const url = `${API}/exam/create?examTitle=${encodeURIComponent(examTitle)}&duration=${duration}&totalMarks=${totalMarks}&teacherEmail=${teacherEmail}&questionsData=${encodeURIComponent(questionsData)}`;
 
     try {
@@ -87,8 +104,11 @@ window.createBulkExam = async function() {
         const data = await res.json();
         alert(data.msg || data.message); 
         if(res.ok) navigateTo("#myExams");
-    } catch (err) { alert("Network Error: Backend issues"); }
+    } catch (err) { 
+        alert("SERVER ERROR !"); 
+    }
 };
+
 
 window.loadMyExams = async function() {
     const email = localStorage.getItem("userEmail");
@@ -268,6 +288,7 @@ window.showRegister = () => { document.getElementById("loginBox").style.display=
 window.showLogin = () => { document.getElementById("loginBox").style.display="block"; document.getElementById("registerBox").style.display="none"; };
 window.logout = () => { localStorage.clear(); navigateTo("#dashboard"); };
 window.toggleSidebar = () => { const s = document.getElementById("sidebar"); s.style.width = s.style.width === "250px" ? "0" : "250px"; };
+
 
 
 
